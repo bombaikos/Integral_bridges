@@ -154,6 +154,7 @@ button{font:inherit; padding:5px 10px; border-radius:5px; border:1px solid var(-
     <div class="row"><label>γ<sub>Q</sub> (ELU) [–]</label><input type="number" id="gQ" value="1.5" step="0.05"></div>
     <div class="row"><label>Factor para el giro [–]<small>0,75 en la ec. 5.15 (PDF p. 129)</small></label><input type="number" id="psiQ" value="0.75" step="0.05"></div>
     <div class="row"><label>B<sub>vía</sub> [m]<small>ancho de carril ficticio</small></label><input type="number" id="B" value="3" step="0.1"></div>
+    <div class="row"><label>Coef. de envolvente [–]<small>1,5 de las ec. 5.13–5.14 (fig. 5.29b). No es γ<sub>Q</sub></small></label><input type="number" id="kenv" value="1.5" step="0.05" min="0.5"></div>
     <div class="row"><label>n<sub>d</sub> axil</label>
       <select id="nMode"><option value="max">máx(100; ec. 5.11–5.12)</option><option value="thesis">100 kN/m (tesis)</option></select></div>
   </fieldset>
@@ -211,7 +212,7 @@ button{font:inherit; padding:5px 10px; border-radius:5px; border:1px solid var(-
 e_extr,DT = e0,DT + α_DT · L_DT                                                   fig. 5.8 PDF p. 104–105
 u_imp,adm = f(e_extr,DT)  — ábaco, χ_adm = 20 ‰ (autopista) / 28 ‰ (nacional)     fig. 5.9 PDF p. 105
 L_vacío = h_mec · tan(45° − φ/2)    (≈ 0,45–0,60·h para φ = 40–30°)              ec. 5.3  PDF p. 101–102
-m⁺_long,d = 1,5 · Q1,d · L_vacío / (2·B_vía)                     (articulada)     ec. 5.13 PDF p. 133
+m⁺_long,d = 1,5 · Q1,d · L_vacío / (2·B_vía)  = (2·Q1,d)·L_vacío/4 / B_eq,  B_eq = B_vía/1,5 = 2 m   ec. 5.13 PDF p. 133
 m⁺_long,d = 1,5 · [Q1,d·(L_vacío − L_diag) + m⁻_pl,d·B_vía] / (2·B_vía)  (rótula) ec. 5.14 PDF p. 133
 m⁺_pl,d ≥ 100 kNm/m (long. y transv.),  n_d = 100 kN/m                            § 5.4.3  PDF p. 133
 G_ef = γ_r·[L/2·(e0 + e_extr) + e_extr² / (2·tan(45°+φ/2))] + γ_c·L·h             ec. 5.11 PDF p. 132
@@ -356,11 +357,14 @@ function calc(){
   const Lv = hmec*Math.tan(rad(45-phid/2));
   const Lext = L - Lv;
   const ratio = Lv/L;
+  const Lrec = Math.max(2*Lv, Lreq!=null ? Lreq : 0);
   if (Lext<=0) msgs.push(["bad",`La losa (${fmt(L,2)} m) no salva el vacío L<sub>vacío</sub> = ${fmt(Lv,2)} m: aumente L<sub>DT</sub> (PDF p. 101).`]);
-  else if (ratio>0.9) msgs.push(["warn","L<sub>vacío</sub>/L<sub>DT</sub> > 0,9: la losa apenas apoya y el relleno plastifica; las fórmulas simplificadas salen de figs. 5.29–5.30 que llegan a ≈ 0,9."]);
+  else if (ratio>0.5) msgs.push(["warn",`L<sub>vacío</sub>/L<sub>DT</sub> = ${fmt(ratio,2)} > 0,5: el extremo apoyado se acerca a su capacidad portante y el momento empieza a depender de L<sub>DT</sub> (PDF p. 126). Criterio deducido: L<sub>DT</sub> ≥ 2·L<sub>vacío</sub> = ${fmt(2*Lv,2)} m.`]);
 
   /* ---- 3. esfuerzos ---- */
   const Q1d = gQ*aQ*Q1k;
+  const kenv = num("kenv");
+  const Beq = B/kenv;                                     // ancho de reparto equivalente del tándem
   const fcd = Math.min(1,Math.cbrt(30/fck))*fck/gc, fsd = fsk/gsS;
   const etafc = Math.min(1,Math.cbrt(30/fck));
   // rótula ec. 5.6 (valores de cálculo)
@@ -368,8 +372,8 @@ function calc(){
   const MplCalc = fsd*1000*rhoh*1*dh*dh*(1 - fsd*rhoh/(2*etafc*fck/gc)); // kNm/m (fc de cálculo ya incluye η en fcd; aquí η explícito)
   const mplUse = $("mplMode").value==="thesis" ? 55 : MplCalc;
   let mlong, mEq;
-  if (conn==="pin"){ mlong = 1.5*Q1d*Math.max(Lv,0)/(2*B); mEq="ec. 5.13"; }
-  else { mlong = 1.5*(Q1d*Math.max(Lv-Ldiag,0) - mplUse*B)/(2*B); mEq="ec. 5.14"; if (mlong<0) mlong=0; }
+  if (conn==="pin"){ mlong = kenv*Q1d*Math.max(Lv,0)/(2*B); mEq="ec. 5.13"; }
+  else { mlong = kenv*(Q1d*Math.max(Lv-Ldiag,0) - mplUse*B)/(2*B); mEq="ec. 5.14"; if (mlong<0) mlong=0; }
   const mreq = Math.max(mlong,100);
   // axil
   const phiRad=rad(phik), aR = rad(45+phik/2), aA=Math.atan(a);
@@ -423,10 +427,18 @@ function calc(){
    <tr><td>L<sub>vacío</sub> = h<sub>mec</sub>·tan(45° − φ<sub>d</sub>/2)</td><td class="n"><strong>${fmt(Lv,2)} m</strong> (${fmt(Lv/hmec,2)}·h)</td><td class="ref">ec. 5.3 · PDF p. 101</td></tr>
    <tr><td>L<sub>DT,min</sub> = L<sub>vacío</sub></td><td class="n">${fmt(Lv,2)} m ${ok(L>Lv)}</td><td class="ref">§ 5.2.1 · PDF p. 101</td></tr>
    <tr><td>Longitud apoyada L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>vacío</sub></td><td class="n">${fmt(Lext,2)} m</td><td class="ref">§ 5.4 · PDF p. 125</td></tr>
-   <tr><td>L<sub>vacío</sub> / L<sub>DT</sub></td><td class="n">${fmt(ratio,2)}</td><td class="ref">figs. 5.29–5.30</td></tr>`;
+   <tr><td>L<sub>vacío</sub> / L<sub>DT</sub></td><td class="n">${fmt(ratio,2)} ${ratio<=0.5?'<span class="tag ok">≤ 0,5</span>':'<span class="tag warn">> 0,5</span>'}</td><td class="ref">fig. 5.29 · PDF p. 126–127</td></tr>
+   <tr><td>L<sub>DT</sub> ≥ 2·L<sub>vacío</sub> (apoyo ≥ vacío) <span class="tag warn">criterio deducido</span></td><td class="n">${fmt(2*Lv,2)} m ${L>=2*Lv?'<span class="tag ok">cumple</span>':'<span class="tag warn">no cumple</span>'}</td><td class="ref">de fig. 5.29, no exigido</td></tr>
+   <tr><td>L<sub>DT</sub> recomendada = máx(2·L<sub>vacío</sub>; planeidad${Lreq!=null?` ${fmt(Lreq,2)} m`:""})</td><td class="n"><strong>${fmt(Lrec,2)} m</strong></td><td class="ref">§ 5.2 + fig. 5.29</td></tr>
+   <tr><td colspan="3" class="note">La tesis solo define L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>vacío</sub> y no fija un mínimo. Con L<sub>vacío</sub>/L<sub>DT</sub> < 0,5 el relleno bajo el extremo no plastifica y el momento no depende de L<sub>DT</sub>; cerca de 1 plastifica (PDF p. 126). El límite 0,5 es una lectura nuestra de esa frase; el mínimo de la tesis es L<sub>DT</sub> > L<sub>vacío</sub>. Caso base de la tesis: L<sub>DT</sub> = 6 m con L<sub>vacío</sub> = 2 m (0,33).</td></tr>`;
 
   $("tF").innerHTML = `<tr><th>Esfuerzo</th><th>Valor</th><th>Fuente</th></tr>
-   <tr><td>Q<sub>1,d</sub> = γ<sub>Q</sub>·α<sub>Q1</sub>·Q<sub>1k</sub></td><td class="n">${fmt(Q1d,0)} kN</td><td class="ref">PDF p. 126</td></tr>
+   <tr><td>Q<sub>1,d</sub> = γ<sub>Q</sub>·α<sub>Q1</sub>·Q<sub>1k</sub> (por eje del tándem del carril 1)</td><td class="n">${fmt(Q1d,0)} kN</td><td class="ref">PDF p. 126</td></tr>
+   <tr><td>Ancho de reparto equivalente del tándem B<sub>eq</sub> = B<sub>vía</sub> / ${fmt(kenv,2)}</td><td class="n"><strong>${fmt(Beq,2)} m</strong></td><td class="ref">ec. 5.13 desarrollada</td></tr>
+   <tr><td colspan="3" class="note">${conn==="pin"
+     ? `m⁺ = ${fmt(kenv,2)}·Q<sub>1,d</sub>·L<sub>vacío</sub>/(2·B<sub>vía</sub>) = [(2·Q<sub>1,d</sub>)·L<sub>vacío</sub>/4] / B<sub>eq</sub>: viga biapoyada de luz L<sub>vacío</sub> con los dos ejes (2 × ${fmt(Q1d,0)} kN) en el centro, repartidos en ${fmt(Beq,2)} m.`
+     : `m⁺ = [(2·Q<sub>1,d</sub>)·(L<sub>vacío</sub> − L<sub>diag</sub>)/4 + m⁻<sub>pl,d</sub>·B<sub>vía</sub>/2] / B<sub>eq</sub>: los dos ejes (2 × ${fmt(Q1d,0)} kN) repartidos en ${fmt(Beq,2)} m sobre la luz L<sub>vacío</sub> − L<sub>diag</sub>, descontando el momento de la rótula.`}
+     El coeficiente ${fmt(kenv,2)} es la envolvente empírica de la fig. 5.29(b): cubre el carril 2, la sobrecarga q, el peso propio y el reparto real en la placa (PDF p. 126–127). En el modelo numérico no hay ancho eficaz: es una placa de 9 m con los tándems de los carriles 1 y 2 junto al borde (fig. 4.25).</td></tr>
    ${conn==="hinge"?`<tr><td>m⁻<sub>pl,d</sub> de la rótula, ec. 5.6 (ρ = ${fmt(rhoh*100,2)} %, d = ${fmt(dh,3)} m)</td><td class="n">−${fmt(MplCalc,0)} kNm/m</td><td class="ref">ec. 5.6 · PDF p. 116</td></tr>
    <tr><td>m⁻<sub>pl,d</sub> usado en ec. 5.14</td><td class="n">−${fmt(mplUse,0)} kNm/m</td><td class="ref">PDF p. 127</td></tr>`:""}
    <tr><td>m⁺<sub>long,d</sub> (${mEq})</td><td class="n">${fmt(mlong,0)} kNm/m</td><td class="ref">${mEq} · PDF p. 133</td></tr>
