@@ -186,11 +186,15 @@ button{font:inherit; padding:5px 10px; border-radius:5px; border:1px solid var(-
 
   <section class="card">
     <h2>2 · Vacío detrás del estribo y longitud mínima</h2>
+    <div class="chartwrap"><svg id="elev" viewBox="0 0 640 330" width="100%" role="img" aria-label="Alzado: vacío detrás del estribo, longitud apoyada y tándem"></svg></div>
+    <p class="note">Alzado a escala con sus datos. Cuña de Rankine con φ<sub>d</sub> (ec. 5.3); tándem en x ≈ L<sub>vacío</sub>/2, posición crítica según la fig. 5.28 (PDF p. 126). Los muelles marcan el tramo que apoya en el relleno, como en el modelo de la fig. 5.27.</p>
     <div class="tw"><table id="tV"></table></div>
   </section>
 
   <section class="card">
     <h2>3 · Esfuerzos de cálculo (ELU, por metro de ancho)</h2>
+    <div class="chartwrap"><svg id="plan" viewBox="0 0 640 260" width="100%" role="img" aria-label="Planta: reparto del tándem en el ancho equivalente"></svg></div>
+    <p class="note">Planta del carril 1 sobre la losa. Ruedas de 0,40 × 0,40 m, 1,20 m entre ejes y 2,00 m entre ruedas (modelo 1, fig. 4.25). La banda oscura es el ancho equivalente B<sub>eq</sub> que resulta de la fórmula simplificada.</p>
     <div class="tw"><table id="tF"></table></div>
   </section>
 
@@ -462,6 +466,103 @@ function calc(){
   $("msgs").innerHTML = msgs.length ? msgs.map(([c,t])=>`<li class="${c}">${t}</li>`).join("") : `<li class="info">Sin avisos.</li>`;
 
   drawChart(set, eextr, uimp, uEnv, marg);
+  drawElev({L,a,e0,h,hmec,Lv,phid,conn,Ldiag,eextr,Q1d});
+  drawPlan({L,Lv,B,Beq,Q1d,conn,Ldiag});
+}
+
+/* ---------- figuras: alzado y planta ---------- */
+function col(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+function dimH(x1,x2,y,label,color){ // cota horizontal
+  const c=color||col('--fg');
+  return `<line x1="${x1}" x2="${x2}" y1="${y}" y2="${y}" stroke="${c}" marker-start="url(#ar)" marker-end="url(#ar)"/>
+  <line x1="${x1}" x2="${x1}" y1="${y-6}" y2="${y+6}" stroke="${c}"/><line x1="${x2}" x2="${x2}" y1="${y-6}" y2="${y+6}" stroke="${c}"/>
+  <text x="${(x1+x2)/2}" y="${y-5}" text-anchor="middle" font-size="11" style="fill:${c}">${label}</text>`;
+}
+function defs(){ return `<defs><marker id="ar" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="${col('--fg')}"/></marker>
+  <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="${col('--bad')}"/></marker>
+  <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="${col('--warn')}" stroke-width="1"/></pattern></defs>`; }
+
+function drawElev(o){
+  const svg=$("elev"); if(!isFinite(o.L)||!isFinite(o.Lv)||o.L<=0){svg.innerHTML="";return;}
+  const W=640, xl=-1.2, xr=Math.max(o.L, 2*o.Lv)+1.0, depth=Math.max(o.hmec, o.eextr+o.h)+0.3;
+  const sc=Math.min((W-150)/(xr-xl), 240/depth);
+  const X=x=>20+(x-xl)*sc, Y=y=>70+y*sc;      // y positivo hacia abajo (m)
+  const fg=col('--fg'), mu=col('--muted'), ac=col('--accent'), ok=col('--ok'), wa=col('--warn'), rule=col('--rule'), card=col('--card');
+  let s=defs();
+  // relleno y superficie
+  s+=`<rect x="${X(0)}" y="${Y(0)}" width="${X(xr)-X(0)}" height="${Y(depth)-Y(0)}" fill="${col('--bg')}"/>`;
+  s+=`<line x1="${X(xl)}" x2="${X(xr)}" y1="${Y(0)}" y2="${Y(0)}" stroke="${fg}" stroke-width="2"/>`;
+  // cuña de Rankine
+  s+=`<path d="M${X(0)} ${Y(0)} L${X(o.Lv)} ${Y(0)} L${X(0)} ${Y(o.hmec)} Z" fill="url(#hatch)" stroke="${wa}" stroke-dasharray="5 3"/>`;
+  s+=`<text x="${X(o.Lv*0.5)+8}" y="${Y(o.hmec*0.55)}" font-size="11" style="fill:${wa}">cuña activa de Rankine</text>`;
+  s+=`<text x="${X(o.Lv*0.5)+8}" y="${Y(o.hmec*0.55)+14}" font-size="11" style="fill:${wa}">ángulo con la horizontal 45° + φ<tspan font-size="8" dy="2">d</tspan><tspan dy="-2">/2 = ${fmt(45+o.phid/2,1)}°</tspan></text>`;
+  // muro y tablero
+  s+=`<rect x="${X(-0.6)}" y="${Y(0)}" width="${0.6*sc}" height="${o.hmec*sc}" fill="${mu}" opacity=".55" stroke="${fg}"/>`;
+  s+=`<rect x="${X(xl)}" y="${Y(0)}" width="${X(-0.6)-X(xl)}" height="${0.9*sc}" fill="${mu}" opacity=".55" stroke="${fg}"/>`;
+  s+=`<text x="${X(-0.3)}" y="${Y(o.hmec)+14}" text-anchor="middle" font-size="11">h = ${fmt(o.hmec,1)} m</text>`;
+  // losa
+  const yt0=o.e0, yt1=o.e0+o.a*o.L;
+  s+=`<path d="M${X(0)} ${Y(yt0)} L${X(o.L)} ${Y(yt1)} L${X(o.L)} ${Y(yt1+o.h)} L${X(0)} ${Y(yt0+o.h)} Z" fill="${ac}" opacity=".85"/>`;
+  // muelles bajo el tramo apoyado
+  const xs=Math.max(o.Lv,0);
+  for (let x=xs+0.15; x<o.L; x+=0.45){
+    const yb=Y(o.e0+o.a*x+o.h); const x0=X(x);
+    s+=`<path d="M${x0} ${yb} l-3 4 l6 4 l-6 4 l6 4 l-3 4" fill="none" stroke="${ok}" stroke-width="1.3"/>`;
+  }
+  // rótula
+  if (o.conn==="hinge" && o.Ldiag<o.L){ const yh=Y(o.e0+o.a*o.Ldiag+o.h/2); s+=`<circle cx="${X(o.Ldiag)}" cy="${yh}" r="5" fill="${card}" stroke="${fg}" stroke-width="1.5"/>`; }
+  else if (o.conn==="pin"){ s+=`<circle cx="${X(0)}" cy="${Y(o.e0+o.h/2)}" r="5" fill="${card}" stroke="${fg}" stroke-width="1.5"/>`; }
+  // tándem
+  const xc=o.Lv/2;
+  for (const dx of [-0.6,0.6]){ const x=X(xc+dx); s+=`<line x1="${x}" x2="${x}" y1="${Y(0)-34}" y2="${Y(0)-3}" stroke="${col('--bad')}" stroke-width="2.5" marker-end="url(#ar2)"/>`; }
+  s+=`<text x="${X(xc)}" y="${Y(0)-40}" text-anchor="middle" font-size="11" style="fill:${col('--bad')}">2 × Q<tspan font-size="8" dy="2">1,d</tspan><tspan dy="-2"> = 2 × ${fmt(o.Q1d,0)} kN · 1,20 m</tspan></text>`;
+  // e_extr
+  s+=`<line x1="${X(o.L)+10}" x2="${X(o.L)+10}" y1="${Y(0)}" y2="${Y(yt1)}" stroke="${fg}" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="${X(o.L)+14}" y="${(Y(0)+Y(yt1))/2+4}" font-size="11">e<tspan font-size="8" dy="2">extr</tspan><tspan dy="-2"> = ${fmt(o.eextr,2)} m</tspan></text>`;
+  // cotas
+  const yd=Y(depth)+18;
+  s+=dimH(X(0),X(o.Lv),yd,`L<tspan font-size="8" dy="2">vacío</tspan><tspan dy="-2"> = ${fmt(o.Lv,2)} m</tspan>`,wa);
+  if (o.L>o.Lv) s+=dimH(X(o.Lv),X(o.L),yd+28,`L<tspan font-size="8" dy="2">DT,extr</tspan><tspan dy="-2"> = ${fmt(o.L-o.Lv,2)} m (apoyada)</tspan>`,ok);
+  s+=dimH(X(0),X(o.L),yd+56,`L<tspan font-size="8" dy="2">DT</tspan><tspan dy="-2"> = ${fmt(o.L,2)} m</tspan>`,fg);
+  const okL=o.L>=2*o.Lv, c2=okL?ok:wa;
+  s+=`<line x1="${X(2*o.Lv)}" x2="${X(2*o.Lv)}" y1="${Y(0)+4}" y2="${yd+64}" stroke="${c2}" stroke-dasharray="4 3"/>`;
+  s+=`<text x="${X(2*o.Lv)+4}" y="${yd+80}" font-size="11" style="fill:${c2}">2·L<tspan font-size="8" dy="2">vacío</tspan><tspan dy="-2"> = ${fmt(2*o.Lv,2)} m ${okL?"✓":"(la losa no llega)"}</tspan></text>`;
+  const H=yd+90; svg.setAttribute("viewBox",`0 0 ${Math.max(X(xr)+140, X(2*o.Lv)+190)} ${H}`);
+  svg.innerHTML=s;
+}
+
+function drawPlan(o){
+  const svg=$("plan"); if(!isFinite(o.L)||!isFinite(o.B)||o.L<=0){svg.innerHTML="";return;}
+  const W=640, xl=-1.0, xr=o.L+0.6, wy=o.B+1.6;
+  const sc=Math.min((W-130)/(xr-xl), 200/wy);
+  const X=x=>20+(x-xl)*sc, Y=y=>30+(y+wy/2)*sc;  // y=0 eje del carril
+  const fg=col('--fg'), ac=col('--accent'), ok=col('--ok'), wa=col('--warn'), bad=col('--bad'), mu=col('--muted');
+  let s=defs();
+  // losa
+  s+=`<rect x="${X(0)}" y="${Y(-wy/2)}" width="${o.L*sc}" height="${wy*sc}" fill="${col('--bg')}" stroke="${mu}"/>`;
+  s+=`<rect x="${X(-0.6)}" y="${Y(-wy/2)}" width="${0.6*sc}" height="${wy*sc}" fill="${mu}" opacity=".55"/>`;
+  s+=`<text x="${X(-0.3)}" y="${Y(-wy/2)-6}" text-anchor="middle" font-size="11">estribo</text>`;
+  // zona apoyada
+  if (o.L>o.Lv) s+=`<rect x="${X(o.Lv)}" y="${Y(-wy/2)}" width="${(o.L-o.Lv)*sc}" height="${wy*sc}" fill="${ok}" opacity=".12"/>`;
+  s+=`<line x1="${X(o.Lv)}" x2="${X(o.Lv)}" y1="${Y(-wy/2)}" y2="${Y(wy/2)}" stroke="${wa}" stroke-dasharray="5 3"/>`;
+  s+=`<text x="${X(o.Lv)+4}" y="${Y(-wy/2)+12}" font-size="10" style="fill:${wa}">fin del vacío</text>`;
+  // carril y ancho equivalente
+  s+=`<rect x="${X(0)}" y="${Y(-o.B/2)}" width="${o.L*sc}" height="${o.B*sc}" fill="none" stroke="${fg}" stroke-dasharray="6 4"/>`;
+  s+=`<rect x="${X(0)}" y="${Y(-o.Beq/2)}" width="${o.Lv*sc}" height="${o.Beq*sc}" fill="${ac}" opacity=".28"/>`;
+  // ruedas
+  const xc=o.Lv/2;
+  for (const dx of [-0.6,0.6]) for (const dy of [-1.0,1.0]){
+    s+=`<rect x="${X(xc+dx-0.2)}" y="${Y(dy-0.2)}" width="${0.4*sc}" height="${0.4*sc}" fill="${bad}"/>`;
+  }
+  // cotas laterales
+  const xR=X(o.L)+12;
+  const vdim=(y1,y2,x,label,c)=>`<line x1="${x}" x2="${x}" y1="${Y(y1)}" y2="${Y(y2)}" stroke="${c}" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="${x+5}" y="${(Y(y1)+Y(y2))/2+4}" font-size="11" style="fill:${c}">${label}</text>`;
+  s+=vdim(-o.B/2,o.B/2,xR,`B<tspan font-size="8" dy="2">vía</tspan><tspan dy="-2"> = ${fmt(o.B,2)} m</tspan>`,fg);
+  s+=vdim(-o.Beq/2,o.Beq/2,X(o.Lv)+8 > xR-60 ? xR+0 : X(o.Lv)+8,`B<tspan font-size="8" dy="2">eq</tspan><tspan dy="-2"> = ${fmt(o.Beq,2)} m</tspan>`,ac);
+  s+=`<line x1="${X(xc-0.8)-8}" x2="${X(xc-0.8)-8}" y1="${Y(-1)}" y2="${Y(1)}" stroke="${bad}" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="${X(xc-0.8)-12}" y="${Y(0)+4}" text-anchor="end" font-size="11" style="fill:${bad}">2,00 m</text>`;
+  s+=dimH(X(xc-0.6),X(xc+0.6),Y(-wy/2)-8,`1,20 m`,bad);
+  s+=dimH(X(0),X(o.Lv),Y(wy/2)+18,`L<tspan font-size="8" dy="2">vacío</tspan><tspan dy="-2"> = ${fmt(o.Lv,2)} m (luz de cálculo)</tspan>`,wa);
+  const H=Y(wy/2)+30; svg.setAttribute("viewBox",`0 0 ${X(xr)+110} ${H}`);
+  svg.innerHTML=s;
 }
 
 /* ---------- gráfico SVG ---------- */
