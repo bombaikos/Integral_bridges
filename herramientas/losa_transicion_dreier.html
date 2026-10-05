@@ -41,10 +41,11 @@ p{margin:0 0 8px}
 fieldset{border:0; border-top:1px solid var(--rule); margin:0; padding:10px 0 4px}
 fieldset:first-of-type{border-top:0; padding-top:0}
 legend{font-weight:600; font-size:.85rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); padding:0}
+.row.wide{grid-template-columns:1fr}
 .row{display:grid; grid-template-columns:1fr 104px; gap:8px; align-items:center; margin:5px 0}
 .row label{font-size:.9rem}
 .row small{display:block; color:var(--muted); font-size:.75rem; line-height:1.25}
-input[type=number],select{width:100%; padding:5px 6px; border:1px solid var(--rule); border-radius:5px; background:var(--bg); color:var(--fg); font:inherit; font-variant-numeric:tabular-nums}
+input[type=number],input[type=text],select{width:100%; padding:5px 6px; border:1px solid var(--rule); border-radius:5px; background:var(--bg); color:var(--fg); font:inherit; font-variant-numeric:tabular-nums}
 input:focus,select:focus{outline:2px solid var(--accent); outline-offset:1px}
 .seg{display:flex; gap:6px; flex-wrap:wrap; margin:6px 0}
 .seg label{display:flex; gap:5px; align-items:center; font-size:.9rem; border:1px solid var(--rule); border-radius:5px; padding:4px 8px; cursor:pointer}
@@ -92,6 +93,7 @@ button:disabled{opacity:.6; cursor:progress}
 <header>
   <h1>Losa de transición de puentes integrales</h1>
   <p class="lead">Desplazamiento impuesto admisible a partir de la longitud e inclinación de la losa, esfuerzos de cálculo y armadura necesaria. Todo se basa en la tesis de D. Dreier, <em>Interaction sol-structure dans le domaine des ponts intégraux</em>, EPFL nº 4880 (2010). Las referencias «PDF p.» son páginas del archivo PDF (página impresa = PDF − 18).</p>
+  <p id="idLine" style="margin:0;font-weight:600"></p>
   <div class="btnrow noprint"><button type="button" class="primary" id="btnDocx">Exportar a Word (.docx)</button><button type="button" onclick="window.print()">Imprimir / PDF</button><span id="expStatus" role="status"></span></div>
 </header>
 
@@ -99,6 +101,11 @@ button:disabled{opacity:.6; cursor:progress}
 <!-- ================= DATOS ================= -->
 <form class="card" id="f" autocomplete="off" onsubmit="return false">
   <h2>Datos</h2>
+  <fieldset><legend>Identificación</legend>
+    <div class="row wide"><label for="proj">Proyecto</label><input type="text" id="proj" value="Obra de emergencia en la M305 PPK 0+800"></div>
+    <div class="row wide"><label for="elem">Elemento</label><input type="text" id="elem" value="Estribo 1"></div>
+    <div class="row"><label>L<sub>estribo</sub> [m]<small>ancho del estribo (L = 13 m); da el nº de barras</small></label><input type="number" id="Wab" value="13" step="0.5" min="1"></div>
+  </fieldset>
   <fieldset><legend>Red viaria</legend>
     <div class="seg">
       <label><input type="radio" name="road" value="auto" checked> Autopista (χ<sub>adm</sub> = 20 ‰)</label>
@@ -302,13 +309,13 @@ function familyValue(set, L, a){ // interpolación en L dentro de cada familia �
 }
 // armado: barras y separaciones habituales
 const DIAMS=[10,12,16,20,25,32], SEPS=[100,125,150,200,250];   // diámetros disponibles (José Luis) y separaciones habituales
-function pickBars(As){ // As en mm²/m
+function pickBars(As, len){ // As en mm²/m; len en m (longitud sobre la que se reparten las barras)
   let best=null;
   for (const s of SEPS) for (const f of DIAMS){
     const a=Math.PI*f*f/4*1000/s;
     if (a>=As && (!best || a<best.a-1 || (Math.abs(a-best.a)<1 && s>best.s))) best={f,s,a};
   }
-  return best ? `Ø${best.f} c/${best.s} (${fmt(best.a,0)} mm²/m)` : "fuera de tabla";
+  return best ? `Ø${best.f} c/${best.s} (${fmt(best.a,0)} mm²/m)` + (len>0 ? ` · ${Math.floor(len*1000/best.s)+1} barras en ${fmt(len,2)} m` : "") : "fuera de tabla";
 }
 // sección rectangular b = 1 m, flexión + tracción n (kN/m) ; m en kNm/m ; d,h en m ; fcd,fsd en MPa
 function designSection(m, n, d, h, fcd, fsd){
@@ -332,7 +339,7 @@ function calc(){
     : "h<sub>tablero</sub> [m]<small>canto del extremo del tablero (PDF p. 101)</small>";
 
   const L=num("L"), al=num("alpha"), e0=num("e0"), h=num("h"), d=num("d"), dt=num("dt");
-  const hmec=num("hmec"), phik=num("phik"), gphi=num("gphi"), gs=num("gs");
+  const Wab=num("Wab"), hmec=num("hmec"), phik=num("phik"), gphi=num("gphi"), gs=num("gs");
   const Q1k=num("Q1k"), aQ=num("aQ"), gQ=num("gQ"), psiQ=num("psiQ"), B=num("B");
   const fck=num("fck"), gc=num("gc"), fsk=num("fsk"), gsS=num("gsS"), Es=num("Es");
   const EcIn=num("Ec"); const Ec = isFinite(EcIn) && EcIn>0 ? EcIn : 10000*Math.cbrt(fck+8);
@@ -469,20 +476,21 @@ function calc(){
    (conn==="pin" ? row(`Δα<sub>DT</sub> al paso del vehículo`, `${f(dAlpha,1)} ‰ ${dAlpha<=ROT_LIMIT?'<span class="tag ok">≤ 4 ‰</span>':'<span class="tag warn">> 4 ‰</span>'}`, ex(`Δα<sub>DT</sub> = 0,5 · 3 · Q · L<sub>vacío</sub>² / (B<sub>vía</sub> · h<sub>DT</sub>³ · E<sub>fis</sub>)`, `0,5 · 3 · ${f(Q1s,0)} kN · ${f(Lv,2)}² / (${f(B,2)} · ${f(h,2)}³ · ${f(Efis,0)} MPa) = ${f(dAlpha,1)} ‰`), "ec. 5.15 · PDF p. 134") : "") +
    row(`Δα<sub>DT</sub> por u<sub>imp</sub> (orientativo)`, `${f(dAlphaU,1)} ‰`, ex(`Δα<sub>DT</sub> ≈ (1 ‰ / 50 mm) · u<sub>imp</sub>`, `${f(ROT_UIMP,3)} · ${f(uimp,1)} = ${f(dAlphaU,1)} ‰`), "fig. 4.29 · PDF p. 93");
 
-  const asRow = (name, s, expr, ref) => s.fail
+  const asRow = (name, s, expr, ref, len) => s.fail
     ? `<tr><td>${name}</td><td class="n" colspan="3"><span class="tag bad">sección insuficiente</span></td><td>${expr}</td><td class="ref">${ref}</td></tr>`
-    : `<tr><td>${name}</td><td class="n">${f(s.As,0)}</td><td>${pickBars(s.As)}</td><td class="n">${f(s.xd,2)} ${s.xd<=0.35?'<span class="tag ok">dúctil</span>':'<span class="tag warn">revisar</span>'}</td><td>${expr}</td><td class="ref">${ref}</td></tr>`;
+    : `<tr><td>${name}</td><td class="n">${f(s.As,0)}</td><td>${pickBars(s.As,len)}</td><td class="n">${f(s.xd,2)} ${s.xd<=0.35?'<span class="tag ok">dúctil</span>':'<span class="tag warn">revisar</span>'}</td><td>${expr}</td><td class="ref">${ref}</td></tr>`;
   const secEx = (m,n,dd,s)=> ex(`M<sub>s</sub> = m − n · (d − h/2); a = d − √(d² − 2M<sub>s</sub>/f<sub>cd</sub>); A<sub>s</sub> = (f<sub>cd</sub> · a + n) / f<sub>sd</sub>`,
       s.fail ? `M<sub>s</sub> = ${f(s.Ms,0)} kNm/m: no hay solución` : `M<sub>s</sub> = ${f(m,0)} − ${f(n,0)} · (${f(dd,3)} − ${f(h/2,3)}) = ${f(s.Ms,0)} kNm/m; a = ${f(s.a*1000,1)} mm; A<sub>s</sub> = (${f(fcd,1)} · ${f(s.a*1000,1)} + ${f(n,0)}·10⁻³·10³) / ${f(fsd,0)} = ${f(s.As,0)} mm²/m`);
   const AsH = rhoh*dh*1e6;
   $("tA").innerHTML = hdr(["Armadura","A<sub>s</sub> [mm²/m]","Propuesta","x/d","Expresión usada","Base"]) +
-   asRow(`Inferior longitudinal (m = ${f(mreq,0)}, n = ${f(nd,0)}, d = ${f(d,3)})`, secL, secEx(mreq,nd,d,secL), "§ 5.4.3 + SIA 262") +
-   asRow(`Inferior transversal (m = 100, d = ${f(dt,3)})`, secT, secEx(100,0,dt,secT), "§ 5.4.3 + SIA 262") +
-   (conn==="hinge" ? `<tr><td>Superior en la rótula (ρ = ${f(rhoh*100,2)} %, d = ${f(dh,3)}), sin cercos</td><td class="n">${f(AsH,0)}</td><td>${pickBars(AsH)}</td><td class="n">—</td><td>${ex(`A<sub>s</sub> = ρ · b · d`, `${f(rhoh,4)} · 1000 mm · ${f(dh*1000,0)} mm = ${f(AsH,0)} mm²/m`)}</td><td class="ref">fig. 5.15 · PDF p. 112, 125</td></tr>` : "") +
-   `<tr><td colspan="6" class="note">Materiales: f<sub>cd</sub> = η<sub>fc</sub>·f<sub>ck</sub>/γ<sub>c</sub> = ${f(etafc,3)} · ${f(fck,0)} / ${f(gc,2)} = ${f(fcd,1)} MPa; f<sub>sd</sub> = f<sub>sk</sub>/γ<sub>s</sub> = ${f(fsk,0)} / ${f(gsS,2)} = ${f(fsd,0)} MPa; E<sub>c,0</sub> = ${f(Ec,0)} MPa. Propuestas con los diámetros disponibles Ø10, 12, 16, 20, 25 y 32 mm y separaciones de 100 a 250 mm. En los ensayos, ρ = 0,3 % era Ø12 c/150 en banda de 0,30 m (PDF p. 113–114). Flexión compuesta con tracción: bloque rectangular de compresiones con a = 0,85·x; cálculo seccional estándar (SIA 262), no está en la tesis.</td></tr>`;
+   asRow(`Inferior longitudinal (m = ${f(mreq,0)}, n = ${f(nd,0)}, d = ${f(d,3)})`, secL, secEx(mreq,nd,d,secL), "§ 5.4.3 + SIA 262", Wab) +
+   asRow(`Inferior transversal (m = 100, d = ${f(dt,3)})`, secT, secEx(100,0,dt,secT), "§ 5.4.3 + SIA 262", L) +
+   (conn==="hinge" ? `<tr><td>Superior en la rótula (ρ = ${f(rhoh*100,2)} %, d = ${f(dh,3)}), sin cercos</td><td class="n">${f(AsH,0)}</td><td>${pickBars(AsH,Wab)}</td><td class="n">—</td><td>${ex(`A<sub>s</sub> = ρ · b · d`, `${f(rhoh,4)} · 1000 mm · ${f(dh*1000,0)} mm = ${f(AsH,0)} mm²/m`)}</td><td class="ref">fig. 5.15 · PDF p. 112, 125</td></tr>` : "") +
+   `<tr><td colspan="6" class="note">Materiales: f<sub>cd</sub> = η<sub>fc</sub>·f<sub>ck</sub>/γ<sub>c</sub> = ${f(etafc,3)} · ${f(fck,0)} / ${f(gc,2)} = ${f(fcd,1)} MPa; f<sub>sd</sub> = f<sub>sk</sub>/γ<sub>s</sub> = ${f(fsk,0)} / ${f(gsS,2)} = ${f(fsd,0)} MPa; E<sub>c,0</sub> = ${f(Ec,0)} MPa. Barras longitudinales repartidas en el ancho del estribo (L = ${f(Wab,1)} m); las transversales, a lo largo de L<sub>DT</sub>. Propuestas con los diámetros disponibles Ø10, 12, 16, 20, 25 y 32 mm y separaciones de 100 a 250 mm. En los ensayos, ρ = 0,3 % era Ø12 c/150 en banda de 0,30 m (PDF p. 113–114). Flexión compuesta con tracción: bloque rectangular de compresiones con a = 0,85·x; cálculo seccional estándar (SIA 262), no está en la tesis.</td></tr>`;
 
   $("msgs").innerHTML = msgs.length ? msgs.map(([c,t])=>`<li class="${c}">${t}</li>`).join("") : `<li class="info">Sin avisos.</li>`;
 
+  $("idLine").textContent = `${$("proj").value || "—"} · ${$("elem").value || "—"} · L = ${fmt(Wab,1)} m · h = ${fmt(hmec,1)} m`;
   drawChart(set, eextr, uimp, uEnv, marg);
   drawElev({L,a,e0,h,hmec,Lv,phid,conn,Ldiag,eextr,Q1d});
   drawPlan({L,Lv,B,Beq,Q1d,conn,Ldiag});
@@ -752,6 +760,8 @@ async function exportDocx(btn){
     const W=9638;
     const children=[];
     children.push(new Paragraph({heading:HeadingLevel.TITLE,spacing:{after:80},children:[new TextRun({text:"Losa de transición de puentes integrales",font:FONT,bold:true,size:40,color:"1D5A8C"})]}));
+    children.push(new Paragraph({children:[new TextRun({text:"Proyecto: ",bold:true,font:FONT}),new TextRun({text:$("proj").value||"—",font:FONT})]}));
+    children.push(new Paragraph({children:[new TextRun({text:"Elemento: ",bold:true,font:FONT}),new TextRun({text:$("elem").value||"—",font:FONT}),new TextRun({text:"   ·   L = "+fmt(num("Wab"),1)+" m   ·   h = "+fmt(num("hmec"),1)+" m",font:FONT})]}));
     children.push(new Paragraph({spacing:{after:160},children:[new TextRun({text:"Predimensionamiento según D. Dreier, tesis EPFL nº 4880 (2010). Fecha: "+new Date().toLocaleDateString("es-ES")+". Generado por la herramienta; no sustituye a la comprobación con la tesis y la normativa.",font:FONT,italics:true,color:"5B6776",size:20})]}));
     // datos de entrada
     const inputs=[];
@@ -821,13 +831,13 @@ async function exportDocx(btn){
     const doc=new Document({creator:"Herramienta losa de transición",title:"Losa de transición de puentes integrales",
       styles:{default:{document:{run:{font:FONT,size:21}}}},
       sections:[{properties:{page:{size:{width:11906,height:16838},margin:{top:1134,bottom:1134,left:1134,right:1134}}},
-        headers:{default:new Header({children:[new Paragraph({alignment:AlignmentType.RIGHT,children:[new TextRun({text:"Losa de transición · Dreier, EPFL 4880",size:16,color:"5B6776",font:FONT})]})]})},
+        headers:{default:new Header({children:[new Paragraph({alignment:AlignmentType.RIGHT,children:[new TextRun({text:($("elem").value||"Losa de transición")+" · Dreier, EPFL 4880",size:16,color:"5B6776",font:FONT})]})]})},
         footers:{default:new Footer({children:[new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:"Página ",size:16,color:"5B6776",font:FONT}),new TextRun({children:[PageNumber.CURRENT],size:16,color:"5B6776",font:FONT})]})]})},
         children}]});
     say("Generando el archivo…");
     const blob=await Packer.toBlob(doc);
     const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
-    a.download="Losa_transicion_"+new Date().toISOString().slice(0,10)+".docx";
+    a.download="Losa_transicion_"+(($("elem").value||"elemento").replace(/[^A-Za-z0-9áéíóúñÁÉÍÓÚÑ]+/g,"_").slice(0,50))+"_"+new Date().toISOString().slice(0,10)+".docx";
     document.body.appendChild(a); a.click(); a.remove();
     window.__lastReport=blob;
     say("Informe generado ("+Math.round(blob.size/1024)+" kB). Si no se descarga, abre la página en el navegador y no en un visor.");
