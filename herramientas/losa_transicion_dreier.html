@@ -301,7 +301,7 @@ function familyValue(set, L, a){ // interpolación en L dentro de cada familia �
   return vlo+(vhi-vlo)*(a-lo)/(hi-lo);
 }
 // armado: barras y separaciones habituales
-const DIAMS=[10,12,14,16,18,20,22,25,26,30,34], SEPS=[100,125,150,200,250];
+const DIAMS=[10,12,16,20,25,32], SEPS=[100,125,150,200,250];   // diámetros disponibles (José Luis) y separaciones habituales
 function pickBars(As){ // As en mm²/m
   let best=null;
   for (const s of SEPS) for (const f of DIAMS){
@@ -479,7 +479,7 @@ function calc(){
    asRow(`Inferior longitudinal (m = ${f(mreq,0)}, n = ${f(nd,0)}, d = ${f(d,3)})`, secL, secEx(mreq,nd,d,secL), "§ 5.4.3 + SIA 262") +
    asRow(`Inferior transversal (m = 100, d = ${f(dt,3)})`, secT, secEx(100,0,dt,secT), "§ 5.4.3 + SIA 262") +
    (conn==="hinge" ? `<tr><td>Superior en la rótula (ρ = ${f(rhoh*100,2)} %, d = ${f(dh,3)}), sin cercos</td><td class="n">${f(AsH,0)}</td><td>${pickBars(AsH)}</td><td class="n">—</td><td>${ex(`A<sub>s</sub> = ρ · b · d`, `${f(rhoh,4)} · 1000 mm · ${f(dh*1000,0)} mm = ${f(AsH,0)} mm²/m`)}</td><td class="ref">fig. 5.15 · PDF p. 112, 125</td></tr>` : "") +
-   `<tr><td colspan="6" class="note">Materiales: f<sub>cd</sub> = η<sub>fc</sub>·f<sub>ck</sub>/γ<sub>c</sub> = ${f(etafc,3)} · ${f(fck,0)} / ${f(gc,2)} = ${f(fcd,1)} MPa; f<sub>sd</sub> = f<sub>sk</sub>/γ<sub>s</sub> = ${f(fsk,0)} / ${f(gsS,2)} = ${f(fsd,0)} MPa; E<sub>c,0</sub> = ${f(Ec,0)} MPa. En los ensayos, ρ = 0,3 % era Ø12 c/150 en banda de 0,30 m (PDF p. 113–114). Flexión compuesta con tracción: bloque rectangular de compresiones con a = 0,85·x; cálculo seccional estándar (SIA 262), no está en la tesis.</td></tr>`;
+   `<tr><td colspan="6" class="note">Materiales: f<sub>cd</sub> = η<sub>fc</sub>·f<sub>ck</sub>/γ<sub>c</sub> = ${f(etafc,3)} · ${f(fck,0)} / ${f(gc,2)} = ${f(fcd,1)} MPa; f<sub>sd</sub> = f<sub>sk</sub>/γ<sub>s</sub> = ${f(fsk,0)} / ${f(gsS,2)} = ${f(fsd,0)} MPa; E<sub>c,0</sub> = ${f(Ec,0)} MPa. Propuestas con los diámetros disponibles Ø10, 12, 16, 20, 25 y 32 mm y separaciones de 100 a 250 mm. En los ensayos, ρ = 0,3 % era Ø12 c/150 en banda de 0,30 m (PDF p. 113–114). Flexión compuesta con tracción: bloque rectangular de compresiones con a = 0,85·x; cálculo seccional estándar (SIA 262), no está en la tesis.</td></tr>`;
 
   $("msgs").innerHTML = msgs.length ? msgs.map(([c,t])=>`<li class="${c}">${t}</li>`).join("") : `<li class="info">Sin avisos.</li>`;
 
