@@ -212,6 +212,8 @@ button:disabled{opacity:.6; cursor:progress}
   <section class="card">
     <h2>4 · Armadura necesaria</h2>
     <div class="tw"><table id="tA"></table></div>
+    <div class="chartwrap" id="hingeWrap"><svg id="hinge" viewBox="0 0 640 270" width="100%" role="img" aria-label="Esquema de la rótula: geometría y armadura"></svg></div>
+    <p class="note" id="hingeNote"></p>
   </section>
 
   <section class="card">
@@ -279,7 +281,6 @@ const FIG59 = {
 };
 const E0_FIG = 0.10;
 const ROT_LIMIT = 4;           // ‰, OFROU autopistas y nacionales (PDF p. 93)
-const ROT_UIMP = 1/50;         // ‰ por mm, fig. 4.29 (≈ 1 ‰ a 50 mm)
 
 const $ = id => document.getElementById(id);
 const num = id => { const v = parseFloat(String($(id).value).replace(",", ".")); return isFinite(v) ? v : NaN; };   // los datos se escriben con punto decimal (se admite también la coma)
@@ -414,7 +415,6 @@ function calc(){
   const Efis = rhoL*d**3*Es*(1-x0/d)*(1-x0/(3*d))/(h**3/12); // MPa
   const Q1s = psiQ*aQ*Q1k;
   const dAlpha = 0.5*3*Q1s*Lv*Lv/(B*h**3*Efis*1000)*1000;    // ‰
-  const dAlphaU = ROT_UIMP*uimp;
   if (conn==="pin"){
     if (dAlpha>ROT_LIMIT) msgs.push(["warn",`Giro al paso del vehículo Δα<sub>DT</sub> ≈ ${fmt(dAlpha,1)} ‰ > 4 ‰: riesgo de fisuración del aglomerado sobre la unión articulada (§ 4.5.2, PDF p. 93–94). La rótula de hormigón reparte ese giro.`]);
     msgs.push(["info","La unión articulada con pasador solo se admite en estribos con juntas; en (semi)integrales la OFROU recomienda la placa de deslizamiento o, según la tesis, la rótula de hormigón (PDF p. 111)."]);
@@ -466,8 +466,7 @@ function calc(){
    row2(`m⁺<sub>pl,d</sub> requerido transversal (mínimo)`, `<strong>100 kNm/m</strong>`, ex(`m⁺<sub>pl,d,trans</sub> ≥ 100 kNm/m`, ""), "§ 5.4.3 · PDF p. 133") +
    row2(`n<sub>max</sub> estimado por rozamiento`, `${f(nEst,0)} kN/m`, ex(`n<sub>max</sub> = G<sub>ef</sub> · cos α · (tan δ + tan α), δ = 2φ<sub>k</sub>/3`, `G<sub>ef</sub> = ${f(Geff,0)} kN/m; α = ${f(deg(aA),2)}°; δ = ${f(deg(delta),1)}° → ${f(nEst,0)} kN/m`), "ec. 5.11–5.12 · PDF p. 132") +
    row2(`n<sub>d</sub> de tracción usado`, `<strong>${f(nd,0)} kN/m</strong>`, ex(`n<sub>d</sub> = ${$("nMode").value==="thesis"?"100 kN/m (tesis)":"máx(100 ; n<sub>max</sub>)"}`, $("nMode").value==="thesis"?"":`máx(100 ; ${f(nEst,0)}) = ${f(nd,0)} kN/m`), "§ 5.4.3 · PDF p. 133") +
-   (conn==="pin" ? row2(`Δα<sub>DT</sub> al paso del vehículo`, `${f(dAlpha,1)} ‰ ${dAlpha<=ROT_LIMIT?'<span class="tag ok">≤ 4 ‰</span>':'<span class="tag warn">> 4 ‰</span>'}`, ex(`Δα<sub>DT</sub> = 0.5 · 3 · Q · L<sub>hueco</sub>² / (B<sub>vía</sub> · h<sub>DT</sub>³ · E<sub>fis</sub>)`, `0,5 · 3 · ${f(Q1s,0)} kN · ${f(Lv,2)}² / (${f(B,2)} · ${f(h,2)}³ · ${f(Efis,0)} MPa) = ${f(dAlpha,1)} ‰`), "ec. 5.15 · PDF p. 134") : "") +
-   row2(`Δα<sub>DT</sub> por u<sub>imp</sub> (orientativo)`, `${f(dAlphaU,1)} ‰`, ex(`Δα<sub>DT</sub> ≈ (1 ‰ / 50 mm) · u<sub>imp</sub>`, `${f(ROT_UIMP,3)} · ${f(uimp,1)} = ${f(dAlphaU,1)} ‰`), "fig. 4.29 · PDF p. 93");
+   (conn==="pin" ? row2(`Δα<sub>DT</sub> al paso del vehículo`, `${f(dAlpha,1)} ‰ ${dAlpha<=ROT_LIMIT?'<span class="tag ok">≤ 4 ‰</span>':'<span class="tag warn">> 4 ‰</span>'}`, ex(`Δα<sub>DT</sub> = 0.5 · 3 · Q · L<sub>hueco</sub>² / (B<sub>vía</sub> · h<sub>DT</sub>³ · E<sub>fis</sub>)`, `0,5 · 3 · ${f(Q1s,0)} kN · ${f(Lv,2)}² / (${f(B,2)} · ${f(h,2)}³ · ${f(Efis,0)} MPa) = ${f(dAlpha,1)} ‰`), "ec. 5.15 · PDF p. 134") : "");
 
   const RHO_H = 0.003;                                    // cuantía de la armadura superior de la rótula (tesis, PDF p. 125)
   const AsH = RHO_H*dh*1e6;                              // mm²/m
@@ -519,6 +518,7 @@ function calc(){
   $("idLine").textContent = `${$("proj").value || "—"} · ${$("elem").value || "—"} · L = ${fmt(Wab,1)} m · h = ${fmt(hmec,1)} m`;
   drawChart(set, eextr, uimp, uEnv, marg);
   drawElev({L,a,e0,h,hmec,Lv,phid,conn,Ldiag,eextr,Q1d});
+  drawHinge({conn,h,dh,Ldiag});
   drawPlan({L,Lv,B,Q1d,conn,Ldiag,Q1k,aQ,gQ});
 }
 
@@ -582,6 +582,49 @@ function drawElev(o){
   svg.innerHTML=s;
 }
 
+function drawHinge(o){
+  const svg=$("hinge"), wrap=$("hingeWrap"), note=$("hingeNote");
+  const show = o.conn==="hinge" && isFinite(o.h) && isFinite(o.dh) && isFinite(o.Ldiag) && o.h>0 && o.Ldiag>0;
+  wrap.hidden=!show; note.hidden=!show;
+  if(!show){ svg.innerHTML=""; return; }
+  const fg=col('--fg'), mu=col('--muted'), ac=col('--accent'), bad=col('--bad'), bg=col('--bg');
+  const sc=3.0, X=x=>140+x*sc, y0=80, hc=o.h*100, Y=z=>y0+z*sc;      // x, z en cm; z hacia abajo desde la cara superior
+  const xe=140, Lbent=80, cover=5;                                     // cm: longitud dibujada; longitud inclinada de la fig. 5.15(b); recubrimiento inferior
+  const dcm=o.dh*100, zTop=Math.max(hc-dcm,2), zBot=hc-cover;           // armadura superior a h − d de la cara superior
+  const hinge=o.Ldiag*100;
+  const xs=Math.max(hinge-Lbent/2,0), xf=xs+Lbent;                     // el tramo inclinado cruza la mitad del canto en x = L_diag
+  let s=defs();
+  // estribo y losa
+  s+=`<rect x="${X(-60)}" y="${Y(-12)}" width="${60*sc}" height="${(hc+12+25)*sc}" fill="${mu}" opacity=".35" stroke="${mu}"/>`;
+  s+=`<text x="${X(-30)}" y="${Y(hc/2)}" text-anchor="middle" font-size="11" style="fill:${fg}">estribo</text>`;
+  s+=`<rect x="${X(0)}" y="${Y(0)}" width="${xe*sc}" height="${hc*sc}" fill="${bg}" stroke="${fg}" stroke-width="1.5"/>`;
+  s+=`<rect x="${X(0)}" y="${Y(hc)}" width="${xe*sc}" height="${10*sc}" fill="${mu}" opacity=".18" stroke="${mu}" stroke-dasharray="4 3"/>`;
+  s+=`<text x="${X(xe)-4}" y="${Y(hc+5)+4}" text-anchor="end" font-size="10" style="fill:${mu}">hormigón de limpieza 10 cm</text>`;
+  // armadura superior (flexión), en el estribo y en la losa
+  s+=`<line x1="${X(-50)}" x2="${X(xs)}" y1="${Y(zTop)}" y2="${Y(zTop)}" stroke="${fg}" stroke-width="3"/>`;
+  s+=`<line x1="${X(0)}" x2="${X(xe-5)}" y1="${Y(zTop)}" y2="${Y(zTop)}" stroke="${fg}" stroke-width="3"/>`;
+  // barra inclinada (conexión): arranca arriba en el estribo, baja en Lbent
+  s+=`<polyline points="${X(-50)},${Y(zTop)} ${X(xs)},${Y(zTop)} ${X(xf)},${Y(zBot)} ${X(xe-5)},${Y(zBot)}" fill="none" stroke="${ac}" stroke-width="3"/>`;
+  // sección de la rótula
+  s+=`<line x1="${X(hinge)}" x2="${X(hinge)}" y1="${Y(-14)}" y2="${Y(hc+14)}" stroke="${bad}" stroke-dasharray="5 3" stroke-width="1.5"/>`;
+  s+=`<circle cx="${X(hinge)}" cy="${Y(hc/2)}" r="5" fill="${bg}" stroke="${bad}" stroke-width="1.5"/>`;
+  // cotas
+  const dim=(x1,x2,y,t,c)=>`<line x1="${X(x1)}" x2="${X(x2)}" y1="${y}" y2="${y}" stroke="${c||fg}" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="${(X(x1)+X(x2))/2}" y="${y-4}" text-anchor="middle" font-size="11" style="fill:${c||fg}">${t}</text>`;
+  const yb=Y(hc+10)+22;
+  s+=dim(0,hinge,yb,`L<tspan font-size="8" dy="2">diag</tspan><tspan dy="-2"> = ${fmt(hinge,0)} cm</tspan>`,bad);
+  s+=`<line x1="${X(0)}" x2="${X(0)}" y1="${Y(hc)}" y2="${yb+4}" stroke="${mu}" stroke-dasharray="2 3"/><line x1="${X(hinge)}" x2="${X(hinge)}" y1="${Y(hc+14)}" y2="${yb+4}" stroke="${mu}" stroke-dasharray="2 3"/>`;
+  s+=dim(xs,xf,Y(-18),`tramo inclinado ≈ ${Lbent} cm`,ac);
+  // canto y canto útil, a la derecha
+  const xr=X(xe)+16;
+  s+=`<line x1="${xr}" x2="${xr}" y1="${Y(0)}" y2="${Y(hc)}" stroke="${fg}" marker-start="url(#ar)" marker-end="url(#ar)"/><text transform="translate(${xr+13} ${Y(hc/2)}) rotate(-90)" text-anchor="middle" font-size="11" style="fill:${fg}">h = ${fmt(hc,0)} cm</text>`;
+  const xd=X(xe)-40;
+  s+=`<line x1="${xd}" x2="${xd}" y1="${Y(zTop)}" y2="${Y(hc)}" stroke="${bad}" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="${xd-5}" y="${Y((zTop+hc)/2)+4}" text-anchor="end" font-size="11" style="fill:${bad}">d = ${fmt(dcm,0)} cm</text>`;
+  s+=`<text x="${X(xs)-8}" y="${Y(zTop)-6}" text-anchor="end" font-size="10" style="fill:${fg}">armadura superior</text>`;
+  s+=`<text x="${X(xf)+10}" y="${Y(zBot)-6}" font-size="10" style="fill:${ac}">barra inclinada</text>`;
+  svg.innerHTML=s;
+  note.textContent=`Esquema de la rótula a escala, según la fig. 5.15(b) (PDF p. 112): canto ${fmt(hc,0)} cm, tramo inclinado de ≈ 80 cm y hormigón de limpieza de 10 cm. La barra inclinada cruza la mitad del canto en la sección de la rótula, a L_diag = ${fmt(hinge,0)} cm del estribo.`;
+}
+
 function drawPlan(o){
   const svg=$("plan"); if(!isFinite(o.L)||!isFinite(o.B)||o.L<=0){svg.innerHTML="";return;}
   const W=640, xl=-1.0, xr=o.L+0.6, wy=o.B+1.6;
@@ -626,7 +669,8 @@ function drawChart(set, ex, uimp, uEnv, marg){
   const c=n=>css.getPropertyValue(n).trim();
   let s="";
   for (let x=0;x<=1.2001;x+=0.2){ s+=`<line x1="${sx(x)}" x2="${sx(x)}" y1="${sy(0)}" y2="${sy(100)}" stroke="${c('--rule')}"/><text x="${sx(x)}" y="${sy(0)+18}" text-anchor="middle" font-size="10">${fmt(x,1)}</text>`; }
-  for (let y=0;y<=100;y+=20){ s+=`<line x1="${sx(0)}" x2="${sx(1.2)}" y1="${sy(y)}" y2="${sy(y)}" stroke="${c('--rule')}"/><text x="${sx(0)-8}" y="${sy(y)+4}" text-anchor="end" font-size="10">${y}</text>`; }
+  for (let y=5;y<=100;y+=10){ s+=`<line x1="${sx(0)}" x2="${sx(1.2)}" y1="${sy(y)}" y2="${sy(y)}" stroke="${c('--rule')}" stroke-width=".5" opacity=".6"/>`; }
+  for (let y=0;y<=100;y+=10){ s+=`<line x1="${sx(0)}" x2="${sx(1.2)}" y1="${sy(y)}" y2="${sy(y)}" stroke="${c('--rule')}"/><text x="${sx(0)-8}" y="${sy(y)+4}" text-anchor="end" font-size="10">${y}</text>`; }
   s+=`<text x="${(sx(0)+sx(1.2))/2}" y="${H-8}" text-anchor="middle" font-size="11">e<tspan font-size="8" dy="3">extr,DT</tspan><tspan dy="-3"> [m]</tspan></text>`;
   s+=`<text transform="translate(16 ${(sy(0)+sy(100))/2}) rotate(-90)" text-anchor="middle" font-size="11">u<tspan font-size="8" dy="3">imp,adm</tspan><tspan dy="-3"> [mm]</tspan></text>`;
   const env=set.env;
@@ -717,7 +761,6 @@ const EXPRESIONES = [
  ["δ<sub>ef</sub> = atan[n<sub>max</sub> / (G<sub>ef</sub> · cos α<sub>DT</sub>) − tan α<sub>DT</sub>] ⇒ n<sub>max</sub> = G<sub>ef</sub> · cos α · (tan δ + tan α), δ = 2φ/3","ec. 5.12 (despejada)","PDF p. 132–133"],
  ["E<sub>fis</sub> = ρ · d³ · E<sub>s</sub> · (1 − x<sub>0</sub>/d) · (1 − x<sub>0</sub>/(3d)) / (h³/12); x<sub>0</sub> = d · ρ · n<sub>0</sub> · (√(1 + 2/(ρ·n<sub>0</sub>)) − 1); n<sub>0</sub> = E<sub>s</sub>/E<sub>c,0</sub>","ec. 4.12","PDF p. 90–91"],
  ["Δα<sub>DT</sub> = 0.5 · 3 · Q<sub>1,d</sub> · L<sub>hueco</sub>² / (B<sub>vía</sub> · h<sub>DT</sub>³ · E<sub>fis</sub>) (con L² corregido)","ec. 5.15","PDF p. 134"],
- ["Δα<sub>DT</sub>(u<sub>imp</sub>) ≈ 1 ‰ · u<sub>imp</sub> / 50 mm","fig. 4.29","PDF p. 93"],
  ["M<sub>s</sub> = m − n · (d − h/2); a = d − √(d² − 2·M<sub>s</sub>/f<sub>cd</sub>); A<sub>s</sub> = (f<sub>cd</sub> · a + n) / f<sub>sd</sub>","SIA 262 (estándar)","no está en la tesis"],
  ["A<sub>s</sub> de la armadura superior de la rótula = ρ · b · d, ρ = 0.3 % (solo armadura traccionada, d = canto útil superior)","fig. 5.15 y § 5.3","PDF p. 112, 125, 127"],
  ["s = mayor múltiplo de 5 mm, ≤ 250 mm, tal que (π · Ø² / 4) · 1000 / s ≥ A<sub>s</sub> para el diámetro Ø elegido","criterio de esta herramienta","no está en la tesis"],
