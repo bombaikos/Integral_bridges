@@ -194,7 +194,7 @@ button:disabled{opacity:.6; cursor:progress}
     <h2>1 · Desplazamiento admisible (estado límite de servicio)</h2>
     <div class="kpis" id="kpis"></div>
     <div class="chartwrap"><svg id="chart" viewBox="0 0 640 380" width="100%" role="img" aria-label="Ábaco u_imp,adm frente a e_extr,DT"></svg></div>
-    <p class="note">Puntos: resultados de elementos finitos de la fig. 5.9 (PDF p. 105), <strong>digitalizados</strong> del vector del PDF (precisión ≈ ±0,5 mm). Línea continua: envolvente inferior de todos los puntos frente a e<sub>extr,DT</sub>. Línea discontinua: envolvente × factor de margen. Rombo: su losa.</p>
+    <p class="note">Puntos: resultados de elementos finitos de la fig. 5.9 (PDF p. 105), <strong>digitalizados</strong> del vector del PDF. Línea continua: envolvente inferior de todos los puntos frente a e<sub>extr,DT</sub>. Línea discontinua: envolvente × factor de margen. Rombo: su losa.</p>
     <div class="tw"><table id="tU"></table></div>
   </section>
 
@@ -358,6 +358,7 @@ function calc(){
   const LpfAdm = (uAdm!=null && eps>0 && k>0) ? uAdm/(k*eps) : null;
   const eReq = invInterp(set.env, uimp/marg);
   const Lreq = eReq!=null && a>0 ? (eReq-e0)/a : null;
+  const uReq = uimp/marg, free = uReq < set.env[0][1];   // por debajo del mínimo del ábaco: no condiciona
   const okU = uAdm!=null && uimp<=uAdm;
 
   if (al<5 || al>20) msgs.push(["bad",`α<sub>DT</sub> = ${fmt(al,1)} % fuera del rango recomendado 5–20 % (PDF p. 105).`]);
@@ -443,8 +444,8 @@ function calc(){
    row(`u<sub>imp</sub> actuante`, `${f(uimp,1)} mm ${uAdm==null?"":ok(okU)}`, umode==="calc"
       ? ex(`u<sub>imp</sub> = k<sub>tablero</sub> · L<sub>pf</sub> · (ε<sub>sh</sub> + ε<sub>cr</sub> + ε<sub>ΔT</sub>)`, `${f(k,2)} · ${f(Lpf,1)} m · (${f(num("esh"),2)} + ${f(num("ecr"),2)} + ${f(num("eT"),2)}) ‰ = ${f(uimp,1)} mm`)
       : ex(`u<sub>imp</sub> = dato introducido`, `${f(uimp,1)} mm`), "ec. 2.1 · PDF p. 27") +
-   row(`e<sub>extr,DT</sub> necesario para u<sub>imp</sub>`, eReq==null?"fuera de ábaco":f(eReq,2)+" m", ex(`e<sub>extr,req</sub> tal que f(e<sub>extr,req</sub>) · f<sub>margen</sub> = u<sub>imp</sub>`, `inversa de la envolvente en ${f(uimp/marg,1)} mm`), "fig. 5.9 inversa") +
-   row(`L<sub>DT</sub> necesaria con α = ${f(al,1)} %`, Lreq==null?"—":f(Lreq,2)+" m", ex(`L<sub>DT</sub> = (e<sub>extr,req</sub> − e<sub>0,DT</sub>) / α<sub>DT</sub>`, Lreq==null?"—":`(${f(eReq,2)} − ${f(e0,2)}) / ${f(a,3)} = ${f(Lreq,2)} m`), "fig. 5.8 · PDF p. 105");
+   row(`e<sub>extr,DT</sub> necesario para u<sub>imp</sub>`, eReq!=null?f(eReq,2)+" m":(free?"no condiciona":"fuera de ábaco"), ex(`e<sub>extr,req</sub> tal que f(e<sub>extr,req</sub>) · f<sub>margen</sub> = u<sub>imp</sub>`, free?`u<sub>imp</sub> / f<sub>margen</sub> = ${f(uReq,1)} mm es menor que el mínimo del ábaco (${f(set.env[0][1],1)} mm): cualquier e<sub>extr</sub> del ábaco lo cumple`:`inversa de la envolvente en ${f(uReq,1)} mm`), "fig. 5.9 inversa") +
+   row(`L<sub>DT</sub> necesaria con α = ${f(al,1)} %`, Lreq==null?(free?"no condiciona":"—"):f(Lreq,2)+" m", ex(`L<sub>DT</sub> = (e<sub>extr,req</sub> − e<sub>0,DT</sub>) / α<sub>DT</sub>`, Lreq==null?(free?"la planeidad no limita la longitud: manda L<sub>vacío</sub>":"—"):`(${f(eReq,2)} − ${f(e0,2)}) / ${f(a,3)} = ${f(Lreq,2)} m`), "fig. 5.8 · PDF p. 105");
 
   $("tV").innerHTML = hdr(["Magnitud","Valor","Expresión usada","Fuente"]) +
    row(`φ<sub>d</sub>`, `${f(phid,1)}°`, ex(`φ<sub>d</sub> = atan(tan φ<sub>k</sub> / γ<sub>M</sub>)`, `atan(tan ${f(phik,1)}° / ${f(gphi,2)}) = ${f(phid,1)}°`), "§ 4.4.2 · PDF p. 91") +
