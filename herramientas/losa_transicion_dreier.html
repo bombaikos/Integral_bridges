@@ -239,6 +239,7 @@ button:disabled{opacity:.6; cursor:progress}
         <li><strong>Ec. 5.15.</strong> El PDF imprime L<sub>hueco</sub> sin cuadrado, pero la normalización de la fig. 5.32(b) usa L²<sub>hueco</sub> y solo así la expresión es adimensional. Se usa L². La frase siguiente («Δα<sub>DT</sub> … 5 ‰ doit être considéré») tiene el signo de comparación ilegible en el PDF, así que no se aplica.</li>
         <li><strong>m⁻<sub>pl,d</sub> = −55 kNm/m.</strong> Valor de la tesis (PDF p. 127), usado en la ec. 5.14 para la armadura inferior. La armadura superior de la rótula se toma con ρ = A<sub>s</sub>/(b·d) = 0,3 % (solo la armadura traccionada, como en los ensayos DT1) y debe resistir al menos 55 kNm/m.</li>
         <li><strong>Ábaco.</strong> Los cálculos de la fig. 5.9 son de deformación plana con h<sub>DT</sub> = 0,30 m, e<sub>0</sub> = 0,10 m, grava compactada y solo dirección activa. No incluyen ciclos térmicos ni compactación por tráfico pesado, de ahí el margen de § 5.2.3. La tesis da como lectura redondeada para la losa estándar 40 mm (autopista) y 55 mm (nacional), y L<sub>pf,adm</sub> = 50 y 70 m (PDF p. 106, 110).</li>
+        <li><strong>Longitud apoyada.</strong> La tesis solo define L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>hueco</sub> y no fija un mínimo. Con L<sub>hueco</sub>/L<sub>DT</sub> &lt; 0,5 el relleno bajo el extremo no plastifica y el momento no depende de L<sub>DT</sub>; cerca de 1 plastifica (PDF p. 126). El límite 0,5 es una lectura nuestra de esa frase; el mínimo de la tesis es L<sub>DT</sub> &gt; L<sub>hueco</sub>. Caso base de la tesis: L<sub>DT</sub> = 6 m con L<sub>hueco</sub> = 2 m (0,33).</li>
         <li><strong>Giro por u<sub>imp</sub>.</strong> ≈ 1 ‰ para 50 mm (fig. 4.29, PDF p. 93); aquí se escala linealmente, como orientación.</li>
         <li>No se cubre: cortante (la tesis remite a Fernández Ruiz et al. 2009), fisuración del aglomerado (ec. 4.5), dirección pasiva (no determinante, PDF p. 101) ni el muro del estribo.</li>
       </ul>
@@ -424,35 +425,34 @@ function calc(){
   $("kpis").innerHTML =
     kp("", "u<sub>imp</sub> actuante", fmt(uimp)+" mm", umode==="calc"?`${fmt(k,2)} · ${fmt(Lpf,1)} m · ${fmt(eps,2)} ‰`:"introducido") +
     kp(uAdm==null?"bad":(okU?"ok":"bad"), "u<sub>imp,adm</sub> de diseño", uAdm==null?"fuera de ábaco":fmt(uAdm)+" mm", `envolvente ${fmt(uEnv)} × ${fmt(marg,2)}`) +
-    kp("", "e<sub>extr,DT</sub>", fmt(eextr,2)+" m", `${fmt(e0,2)} + ${fmt(a,3)} · ${fmt(L,2)}`) +
-    kp("", "L<sub>pf,adm</sub>", LpfAdm==null?"—":fmt(LpfAdm,0)+" m", `con ε = ${fmt(eps,2)} ‰, k = ${fmt(k,2)}`);
+    kp("", "e<sub>extr,DT</sub>", fmt(eextr,2)+" m", `${fmt(e0,2)} + ${fmt(a,3)} · ${fmt(L,2)}`);
 
   const ok = b => b?'<span class="tag ok">cumple</span>':'<span class="tag bad">no cumple</span>';
   const ex=(sym,num)=>`<div class="ex">${sym}${num?`<br>= ${num}`:""}</div>`;
   const f=(v,d=2)=>fmt(v,d);
   const hdr=(c)=>`<tr>${c.map(t=>`<th>${t}</th>`).join("")}</tr>`;
+  const row2=(name,val)=>`<tr><td>${name}</td><td class="n">${val}</td></tr>`;
   const row=(name,val,expr,ref,cls="n")=>`<tr><td>${name}</td><td class="${cls}">${val}</td><td>${expr}</td><td class="ref">${ref}</td></tr>`;
 
-  $("tU").innerHTML = hdr(["Magnitud","Valor","Expresión usada","Fuente"]) +
-   row(`Criterio de servicio χ<sub>adm</sub> (${set.label})`, `${set.chi} ‰`, ex("χ<sub>adm</sub> = 20 ‰ (autopistas) · 28 ‰ (carreteras nacionales)", ""), "ec. 4.4 · PDF p. 76") +
-   row(`u<sub>imp,adm</sub> envolvente inferior (sin margen)`, uEnv==null?"—":f(uEnv,1)+" mm", ex(`u<sub>imp,adm</sub> = mín. de los puntos de la fig. 5.9 en e<sub>extr</sub>, interpolación lineal`, `f(${f(eextr,2)} m) = ${uEnv==null?"—":f(uEnv,1)} mm`), "fig. 5.9 · PDF p. 105") +
-   row(`u<sub>imp,adm</sub> en la curva de su familia (α, L)`, uFam==null?"n/d":f(uFam,1)+" mm", ex(`interpolación en L<sub>DT</sub> y α<sub>DT</sub> entre las curvas α = 5, 10 y 15 %`, `f(L = ${f(L,2)} m; α = ${f(al,1)} %) = ${uFam==null?"n/d":f(uFam,1)} mm`), "fig. 5.9 · PDF p. 105") +
-   row(`u<sub>imp,adm</sub> de diseño (× ${f(marg,2)})`, `<strong>${uAdm==null?"—":f(uAdm,1)+" mm"}</strong>`, ex(`u<sub>imp,adm</sub> = f<sub>margen</sub> · u<sub>imp,adm,env</sub>`, `${f(marg,2)} · ${uEnv==null?"—":f(uEnv,1)} = ${uAdm==null?"—":f(uAdm,1)} mm`), "§ 5.2.3 · PDF p. 110") +
-   row(`u<sub>imp</sub> actuante`, `${f(uimp,1)} mm ${uAdm==null?"":ok(okU)}`, umode==="calc"
+  $("tU").innerHTML = hdr(["Magnitud","Valor"]) +
+   row2(`Criterio de servicio χ<sub>adm</sub> (${set.label})`, `${set.chi} ‰`, ex("χ<sub>adm</sub> = 20 ‰ (autopistas) · 28 ‰ (carreteras nacionales)", ""), "ec. 4.4 · PDF p. 76") +
+   row2(`u<sub>imp,adm</sub> envolvente inferior (sin margen)`, uEnv==null?"—":f(uEnv,1)+" mm", ex(`u<sub>imp,adm</sub> = mín. de los puntos de la fig. 5.9 en e<sub>extr</sub>, interpolación lineal`, `f(${f(eextr,2)} m) = ${uEnv==null?"—":f(uEnv,1)} mm`), "fig. 5.9 · PDF p. 105") +
+   row2(`u<sub>imp,adm</sub> de diseño (× ${f(marg,2)})`, `<strong>${uAdm==null?"—":f(uAdm,1)+" mm"}</strong>`, ex(`u<sub>imp,adm</sub> = f<sub>margen</sub> · u<sub>imp,adm,env</sub>`, `${f(marg,2)} · ${uEnv==null?"—":f(uEnv,1)} = ${uAdm==null?"—":f(uAdm,1)} mm`), "§ 5.2.3 · PDF p. 110") +
+   row2(`u<sub>imp</sub> actuante`, `${f(uimp,1)} mm ${uAdm==null?"":ok(okU)}`, umode==="calc"
       ? ex(`u<sub>imp</sub> = k<sub>tablero</sub> · L<sub>pf</sub> · (ε<sub>sh</sub> + ε<sub>cr</sub> + ε<sub>ΔT</sub>)`, `${f(k,2)} · ${f(Lpf,1)} m · (${f(num("esh"),2)} + ${f(num("ecr"),2)} + ${f(num("eT"),2)}) ‰ = ${f(uimp,1)} mm`)
       : ex(`u<sub>imp</sub> = dato introducido`, `${f(uimp,1)} mm`), "ec. 2.1 · PDF p. 27") +
-   row(`e<sub>extr,DT</sub> necesario para u<sub>imp</sub>`, eReq!=null?f(eReq,2)+" m":(free?"no condiciona":"fuera de ábaco"), ex(`e<sub>extr,req</sub> tal que f(e<sub>extr,req</sub>) · f<sub>margen</sub> = u<sub>imp</sub>`, free?`u<sub>imp</sub> / f<sub>margen</sub> = ${f(uReq,1)} mm es menor que el mínimo del ábaco (${f(set.env[0][1],1)} mm): cualquier e<sub>extr</sub> del ábaco lo cumple`:`inversa de la envolvente en ${f(uReq,1)} mm`), "fig. 5.9 inversa") +
-   row(`L<sub>DT</sub> necesaria con α = ${f(al,1)} %`, Lreq==null?(free?"no condiciona":"—"):f(Lreq,2)+" m", ex(`L<sub>DT</sub> = (e<sub>extr,req</sub> − e<sub>0,DT</sub>) / α<sub>DT</sub>`, Lreq==null?(free?"la planeidad no limita la longitud: manda L<sub>hueco</sub>":"—"):`(${f(eReq,2)} − ${f(e0,2)}) / ${f(a,3)} = ${f(Lreq,2)} m`), "fig. 5.8 · PDF p. 105");
+   row2(`e<sub>extr,DT</sub> necesario para u<sub>imp</sub>`, eReq!=null?f(eReq,2)+" m":(free?"no condiciona":"fuera de ábaco"), ex(`e<sub>extr,req</sub> tal que f(e<sub>extr,req</sub>) · f<sub>margen</sub> = u<sub>imp</sub>`, free?`u<sub>imp</sub> / f<sub>margen</sub> = ${f(uReq,1)} mm es menor que el mínimo del ábaco (${f(set.env[0][1],1)} mm): cualquier e<sub>extr</sub> del ábaco lo cumple`:`inversa de la envolvente en ${f(uReq,1)} mm`), "fig. 5.9 inversa") +
+   row2(`L<sub>DT</sub> necesaria con α = ${f(al,1)} %`, Lreq==null?(free?"no condiciona":"—"):f(Lreq,2)+" m", ex(`L<sub>DT</sub> = (e<sub>extr,req</sub> − e<sub>0,DT</sub>) / α<sub>DT</sub>`, Lreq==null?(free?"la planeidad no limita la longitud: manda L<sub>hueco</sub>":"—"):`(${f(eReq,2)} − ${f(e0,2)}) / ${f(a,3)} = ${f(Lreq,2)} m`), "fig. 5.8 · PDF p. 105");
 
-  $("tV").innerHTML = hdr(["Magnitud","Valor","Expresión usada","Fuente"]) +
-   row(`φ<sub>d</sub>`, `${f(phid,1)}°`, ex(`φ<sub>d</sub> = atan(tan φ<sub>k</sub> / γ<sub>M</sub>)`, `atan(tan ${f(phik,1)}° / ${f(gphi,2)}) = ${f(phid,1)}°`), "§ 4.4.2 · PDF p. 91") +
-   row(`L<sub>hueco</sub>`, `<strong>${f(Lv,2)} m</strong> (${f(Lv/hmec,2)}·h)`, ex(`L<sub>hueco</sub> = h<sub>mec</sub> · tan(45° − φ<sub>d</sub>/2)`, `${f(hmec,2)} · tan(45° − ${f(phid/2,2)}°) = ${f(Lv,2)} m`), "ec. 5.3 · PDF p. 101") +
-   row(`L<sub>DT,min</sub>`, `${f(Lv,2)} m ${ok(L>Lv)}`, ex(`L<sub>DT</sub> > L<sub>hueco</sub>`, `${f(L,2)} > ${f(Lv,2)}`), "§ 5.2.1 · PDF p. 101") +
-   row(`Longitud apoyada L<sub>DT,extr</sub>`, `${f(Lext,2)} m`, ex(`L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>hueco</sub>`, `${f(L,2)} − ${f(Lv,2)} = ${f(Lext,2)} m`), "§ 5.4 · PDF p. 125") +
-   row(`L<sub>hueco</sub> / L<sub>DT</sub>`, `${f(ratio,2)} ${ratio<=0.5?'<span class="tag ok">≤ 0,5</span>':'<span class="tag warn">> 0,5</span>'}`, ex(`L<sub>hueco</sub> / L<sub>DT</sub> ≤ 0,5 (el relleno no plastifica)`, `${f(Lv,2)} / ${f(L,2)} = ${f(ratio,2)}`), "fig. 5.29 · PDF p. 126–127") +
-   row(`L<sub>DT</sub> ≥ 2·L<sub>hueco</sub> <span class="tag warn">criterio deducido</span>`, `${f(2*Lv,2)} m ${L>=2*Lv?'<span class="tag ok">cumple</span>':'<span class="tag warn">no cumple</span>'}`, ex(`2 · L<sub>hueco</sub> (apoyo ≥ hueco)`, `2 · ${f(Lv,2)} = ${f(2*Lv,2)} m`), "de fig. 5.29, no exigido") +
-   row(`L<sub>DT</sub> recomendada`, `<strong>${f(Lrec,2)} m</strong>`, ex(`máx(2 · L<sub>hueco</sub> ; L<sub>DT</sub> por planeidad)`, `máx(${f(2*Lv,2)} ; ${Lreq!=null?f(Lreq,2):"—"}) = ${f(Lrec,2)} m`), "§ 5.2 + fig. 5.29") +
-   `<tr><td colspan="4" class="note">La tesis solo define L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>hueco</sub> y no fija un mínimo. Con L<sub>hueco</sub>/L<sub>DT</sub> < 0,5 el relleno bajo el extremo no plastifica y el momento no depende de L<sub>DT</sub>; cerca de 1 plastifica (PDF p. 126). El límite 0,5 es una lectura nuestra de esa frase; el mínimo de la tesis es L<sub>DT</sub> > L<sub>hueco</sub>. Caso base de la tesis: L<sub>DT</sub> = 6 m con L<sub>hueco</sub> = 2 m (0,33).</td></tr>`;
+  $("tV").innerHTML = hdr(["Magnitud","Valor"]) +
+   row2(`φ<sub>d</sub>`, `${f(phid,1)}°`, ex(`φ<sub>d</sub> = atan(tan φ<sub>k</sub> / γ<sub>M</sub>)`, `atan(tan ${f(phik,1)}° / ${f(gphi,2)}) = ${f(phid,1)}°`), "§ 4.4.2 · PDF p. 91") +
+   row2(`L<sub>hueco</sub>`, `<strong>${f(Lv,2)} m</strong> (${f(Lv/hmec,2)}·h)`, ex(`L<sub>hueco</sub> = h<sub>mec</sub> · tan(45° − φ<sub>d</sub>/2)`, `${f(hmec,2)} · tan(45° − ${f(phid/2,2)}°) = ${f(Lv,2)} m`), "ec. 5.3 · PDF p. 101") +
+   row2(`L<sub>DT,min</sub>`, `${f(Lv,2)} m ${ok(L>Lv)}`, ex(`L<sub>DT</sub> > L<sub>hueco</sub>`, `${f(L,2)} > ${f(Lv,2)}`), "§ 5.2.1 · PDF p. 101") +
+   row2(`Longitud apoyada L<sub>DT,extr</sub>`, `${f(Lext,2)} m`, ex(`L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>hueco</sub>`, `${f(L,2)} − ${f(Lv,2)} = ${f(Lext,2)} m`), "§ 5.4 · PDF p. 125") +
+   row2(`L<sub>hueco</sub> / L<sub>DT</sub>`, `${f(ratio,2)} ${ratio<=0.5?'<span class="tag ok">≤ 0,5</span>':'<span class="tag warn">> 0,5</span>'}`, ex(`L<sub>hueco</sub> / L<sub>DT</sub> ≤ 0,5 (el relleno no plastifica)`, `${f(Lv,2)} / ${f(L,2)} = ${f(ratio,2)}`), "fig. 5.29 · PDF p. 126–127") +
+   row2(`L<sub>DT</sub> ≥ 2·L<sub>hueco</sub> <span class="tag warn">criterio deducido</span>`, `${f(2*Lv,2)} m ${L>=2*Lv?'<span class="tag ok">cumple</span>':'<span class="tag warn">no cumple</span>'}`, ex(`2 · L<sub>hueco</sub> (apoyo ≥ hueco)`, `2 · ${f(Lv,2)} = ${f(2*Lv,2)} m`), "de fig. 5.29, no exigido") +
+   row2(`L<sub>DT</sub> recomendada`, `<strong>${f(Lrec,2)} m</strong>`, ex(`máx(2 · L<sub>hueco</sub> ; L<sub>DT</sub> por planeidad)`, `máx(${f(2*Lv,2)} ; ${Lreq!=null?f(Lreq,2):"—"}) = ${f(Lrec,2)} m`), "§ 5.2 + fig. 5.29") +
+   "";
 
   const mExpr = conn==="pin"
     ? ex(`m⁺<sub>long,d</sub> = 1,5 · Q<sub>1,d</sub> · L<sub>hueco</sub> / (2 · B<sub>vía</sub>)`, `${f(kenv,2)} · ${f(Q1d,0)} · ${f(Lv,2)} / (2 · ${f(B,2)}) = ${f(mlong,0)} kNm/m`)
@@ -671,11 +671,14 @@ const EXPRESIONES = [
  ["e<sub>extr,DT</sub> = e<sub>0,DT</sub> + α<sub>DT</sub> · L<sub>DT</sub>","fig. 5.8","PDF p. 104–105"],
  ["χ(x) = [2·w(x) − w(x+1 m) − w(x−1 m)] / 1 m ≤ χ<sub>adm</sub>","ec. 4.4","PDF p. 76"],
  ["u<sub>imp,adm</sub> = f(e<sub>extr,DT</sub>), ábaco con χ<sub>adm</sub> = 20 ‰ / 28 ‰ (digitalizado)","fig. 5.9","PDF p. 105"],
+ ["e<sub>extr,req</sub> tal que f<sub>margen</sub> · f(e<sub>extr,req</sub>) = u<sub>imp</sub> (inversa de la envolvente); L<sub>DT,nec</sub> = (e<sub>extr,req</sub> − e<sub>0,DT</sub>) / α<sub>DT</sub>","fig. 5.8 y 5.9","PDF p. 104–105"],
  ["u<sub>imp,adm,diseño</sub> = f<sub>margen</sub> · u<sub>imp,adm</sub> (f<sub>margen</sub> = 0,75 por defecto)","§ 5.2.3","PDF p. 110"],
  ["φ<sub>d</sub> = atan(tan φ<sub>k</sub> / γ<sub>M</sub>)","§ 4.4.2","PDF p. 91"],
  ["L<sub>hueco</sub> = h<sub>mec</sub> · tan(45° − φ<sub>d</sub>/2)","ec. 5.3 (corregida)","PDF p. 101–102"],
+ ["L<sub>DT</sub> > L<sub>hueco</sub> (longitud mínima)","§ 5.2.1","PDF p. 101"],
  ["L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>hueco</sub>","§ 5.4","PDF p. 125"],
- ["L<sub>DT</sub> ≥ 2 · L<sub>hueco</sub> (criterio deducido, no exigido por la tesis)","fig. 5.29","PDF p. 126–127"],
+ ["L<sub>hueco</sub> / L<sub>DT</sub> ≤ 0,5 (el relleno bajo el extremo no plastifica; lectura nuestra)","fig. 5.29","PDF p. 126"],
+ ["L<sub>DT</sub> ≥ 2 · L<sub>hueco</sub> (criterio deducido, no exigido por la tesis); L<sub>DT,rec</sub> = máx(2 · L<sub>hueco</sub> ; L<sub>DT,nec</sub>)","fig. 5.29","PDF p. 126–127"],
  ["Q<sub>1,d</sub> = γ<sub>Q</sub> · α<sub>Q1</sub> · Q<sub>1k</sub> = 1,5 · 0,9 · 300 = 405 kN","§ 5.4.1","PDF p. 126"],
  ["m<sup>+</sup><sub>long,d</sub> = 1,5 · Q<sub>1,d</sub> · L<sub>hueco</sub> / (2 · B<sub>vía</sub>) (unión articulada)","ec. 5.13","PDF p. 133"],
  ["m<sup>+</sup><sub>long,d</sub> = 1,5 · [Q<sub>1,d</sub> · (L<sub>hueco</sub> − L<sub>diag</sub>) + m<sup>−</sup><sub>pl,d</sub> · B<sub>vía</sub>] / (2 · B<sub>vía</sub>) (rótula)","ec. 5.14","PDF p. 133"],
