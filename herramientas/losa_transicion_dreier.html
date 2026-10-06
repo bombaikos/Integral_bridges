@@ -601,7 +601,7 @@ function drawHinge(o){
   s+=`<text x="${X(40)}" y="${Y(63)+3}" font-size="10" style="fill:${mu}">hormigón de limpieza</text>`;
   // armadura superior de la losa (continua desde el estribo) y barra inclinada de conexión
   s+=`<polyline points="${P([[-70,21.7],[0,21.7],[XE-4,34.2]])}" fill="none" stroke="${fg}" stroke-width="3"/>`;
-  s+=`<polyline points="${P([[-70,5.1],[0,5.1],[54.8,47.4],[XE-4,53.6]])}" fill="none" stroke="${ac}" stroke-width="3"/>`;
+  s+=`<polyline points="${P([[-70,5.1],[0,5.1],[LDIAG*100,47.4],[XE-4,53.6]])}" fill="none" stroke="${ac}" stroke-width="3"/>`;
   // sección de la rótula
   const xh=LDIAG*100;
   s+=`<line x1="${X(xh)}" x2="${X(xh)}" y1="${Y(-12)}" y2="${Y(76)}" stroke="${bad}" stroke-dasharray="5 3" stroke-width="1.5"/>`;
@@ -616,16 +616,11 @@ function drawHinge(o){
   s+=vd(-8,0,20,"20 cm",fg,-5);
   s+=vd(XE+10,29.4,59.4,"30 cm",fg,12);
   s+=vd(XE+10,59.4,69.4,"10 cm",mu,12);
-  // ángulo de la barra inclinada
-  const ax=X(-1), az=Y(5.1);
-  s+=`<line x1="${ax}" x2="${ax+80}" y1="${az}" y2="${az}" stroke="${ac}" stroke-dasharray="3 3" stroke-width="1"/>`;
-  s+=`<path d="M${ax+60} ${az} A60 60 0 0 1 ${ax+60*Math.cos(37*Math.PI/180)} ${az+60*Math.sin(37*Math.PI/180)}" fill="none" stroke="${ac}"/>`;
-  s+=`<text x="${ax+68}" y="${az+22}" font-size="11" style="fill:${ac}">≈ 37°</text>`;
   s+=`<text x="${X(66)}" y="${Y(49)+14}" font-size="10" style="fill:${ac}">barra inclinada (6)</text>`;
   s+=`<text x="${X(70)}" y="${Y(28)-2}" font-size="10" style="fill:${fg}">armadura superior</text>`;
   s+=`<text x="${X(-60)}" y="${Y(68)}" font-size="11" style="fill:${fg}">estribo</text>`;
   svg.innerHTML=s;
-  note.textContent="Detalle de la fig. 5.15(b) redibujado a escala. Geometría medida sobre la figura (±2 cm): paramento del estribo 20 cm por encima de la losa, tacón de 26 cm y pendiente de la losa ≈ 10 %. La barra inclinada parte de la cara superior del estribo (no de la de la losa) y baja ≈ 37° (arctan 20/26 ≈ 37.6°) hasta la cara inferior, a ≈ 55 cm del estribo. La tesis toma L_diag = 62 cm (fijo: todos los ensayos se hicieron con este valor).";
+  note.textContent="Detalle de la fig. 5.15(b) de la tesis y fig. 5.3 de la directriz ASTRA 12004 (cap. 3), redibujado a escala. La barra inclinada parte de la cara superior del estribo (20 cm por encima de la losa) y baja hasta la cara inferior. L_diag (l_ch en la directriz) se mide desde la cara del estribo hasta la esquina inferior de la barra inclinada; se toma el valor de la tesis, 62 cm, fijo (todos los ensayos se hicieron con él). Medida sobre la figura da ≈ 56 cm (±2 cm) y la barra baja ≈ 37°; dibujada hasta 62 cm el ángulo resulta ≈ 34°.";
 }
 
 function drawPlan(o){
