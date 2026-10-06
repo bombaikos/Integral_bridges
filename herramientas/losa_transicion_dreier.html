@@ -207,8 +207,8 @@ button:disabled{opacity:.6; cursor:progress}
 
   <section class="card">
     <h2>3 · Esfuerzos de cálculo (ELU, por metro de ancho)</h2>
-    <div class="chartwrap"><svg id="plan" viewBox="0 0 640 260" width="100%" role="img" aria-label="Planta: reparto del tándem en el ancho equivalente"></svg></div>
-    <p class="note" id="planNote">Planta del carril 1 sobre la losa. Ruedas de 0,40 × 0,40 m, 1,20 m entre ejes y 2,00 m entre ruedas (modelo 1, fig. 4.25). La banda oscura es el ancho equivalente B<sub>eq</sub> que resulta de la fórmula simplificada.</p>
+    <div class="chartwrap"><svg id="plan" viewBox="0 0 640 260" width="100%" role="img" aria-label="Planta: tándem del carril 1 sobre la losa"></svg></div>
+    <p class="note" id="planNote">Planta del carril 1 sobre la losa. Ruedas de 0,40 × 0,40 m, 1,20 m entre ejes y 2,00 m entre ruedas (modelo 1, fig. 4.25).</p>
     <div class="tw"><table id="tF"></table></div>
   </section>
 
@@ -382,7 +382,6 @@ function calc(){
   /* ---- 3. esfuerzos ---- */
   const Q1d = gQ*aQ*Q1k;
   const kenv = 1.5;                                       // resultado de los cálculos de elementos finitos de la tesis (fig. 5.29b): no es un dato de entrada
-  const Beq = B/kenv;                                     // ancho de reparto equivalente del tándem
   const fcd = Math.min(1,Math.cbrt(30/fck))*fck/gc, fsd = fsk/gsS;
   const etafc = Math.min(1,Math.cbrt(30/fck));
   // rótula ec. 5.6 (valores de cálculo)
@@ -458,12 +457,11 @@ function calc(){
    `<tr><td colspan="4" class="note">La tesis solo define L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>vacío</sub> y no fija un mínimo. Con L<sub>vacío</sub>/L<sub>DT</sub> < 0,5 el relleno bajo el extremo no plastifica y el momento no depende de L<sub>DT</sub>; cerca de 1 plastifica (PDF p. 126). El límite 0,5 es una lectura nuestra de esa frase; el mínimo de la tesis es L<sub>DT</sub> > L<sub>vacío</sub>. Caso base de la tesis: L<sub>DT</sub> = 6 m con L<sub>vacío</sub> = 2 m (0,33).</td></tr>`;
 
   const mExpr = conn==="pin"
-    ? ex(`m⁺<sub>long,d</sub> = k<sub>env</sub> · Q<sub>1,d</sub> · L<sub>vacío</sub> / (2 · B<sub>vía</sub>)`, `${f(kenv,2)} · ${f(Q1d,0)} · ${f(Lv,2)} / (2 · ${f(B,2)}) = ${f(mlong,0)} kNm/m`)
-    : ex(`m⁺<sub>long,d</sub> = k<sub>env</sub> · [Q<sub>1,d</sub> · (L<sub>vacío</sub> − L<sub>diag</sub>) + m⁻<sub>pl,d</sub> · B<sub>vía</sub>] / (2 · B<sub>vía</sub>)`, `${f(kenv,2)} · [${f(Q1d,0)} · (${f(Lv,2)} − ${f(Ldiag,2)}) + (${f(-mplUse,0)}) · ${f(B,2)}] / (2 · ${f(B,2)}) = ${f(mlong,0)} kNm/m`);
+    ? ex(`m⁺<sub>long,d</sub> = 1,5 · Q<sub>1,d</sub> · L<sub>vacío</sub> / (2 · B<sub>vía</sub>)`, `${f(kenv,2)} · ${f(Q1d,0)} · ${f(Lv,2)} / (2 · ${f(B,2)}) = ${f(mlong,0)} kNm/m`)
+    : ex(`m⁺<sub>long,d</sub> = 1,5 · [Q<sub>1,d</sub> · (L<sub>vacío</sub> − L<sub>diag</sub>) + m⁻<sub>pl,d</sub> · B<sub>vía</sub>] / (2 · B<sub>vía</sub>)`, `${f(kenv,2)} · [${f(Q1d,0)} · (${f(Lv,2)} − ${f(Ldiag,2)}) + (${f(-mplUse,0)}) · ${f(B,2)}] / (2 · ${f(B,2)}) = ${f(mlong,0)} kNm/m`);
   $("tF").innerHTML = hdr(["Esfuerzo","Valor","Expresión usada","Fuente"]) +
    row(`Q<sub>1,d</sub> por eje del tándem del carril 1`, `${f(Q1d,0)} kN`, ex(`Q<sub>1,d</sub> = γ<sub>Q</sub> · α<sub>Q1</sub> · Q<sub>1k</sub>`, `${f(gQ,2)} · ${f(aQ,2)} · ${f(Q1k,0)} = ${f(Q1d,0)} kN`), "PDF p. 126") +
-   row(`Ancho de reparto equivalente del tándem B<sub>eq</sub>`, `<strong>${f(Beq,2)} m</strong>`, ex(`B<sub>eq</sub> = B<sub>vía</sub> / k<sub>env</sub>`, `${f(B,2)} / ${f(kenv,2)} = ${f(Beq,2)} m`), "ec. 5.13 desarrollada") +
-   `<tr><td colspan="4" class="note">El coeficiente ${fmt(kenv,2)} sale de los cálculos de elementos finitos de la tesis (fig. 5.29b, PDF p. 126–127): es el cociente entre el momento que obtiene el modelo y el de la referencia Q<sub>1,d</sub>·L<sub>vacío</sub>/(2·B<sub>vía</sub>). B<sub>eq</sub> = B<sub>vía</sub>/${fmt(kenv,2)} no es un ancho real: es la misma fórmula escrita como «carga de los dos ejes repartida en B<sub>eq</sub>». El modelo numérico no usa ancho eficaz (placa de 9 m con los tándems de los carriles 1 y 2, fig. 4.25).</td></tr>` +
+   `<tr><td colspan="4" class="note">m<sup>+</sup><sub>long,d</sub> se deduce en la tesis con modelos de losa de elementos finitos (fig. 5.29–5.30, PDF p. 126–129).</td></tr>` +
    (conn==="hinge" ? row(`m⁻<sub>pl,d</sub> de la rótula (ρ = ${f(rhoh*100,2)} %, d = ${f(dh,3)} m)`, `−${f(MplCalc,0)} kNm/m`, ex(`m⁻<sub>pl,d</sub> = f<sub>sd</sub> · ρ · d² · (1 − f<sub>sd</sub> · ρ / (2 · f<sub>cd</sub>))`, `${f(fsd,0)} MPa · ${f(rhoh,4)} · ${f(dh,3)}² m² · 10³ · (1 − ${f(fsd,0)} · ${f(rhoh,4)} / (2 · ${f(fcd,1)})) = ${f(MplCalc,0)} kNm/m`), "ec. 5.6 · PDF p. 116")
      + row(`m⁻<sub>pl,d</sub> usado en ec. 5.14`, `−${f(mplUse,0)} kNm/m`, ex($("mplMode").value==="thesis" ? `valor recomendado por la tesis` : `valor de la ec. 5.6`, ""), "PDF p. 127") : "") +
    row(`m⁺<sub>long,d</sub> (${mEq})`, `${f(mlong,0)} kNm/m`, mExpr, `${mEq} · PDF p. 133`) +
@@ -491,7 +489,7 @@ function calc(){
   $("idLine").textContent = `${$("proj").value || "—"} · ${$("elem").value || "—"} · L = ${fmt(Wab,1)} m · h = ${fmt(hmec,1)} m`;
   drawChart(set, eextr, uimp, uEnv, marg);
   drawElev({L,a,e0,h,hmec,Lv,phid,conn,Ldiag,eextr,Q1d});
-  drawPlan({L,Lv,B,Beq,Q1d,conn,Ldiag,Q1k,aQ,gQ,kenv});
+  drawPlan({L,Lv,B,Q1d,conn,Ldiag,Q1k,aQ,gQ});
 }
 
 /* ---------- figuras: alzado y planta ---------- */
@@ -569,9 +567,8 @@ function drawPlan(o){
   if (o.L>o.Lv) s+=`<rect x="${X(o.Lv)}" y="${Y(-wy/2)}" width="${(o.L-o.Lv)*sc}" height="${wy*sc}" fill="${ok}" opacity=".12"/>`;
   s+=`<line x1="${X(o.Lv)}" x2="${X(o.Lv)}" y1="${Y(-wy/2)}" y2="${Y(wy/2)}" stroke="${wa}" stroke-dasharray="5 3"/>`;
   s+=`<text x="${X(o.Lv)+4}" y="${Y(-wy/2)+12}" font-size="10" style="fill:${wa}">fin del vacío</text>`;
-  // carril y ancho equivalente
+  // carril
   s+=`<rect x="${X(0)}" y="${Y(-o.B/2)}" width="${o.L*sc}" height="${o.B*sc}" fill="none" stroke="${fg}" stroke-dasharray="6 4"/>`;
-  s+=`<rect x="${X(0)}" y="${Y(-o.Beq/2)}" width="${o.Lv*sc}" height="${o.Beq*sc}" fill="${ac}" opacity=".28"/>`;
   // ruedas
   const xc=o.Lv/2;
   for (const dx of [-0.6,0.6]) for (const dy of [-1.0,1.0]){
@@ -581,12 +578,11 @@ function drawPlan(o){
   const xR=X(o.L)+12;
   const vdim=(y1,y2,x,label,c,ty)=>`<line x1="${x}" x2="${x}" y1="${Y(y1)}" y2="${Y(y2)}" stroke="${c}" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="${x+5}" y="${ty!=null?ty:(Y(y1)+Y(y2))/2+4}" font-size="11" style="fill:${c}">${label}</text>`;
   s+=vdim(-o.B/2,o.B/2,xR,`B<tspan font-size="8" dy="2">vía</tspan><tspan dy="-2"> = ${fmt(o.B,2)} m</tspan>`,fg);
-  s+=vdim(-o.Beq/2,o.Beq/2,Math.min(X(o.Lv)+8,xR-14),`B<tspan font-size="8" dy="2">eq</tspan><tspan dy="-2"> = ${fmt(o.Beq,2)} m</tspan>`,ac,Y(o.Beq/2)+16);   // rótulo bajo la cota: no pisa «entre ruedas»
   s+=`<line x1="${X(xc)}" x2="${X(xc)}" y1="${Y(-1)}" y2="${Y(1)}" stroke="${bad}" marker-start="url(#ar)" marker-end="url(#ar)"/><text transform="translate(${X(xc)+15} ${Y(0)}) rotate(-90)" text-anchor="middle" font-size="11" style="fill:${bad}">2,00 m entre ruedas</text>`;
   s+=dimH(X(xc-0.6),X(xc+0.6),Y(-wy/2)-8,`1,20 m`,bad);
   s+=dimH(X(0),X(o.Lv),Y(wy/2)+30,`L<tspan font-size="8" dy="2">vacío</tspan><tspan dy="-2"> = ${fmt(o.Lv,2)} m (luz de cálculo)</tspan>`,wa,"start");
   const wd=o.Q1d/2;
-  $("planNote").innerHTML=`Planta del carril 1 sobre la losa. Cuatro cargas puntuales, una por cada punto de contacto del tándem: <strong>${fmt(o.Q1k/2,0)} kN</strong> cada una (Q<sub>1k</sub>/2, valor característico, en kN sobre cada rueda); en ELU, γ<sub>Q</sub>·α<sub>Q1</sub>·Q<sub>1k</sub>/2 = ${fmt(o.gQ,2)}·${fmt(o.aQ,2)}·${fmt(o.Q1k,0)}/2 = <strong>${fmt(wd,1)} kN</strong> por rueda (${fmt(o.Q1d,0)} kN por eje, ${fmt(2*o.Q1d,0)} kN el tándem). Ruedas de 0,40 × 0,40 m, 1,20 m entre ejes y 2,00 m entre ruedas (modelo 1, fig. 4.25). <strong>Carga uniforme: no se aplica ninguna</strong>; la sobrecarga q del modelo 1 y el carril 2 quedan cubiertos por el coeficiente de envolvente k<sub>env</sub> = ${fmt(o.kenv,2)} (fig. 5.29b), no por una carga explícita. La banda oscura es el ancho equivalente B<sub>eq</sub> = B<sub>vía</sub>/k<sub>env</sub>.`;
+  $("planNote").innerHTML=`Planta del carril 1 sobre la losa. Cuatro cargas puntuales, una por cada punto de contacto del tándem: <strong>${fmt(o.Q1k/2,0)} kN</strong> cada una (Q<sub>1k</sub>/2, valor característico); en ELU, γ<sub>Q</sub>·α<sub>Q1</sub>·Q<sub>1k</sub>/2 = ${fmt(o.gQ,2)}·${fmt(o.aQ,2)}·${fmt(o.Q1k,0)}/2 = <strong>${fmt(wd,1)} kN</strong> por rueda (${fmt(o.Q1d,0)} kN por eje, ${fmt(2*o.Q1d,0)} kN el tándem). Ruedas de 0,40 × 0,40 m, 1,20 m entre ejes y 2,00 m entre ruedas (modelo 1, fig. 4.25). No se aplica ninguna carga uniforme.`;
   const H=Y(wy/2)+42; svg.setAttribute("viewBox",`0 0 ${X(xr)+110} ${H}`);
   svg.innerHTML=s;
 }
@@ -652,8 +648,6 @@ const NOTACION = [
  ["Q<sub>1k</sub>, α<sub>Q1</sub>, γ<sub>Q</sub>","Eje del tándem del modelo de carga 1, factor de ajuste y coeficiente de mayoración","kN, –, –","SIA 261"],
  ["Q<sub>1,d</sub>","Valor de cálculo de un eje del tándem = γ<sub>Q</sub>·α<sub>Q1</sub>·Q<sub>1k</sub>","kN","tesis"],
  ["B<sub>vía</sub>","Ancho de carril ficticio (3 m)","m","tesis (B<sub>voie</sub>)"],
- ["k<sub>env</sub>","Coeficiente de envolvente 1,5 de las ec. 5.13–5.14 (no es γ<sub>Q</sub>)","–","aquí"],
- ["B<sub>eq</sub>","Ancho de reparto equivalente del tándem = B<sub>vía</sub>/k<sub>env</sub>","m","aquí"],
  ["m<sup>+</sup><sub>long,d</sub>","Momento positivo longitudinal de cálculo de la losa","kNm/m","tesis"],
  ["m<sup>+</sup><sub>pl,d</sub>","Momento plástico positivo de cálculo de la sección de la losa","kNm/m","tesis"],
  ["m<sup>−</sup><sub>pl,d</sub>","Momento plástico de cálculo de la rótula de hormigón (−55 kNm/m en la tesis)","kNm/m","tesis"],
@@ -682,7 +676,7 @@ const EXPRESIONES = [
  ["L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>vacío</sub>","§ 5.4","PDF p. 125"],
  ["L<sub>DT</sub> ≥ 2 · L<sub>vacío</sub> (criterio deducido, no exigido por la tesis)","fig. 5.29","PDF p. 126–127"],
  ["Q<sub>1,d</sub> = γ<sub>Q</sub> · α<sub>Q1</sub> · Q<sub>1k</sub> = 1,5 · 0,9 · 300 = 405 kN","§ 5.4.1","PDF p. 126"],
- ["m<sup>+</sup><sub>long,d</sub> = 1,5 · Q<sub>1,d</sub> · L<sub>vacío</sub> / (2 · B<sub>vía</sub>) = (2·Q<sub>1,d</sub>)·L<sub>vacío</sub>/4 / B<sub>eq</sub>, B<sub>eq</sub> = B<sub>vía</sub>/1,5 (unión articulada)","ec. 5.13","PDF p. 133"],
+ ["m<sup>+</sup><sub>long,d</sub> = 1,5 · Q<sub>1,d</sub> · L<sub>vacío</sub> / (2 · B<sub>vía</sub>) (unión articulada)","ec. 5.13","PDF p. 133"],
  ["m<sup>+</sup><sub>long,d</sub> = 1,5 · [Q<sub>1,d</sub> · (L<sub>vacío</sub> − L<sub>diag</sub>) + m<sup>−</sup><sub>pl,d</sub> · B<sub>vía</sub>] / (2 · B<sub>vía</sub>) (rótula)","ec. 5.14","PDF p. 133"],
  ["m<sup>+</sup><sub>pl,d</sub> ≥ 100 kNm/m (longitudinal y transversal); n<sub>d</sub> = 100 kN/m","§ 5.4.3","PDF p. 133"],
  ["G<sub>ef</sub> = γ<sub>r</sub> · [L<sub>DT</sub>/2 · (e<sub>0,DT</sub> + e<sub>extr,DT</sub>) + e<sub>extr,DT</sub>² / (2·tan(45° + φ/2))] + γ<sub>c</sub> · L<sub>DT</sub> · h<sub>DT</sub>","ec. 5.11","PDF p. 132"],
