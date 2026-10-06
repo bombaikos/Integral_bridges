@@ -591,10 +591,11 @@ function drawHinge(o){
   if(!show){ svg.innerHTML=""; return; }
   const fg=col('--fg'), mu=col('--muted'), ac=col('--accent'), bad=col('--bad'), bg=col('--bg');
   const sc=3.0, X=x=>140+x*sc, y0=80, hc=o.h*100, Y=z=>y0+z*sc;      // x, z en cm; z hacia abajo desde la cara superior
-  const xe=140, Lbent=40, cover=5;                                     // cm: longitud dibujada; longitud del tramo inclinado (esquemática); recubrimiento inferior
+  const xe=140, cover=5, TACON=26;                                    // cm: longitud dibujada; recubrimiento inferior; tacón (fig. 5.15(b))
   const dcm=o.dh*100, zTop=Math.max(hc-dcm,2), zBot=hc-cover;           // armadura superior a h − d de la cara superior
   const hinge=o.Ldiag*100;
-  const xs=Math.max(hinge-Lbent/2,0), xf=xs+Lbent;                     // el tramo inclinado cruza la mitad del canto en x = L_diag
+  const xs=Math.min(TACON,Math.max(hinge-5,0)), xf=hinge;               // la barra inclinada arranca tras el tacón y llega abajo en la sección de la rótula
+  const ang=Math.atan2(zBot-zTop, Math.max(xf-xs,1))*180/Math.PI;
   let s=defs();
   // estribo y losa
   s+=`<rect x="${X(-60)}" y="${Y(-12)}" width="${60*sc}" height="${(hc+12+25)*sc}" fill="${mu}" opacity=".35" stroke="${mu}"/>`;
@@ -605,15 +606,16 @@ function drawHinge(o){
   // armadura superior (flexión), en el estribo y en la losa
   s+=`<line x1="${X(-50)}" x2="${X(xs)}" y1="${Y(zTop)}" y2="${Y(zTop)}" stroke="${fg}" stroke-width="3"/>`;
   s+=`<line x1="${X(0)}" x2="${X(xe-5)}" y1="${Y(zTop)}" y2="${Y(zTop)}" stroke="${fg}" stroke-width="3"/>`;
-  // barra inclinada (conexión): arranca arriba en el estribo, baja en Lbent
+  // barra inclinada (conexión): arranca arriba en el estribo, baja hasta la sección de la rótula
   s+=`<polyline points="${X(-50)},${Y(zTop)} ${X(xs)},${Y(zTop)} ${X(xf)},${Y(zBot)} ${X(xe-5)},${Y(zBot)}" fill="none" stroke="${ac}" stroke-width="3"/>`;
   // sección de la rótula
   s+=`<line x1="${X(hinge)}" x2="${X(hinge)}" y1="${Y(-14)}" y2="${Y(hc+14)}" stroke="${bad}" stroke-dasharray="5 3" stroke-width="1.5"/>`;
-  s+=`<circle cx="${X(hinge)}" cy="${Y(hc/2)}" r="5" fill="${bg}" stroke="${bad}" stroke-width="1.5"/>`;
+  s+=`<circle cx="${X(hinge)}" cy="${Y(zBot)}" r="5" fill="${bg}" stroke="${bad}" stroke-width="1.5"/>`;
   // cotas
   const dim=(x1,x2,y,t,c)=>`<line x1="${X(x1)}" x2="${X(x2)}" y1="${y}" y2="${y}" stroke="${c||fg}" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="${(X(x1)+X(x2))/2}" y="${y-4}" text-anchor="middle" font-size="11" style="fill:${c||fg}">${t}</text>`;
   const yb=Y(hc+10)+22;
   s+=dim(0,hinge,yb,`L<tspan font-size="8" dy="2">diag</tspan><tspan dy="-2"> = ${fmt(hinge,0)} cm</tspan>`,bad);
+  s+=dim(0,xs,Y(-18),`${TACON} cm`,ac);
   s+=`<line x1="${X(0)}" x2="${X(0)}" y1="${Y(hc)}" y2="${yb+4}" stroke="${mu}" stroke-dasharray="2 3"/><line x1="${X(hinge)}" x2="${X(hinge)}" y1="${Y(hc+14)}" y2="${yb+4}" stroke="${mu}" stroke-dasharray="2 3"/>`;
   // canto y canto útil, a la derecha
   const xr=X(xe)+16;
@@ -623,7 +625,7 @@ function drawHinge(o){
   s+=`<text x="${X(xs)-8}" y="${Y(zTop)-6}" text-anchor="end" font-size="10" style="fill:${fg}">armadura superior</text>`;
   s+=`<text x="${X(xf)+10}" y="${Y(zBot)-6}" font-size="10" style="fill:${ac}">barra inclinada</text>`;
   svg.innerHTML=s;
-  note.textContent=`Esquema de la rótula a escala (canto ${fmt(hc,0)} cm, d = ${fmt(dcm,0)} cm). La barra inclinada se dibuja cruzando la mitad del canto en la sección de la rótula, a L_diag = ${fmt(hinge,0)} cm del estribo; la longitud del tramo inclinado es esquemática.`;
+  note.textContent=`Esquema de la rótula a escala (canto ${fmt(hc,0)} cm, d = ${fmt(dcm,0)} cm). La barra inclinada arranca a ${TACON} cm del estribo (tacón de la fig. 5.15(b)) y llega a la cara inferior en la sección de la rótula, L_diag = ${fmt(hinge,0)} cm; el ángulo resultante es ≈ ${fmt(ang,0)}° (≈ 30° en los croquis de los ensayos).`;
 }
 
 function drawPlan(o){
