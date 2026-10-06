@@ -155,11 +155,8 @@ button:disabled{opacity:.6; cursor:progress}
       <label><input type="radio" name="conn" value="pin"> Articulada</label>
     </div>
     <div id="hingeIn">
-      <div class="row"><label>ρ rótula [%]<small>0,3 % recomendado (PDF p. 125)</small></label><input type="number" id="rhoh" value="0.3" step="0.05" min="0.05"></div>
-      <div class="row"><label>d rótula [m]<small>canto útil armadura superior</small></label><input type="number" id="dh" value="0.25" step="0.005"></div>
+      <div class="row"><label>d armadura superior [m]<small>canto útil de la rótula (ρ = 0,3 %, tesis)</small></label><input type="number" id="dh" value="0.25" step="0.005"></div>
       <div class="row"><label>L<sub>diag</sub> [m]<small>posición de la rótula (0,62 m)</small></label><input type="number" id="Ldiag" value="0.62" step="0.01"></div>
-      <div class="row"><label>m⁻<sub>pl,d</sub> en ec. 5.14</label>
-        <select id="mplMode"><option value="thesis">−55 (tesis)</option><option value="calc">ec. 5.6</option></select></div>
     </div>
   </fieldset>
 
@@ -240,7 +237,7 @@ button:disabled{opacity:.6; cursor:progress}
       <ul>
         <li><strong>Ec. 5.3.</strong> La tesis la escribe como h·tan(α<sub>R,a</sub>) con α<sub>R,a</sub> = 45° + φ/2, pero dice que da 0,60–0,45·h para φ = 30–40° (PDF p. 102). Eso solo cuadra con tan(45° − φ/2), que es lo que se usa aquí. Se toma φ<sub>d</sub> = atan(tan φ<sub>k</sub>/γ<sub>M</sub>), que da un hueco mayor, como en § 4.4.2 (φ<sub>d</sub> = 32°).</li>
         <li><strong>Ec. 5.15.</strong> El PDF imprime L<sub>hueco</sub> sin cuadrado, pero la normalización de la fig. 5.32(b) usa L²<sub>hueco</sub> y solo así la expresión es adimensional. Se usa L². La frase siguiente («Δα<sub>DT</sub> … 5 ‰ doit être considéré») tiene el signo de comparación ilegible en el PDF, así que no se aplica.</li>
-        <li><strong>m⁻<sub>pl,d</sub> = −55 kNm/m.</strong> La tesis da el valor (PDF p. 127) sin el canto útil. Con d = 0,25 m y ρ = 0,3 % la ec. 5.6 da unos −79 kNm/m. En la ec. 5.14 un |m⁻| menor da un m⁺ mayor, así que −55 queda del lado de la seguridad. Para el extremo del tablero conviene el valor mayor; los ensayos con Ø12 superaron M<sub>pl</sub> en más de un 15 % por endurecimiento (PDF p. 116).</li>
+        <li><strong>m⁻<sub>pl,d</sub> = −55 kNm/m.</strong> Valor de la tesis (PDF p. 127), usado en la ec. 5.14 para la armadura inferior. La armadura superior de la rótula se toma con ρ = A<sub>s</sub>/(b·d) = 0,3 % (solo la armadura traccionada, como en los ensayos DT1) y debe resistir al menos 55 kNm/m.</li>
         <li><strong>Ábaco.</strong> Los cálculos de la fig. 5.9 son de deformación plana con h<sub>DT</sub> = 0,30 m, e<sub>0</sub> = 0,10 m, grava compactada y solo dirección activa. No incluyen ciclos térmicos ni compactación por tráfico pesado, de ahí el margen de § 5.2.3. La tesis da como lectura redondeada para la losa estándar 40 mm (autopista) y 55 mm (nacional), y L<sub>pf,adm</sub> = 50 y 70 m (PDF p. 106, 110).</li>
         <li><strong>Giro por u<sub>imp</sub>.</strong> ≈ 1 ‰ para 50 mm (fig. 4.29, PDF p. 93); aquí se escala linealmente, como orientación.</li>
         <li>No se cubre: cortante (la tesis remite a Fernández Ruiz et al. 2009), fisuración del aglomerado (ec. 4.5), dirección pasiva (no determinante, PDF p. 101) ni el muro del estribo.</li>
@@ -309,12 +306,16 @@ function familyValue(set, L, a){ // interpolación en L dentro de cada familia �
 }
 // armado: barras y separaciones habituales
 const DIAMS=[10,12,16,20,25,32], SEPS=[100,125,150,200,250];   // diámetros disponibles (José Luis) y separaciones habituales
-function pickBars(As, len){ // As en mm²/m; len en m (longitud sobre la que se reparten las barras)
+function bestBars(As){ // As en mm²/m → {f,s,a}
   let best=null;
   for (const s of SEPS) for (const f of DIAMS){
     const a=Math.PI*f*f/4*1000/s;
     if (a>=As && (!best || a<best.a-1 || (Math.abs(a-best.a)<1 && s>best.s))) best={f,s,a};
   }
+  return best;
+}
+function pickBars(As, len){ // As en mm²/m; len en m (longitud sobre la que se reparten las barras)
+  const best=bestBars(As);
   return best ? `Ø${best.f} c/${best.s} (${fmt(best.a,0)} mm²/m)` + (len>0 ? ` · ${Math.floor(len*1000/best.s)+1} barras en ${fmt(len,2)} m` : "") : "fuera de tabla";
 }
 // sección rectangular b = 1 m, flexión + tracción n (kN/m) ; m en kNm/m ; d,h en m ; fcd,fsd en MPa
@@ -385,9 +386,8 @@ function calc(){
   const fcd = Math.min(1,Math.cbrt(30/fck))*fck/gc, fsd = fsk/gsS;
   const etafc = Math.min(1,Math.cbrt(30/fck));
   // rótula ec. 5.6 (valores de cálculo)
-  const rhoh=num("rhoh")/100, dh=num("dh"), Ldiag=num("Ldiag");
-  const MplCalc = fsd*1000*rhoh*1*dh*dh*(1 - fsd*rhoh/(2*etafc*fck/gc)); // kNm/m (fc de cálculo ya incluye η en fcd; aquí η explícito)
-  const mplUse = $("mplMode").value==="thesis" ? 55 : MplCalc;
+  const dh=num("dh"), Ldiag=num("Ldiag");
+  const mplUse = 55;                                     // m⁻pl,d de la tesis (kNm/m), PDF p. 127
   let mlong, mEq;
   if (conn==="pin"){ mlong = kenv*Q1d*Math.max(Lv,0)/(2*B); mEq="ec. 5.13"; }
   else { mlong = kenv*(Q1d*Math.max(Lv-Ldiag,0) - mplUse*B)/(2*B); mEq="ec. 5.14"; if (mlong<0) mlong=0; }
@@ -415,8 +415,6 @@ function calc(){
     if (dAlpha>ROT_LIMIT) msgs.push(["warn",`Giro al paso del vehículo Δα<sub>DT</sub> ≈ ${fmt(dAlpha,1)} ‰ > 4 ‰: riesgo de fisuración del aglomerado sobre la unión articulada (§ 4.5.2, PDF p. 93–94). La rótula de hormigón reparte ese giro.`]);
     msgs.push(["info","La unión articulada con pasador solo se admite en estribos con juntas; en (semi)integrales la OFROU recomienda la placa de deslizamiento o, según la tesis, la rótula de hormigón (PDF p. 111)."]);
   } else {
-    if (rhoh>0.0045) msgs.push(["bad",`ρ de la rótula = ${fmt(rhoh*100,2)} %: con 0,7 % los ensayos rompieron por cortante sin cercos o por desprendimiento del recubrimiento. La tesis recomienda 0,3 % sin cercos (PDF p. 125).`]);
-    msgs.push(["info",`El extremo del tablero debe resistir el momento de la rótula, M<sub>pl</sub> ≈ ${fmt(MplCalc,0)} kNm/m según ec. 5.6 con valores de cálculo; los ensayos lo superaron en más de un 15 % (PDF p. 116, 125).`]);
   }
   if (!secL.fail && secL.xd>0.35) msgs.push(["warn",`x/d = ${fmt(secL.xd,2)} > 0,35 en la armadura longitudinal: ductilidad dudosa (criterio SIA 262 habitual). Aumente h<sub>DT</sub>.`]);
   if (secL.fail) msgs.push(["bad","La sección longitudinal no resiste el momento con el canto dado: aumente h<sub>DT</sub> o d."]);
@@ -462,8 +460,7 @@ function calc(){
   $("tF").innerHTML = hdr(["Esfuerzo","Valor","Expresión usada","Fuente"]) +
    row(`Q<sub>1,d</sub> por eje del tándem del carril 1`, `${f(Q1d,0)} kN`, ex(`Q<sub>1,d</sub> = γ<sub>Q</sub> · α<sub>Q1</sub> · Q<sub>1k</sub>`, `${f(gQ,2)} · ${f(aQ,2)} · ${f(Q1k,0)} = ${f(Q1d,0)} kN`), "PDF p. 126") +
    `<tr><td colspan="4" class="note">m<sup>+</sup><sub>long,d</sub> se deduce en la tesis con modelos de losa de elementos finitos (fig. 5.29–5.30, PDF p. 126–129).</td></tr>` +
-   (conn==="hinge" ? row(`m⁻<sub>pl,d</sub> de la rótula (ρ = ${f(rhoh*100,2)} %, d = ${f(dh,3)} m)`, `−${f(MplCalc,0)} kNm/m`, ex(`m⁻<sub>pl,d</sub> = f<sub>sd</sub> · ρ · d² · (1 − f<sub>sd</sub> · ρ / (2 · f<sub>cd</sub>))`, `${f(fsd,0)} MPa · ${f(rhoh,4)} · ${f(dh,3)}² m² · 10³ · (1 − ${f(fsd,0)} · ${f(rhoh,4)} / (2 · ${f(fcd,1)})) = ${f(MplCalc,0)} kNm/m`), "ec. 5.6 · PDF p. 116")
-     + row(`m⁻<sub>pl,d</sub> usado en ec. 5.14`, `−${f(mplUse,0)} kNm/m`, ex($("mplMode").value==="thesis" ? `valor recomendado por la tesis` : `valor de la ec. 5.6`, ""), "PDF p. 127") : "") +
+   (conn==="hinge" ? row(`m⁻<sub>pl,d</sub> de la rótula`, `−${f(mplUse,0)} kNm/m`, ex(`valor de la tesis`, ""), "PDF p. 127") : "")
    row(`m⁺<sub>long,d</sub> (${mEq})`, `${f(mlong,0)} kNm/m`, mExpr, `${mEq} · PDF p. 133`) +
    row(`m⁺<sub>pl,d</sub> requerido longitudinal`, `<strong>${f(mreq,0)} kNm/m</strong>`, ex(`m⁺<sub>pl,d</sub> ≥ máx(m⁺<sub>long,d</sub> ; 100)`, `máx(${f(mlong,0)} ; 100) = ${f(mreq,0)} kNm/m`), "§ 5.4.3 · PDF p. 133") +
    row(`m⁺<sub>pl,d</sub> requerido transversal (mínimo)`, `<strong>100 kNm/m</strong>`, ex(`m⁺<sub>pl,d,trans</sub> ≥ 100 kNm/m`, ""), "§ 5.4.3 · PDF p. 133") +
@@ -477,11 +474,15 @@ function calc(){
     : `<tr><td>${name}</td><td class="n">${f(s.As,0)}</td><td>${pickBars(s.As,len)}</td><td class="n">${f(s.xd,2)} ${s.xd<=0.35?'<span class="tag ok">dúctil</span>':'<span class="tag warn">revisar</span>'}</td><td>${expr}</td><td class="ref">${ref}</td></tr>`;
   const secEx = (m,n,dd,s)=> ex(`M<sub>s</sub> = m − n · (d − h/2); a = d − √(d² − 2M<sub>s</sub>/f<sub>cd</sub>); A<sub>s</sub> = (f<sub>cd</sub> · a + n) / f<sub>sd</sub>`,
       s.fail ? `M<sub>s</sub> = ${f(s.Ms,0)} kNm/m: no hay solución` : `M<sub>s</sub> = ${f(m,0)} − ${f(n,0)} · (${f(dd,3)} − ${f(h/2,3)}) = ${f(s.Ms,0)} kNm/m; a = ${f(s.a*1000,1)} mm; A<sub>s</sub> = (${f(fcd,1)} · ${f(s.a*1000,1)} + ${f(n,0)}·10⁻³·10³) / ${f(fsd,0)} = ${f(s.As,0)} mm²/m`);
-  const AsH = rhoh*dh*1e6;
+  const RHO_H = 0.003;                                    // cuantía de la armadura superior de la rótula (tesis, PDF p. 125)
+  const secH = designSection(mplUse, 0, dh, h, fcd, fsd);
+  const AsH = Math.max(RHO_H*dh*1e6, secH.fail ? 0 : secH.As);
+  const bH = bestBars(AsH);
+  const MrdH = bH ? (()=>{ const F=bH.a*fsd, a=F/(fcd*1000); return F*(dh*1000 - a/2)/1e6; })() : null;   // kNm/m: F = A_s·f_sd (N/m), a = F/(f_cd·b) en mm
   $("tA").innerHTML = hdr(["Armadura","A<sub>s</sub> [mm²/m]","Propuesta","x/d","Expresión usada","Base"]) +
    asRow(`Inferior longitudinal (m = ${f(mreq,0)}, n = ${f(nd,0)}, d = ${f(d,3)})`, secL, secEx(mreq,nd,d,secL), "§ 5.4.3 + SIA 262", Wab) +
    asRow(`Inferior transversal (m = 100, d = ${f(dt,3)})`, secT, secEx(100,0,dt,secT), "§ 5.4.3 + SIA 262", L) +
-   (conn==="hinge" ? `<tr><td>Superior en la rótula (ρ = ${f(rhoh*100,2)} %, d = ${f(dh,3)}), sin cercos</td><td class="n">${f(AsH,0)}</td><td>${pickBars(AsH,Wab)}</td><td class="n">—</td><td>${ex(`A<sub>s</sub> = ρ · b · d`, `${f(rhoh,4)} · 1000 mm · ${f(dh*1000,0)} mm = ${f(AsH,0)} mm²/m`)}</td><td class="ref">fig. 5.15 · PDF p. 112, 125</td></tr>` : "") +
+   (conn==="hinge" ? `<tr><td>Superior en la rótula (ρ = 0,30 %, m = ${f(mplUse,0)}, d = ${f(dh,3)}), sin cercos</td><td class="n">${f(AsH,0)}</td><td>${pickBars(AsH,Wab)}</td><td class="n">—</td><td>${ex(`A<sub>s</sub> = máx(ρ · b · d ; A<sub>s</sub> para m = ${f(mplUse,0)} kNm/m)`, `máx(${f(RHO_H,4)} · 1000 · ${f(dh*1000,0)} ; ${secH.fail?"—":f(secH.As,0)}) = ${f(AsH,0)} mm²/m. Con la propuesta, M<sub>Rd</sub> = ${f(MrdH,0)} kNm/m ${MrdH>=mplUse?'≥':'<'} ${f(mplUse,0)}`)}</td><td class="ref">fig. 5.15 · PDF p. 112, 125</td></tr>` : "") +
    `<tr><td colspan="6" class="note">Materiales: f<sub>cd</sub> = η<sub>fc</sub>·f<sub>ck</sub>/γ<sub>c</sub> = ${f(etafc,3)} · ${f(fck,0)} / ${f(gc,2)} = ${f(fcd,1)} MPa; f<sub>sd</sub> = f<sub>sk</sub>/γ<sub>s</sub> = ${f(fsk,0)} / ${f(gsS,2)} = ${f(fsd,0)} MPa; E<sub>c,0</sub> = ${f(Ec,0)} MPa. Barras longitudinales repartidas en el ancho del estribo (L = ${f(Wab,1)} m); las transversales, a lo largo de L<sub>DT</sub>. Propuestas con los diámetros disponibles Ø10, 12, 16, 20, 25 y 32 mm y separaciones de 100 a 250 mm. En los ensayos, ρ = 0,3 % era Ø12 c/150 en banda de 0,30 m (PDF p. 113–114). Flexión compuesta con tracción: bloque rectangular de compresiones con a = 0,85·x; cálculo seccional estándar (SIA 262), no está en la tesis.</td></tr>`;
 
   $("msgs").innerHTML = msgs.length ? msgs.map(([c,t])=>`<li class="${c}">${t}</li>`).join("") : `<li class="info">Sin avisos.</li>`;
@@ -681,7 +682,6 @@ const EXPRESIONES = [
  ["m<sup>+</sup><sub>pl,d</sub> ≥ 100 kNm/m (longitudinal y transversal); n<sub>d</sub> = 100 kN/m","§ 5.4.3","PDF p. 133"],
  ["G<sub>ef</sub> = γ<sub>r</sub> · [L<sub>DT</sub>/2 · (e<sub>0,DT</sub> + e<sub>extr,DT</sub>) + e<sub>extr,DT</sub>² / (2·tan(45° + φ/2))] + γ<sub>c</sub> · L<sub>DT</sub> · h<sub>DT</sub>","ec. 5.11","PDF p. 132"],
  ["δ<sub>ef</sub> = atan[n<sub>max</sub> / (G<sub>ef</sub> · cos α<sub>DT</sub>) − tan α<sub>DT</sub>] ⇒ n<sub>max</sub> = G<sub>ef</sub> · cos α · (tan δ + tan α), δ = 2φ/3","ec. 5.12 (despejada)","PDF p. 132–133"],
- ["M<sub>pl</sub> = f<sub>s</sub> · ρ · b · d² · (1 − f<sub>s</sub> · ρ / (2 · η<sub>fc</sub> · f<sub>c</sub>)), η<sub>fc</sub> = (30/f<sub>c</sub>)<sup>1/3</sup> ≤ 1","ec. 5.6","PDF p. 116"],
  ["E<sub>fis</sub> = ρ · d³ · E<sub>s</sub> · (1 − x<sub>0</sub>/d) · (1 − x<sub>0</sub>/(3d)) / (h³/12); x<sub>0</sub> = d · ρ · n<sub>0</sub> · (√(1 + 2/(ρ·n<sub>0</sub>)) − 1); n<sub>0</sub> = E<sub>s</sub>/E<sub>c,0</sub>","ec. 4.12","PDF p. 90–91"],
  ["Δα<sub>DT</sub> = 0,5 · 3 · Q<sub>1,d</sub> · L<sub>hueco</sub>² / (B<sub>vía</sub> · h<sub>DT</sub>³ · E<sub>fis</sub>) (con L² corregido)","ec. 5.15","PDF p. 134"],
  ["Δα<sub>DT</sub>(u<sub>imp</sub>) ≈ 1 ‰ · u<sub>imp</sub> / 50 mm","fig. 4.29","PDF p. 93"],
