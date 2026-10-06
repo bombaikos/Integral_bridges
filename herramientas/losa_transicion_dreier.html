@@ -169,7 +169,6 @@ button:disabled{opacity:.6; cursor:progress}
     <div class="row"><label>γ<sub>Q</sub> (ELU) [–]</label><input type="number" id="gQ" value="1.5" step="0.05"></div>
     <div class="row"><label>Factor para el giro [–]<small>0,75 en la ec. 5.15 (PDF p. 129)</small></label><input type="number" id="psiQ" value="0.75" step="0.05"></div>
     <div class="row"><label>B<sub>vía</sub> [m]<small>ancho de carril ficticio</small></label><input type="number" id="B" value="3" step="0.1"></div>
-    <div class="row"><label>Coef. de envolvente [–]<small>1,5 de las ec. 5.13–5.14 (fig. 5.29b). No es γ<sub>Q</sub></small></label><input type="number" id="kenv" value="1.5" step="0.05" min="0.5"></div>
     <div class="row"><label>n<sub>d</sub> axil</label>
       <select id="nMode"><option value="max">máx(100; ec. 5.11–5.12)</option><option value="thesis">100 kN/m (tesis)</option></select></div>
   </fieldset>
@@ -382,7 +381,7 @@ function calc(){
 
   /* ---- 3. esfuerzos ---- */
   const Q1d = gQ*aQ*Q1k;
-  const kenv = num("kenv");
+  const kenv = 1.5;                                       // resultado de los cálculos de elementos finitos de la tesis (fig. 5.29b): no es un dato de entrada
   const Beq = B/kenv;                                     // ancho de reparto equivalente del tándem
   const fcd = Math.min(1,Math.cbrt(30/fck))*fck/gc, fsd = fsk/gsS;
   const etafc = Math.min(1,Math.cbrt(30/fck));
@@ -464,10 +463,7 @@ function calc(){
   $("tF").innerHTML = hdr(["Esfuerzo","Valor","Expresión usada","Fuente"]) +
    row(`Q<sub>1,d</sub> por eje del tándem del carril 1`, `${f(Q1d,0)} kN`, ex(`Q<sub>1,d</sub> = γ<sub>Q</sub> · α<sub>Q1</sub> · Q<sub>1k</sub>`, `${f(gQ,2)} · ${f(aQ,2)} · ${f(Q1k,0)} = ${f(Q1d,0)} kN`), "PDF p. 126") +
    row(`Ancho de reparto equivalente del tándem B<sub>eq</sub>`, `<strong>${f(Beq,2)} m</strong>`, ex(`B<sub>eq</sub> = B<sub>vía</sub> / k<sub>env</sub>`, `${f(B,2)} / ${f(kenv,2)} = ${f(Beq,2)} m`), "ec. 5.13 desarrollada") +
-   `<tr><td colspan="4" class="note">${conn==="pin"
-     ? `m⁺ = ${fmt(kenv,2)}·Q<sub>1,d</sub>·L<sub>vacío</sub>/(2·B<sub>vía</sub>) = [(2·Q<sub>1,d</sub>)·L<sub>vacío</sub>/4] / B<sub>eq</sub>: viga biapoyada de luz L<sub>vacío</sub> con los dos ejes (2 × ${fmt(Q1d,0)} kN) en el centro, repartidos en ${fmt(Beq,2)} m.`
-     : `m⁺ = [(2·Q<sub>1,d</sub>)·(L<sub>vacío</sub> − L<sub>diag</sub>)/4 + m⁻<sub>pl,d</sub>·B<sub>vía</sub>/2] / B<sub>eq</sub>: los dos ejes (2 × ${fmt(Q1d,0)} kN) repartidos en ${fmt(Beq,2)} m sobre la luz L<sub>vacío</sub> − L<sub>diag</sub>, descontando el momento de la rótula.`}
-     El coeficiente ${fmt(kenv,2)} es la envolvente empírica de la fig. 5.29(b) (PDF p. 126–127): cociente entre m<sup>+</sup><sub>long,d</sub> del modelo de elementos finitos y la referencia Q<sub>1,d</sub>·L<sub>vacío</sub> / (2·B<sub>vía</sub>). Lo que absorbe (carril 2, sobrecarga q, peso propio, reparto en la placa) es interpretación de esta herramienta, no está enumerado en la tesis. En el modelo numérico no hay ancho eficaz: es una placa de 9 m con los tándems de los carriles 1 y 2 junto al borde (fig. 4.25).</td></tr>` +
+   `<tr><td colspan="4" class="note">El coeficiente ${fmt(kenv,2)} sale de los cálculos de elementos finitos de la tesis (fig. 5.29b, PDF p. 126–127): es el cociente entre el momento que obtiene el modelo y el de la referencia Q<sub>1,d</sub>·L<sub>vacío</sub>/(2·B<sub>vía</sub>). B<sub>eq</sub> = B<sub>vía</sub>/${fmt(kenv,2)} no es un ancho real: es la misma fórmula escrita como «carga de los dos ejes repartida en B<sub>eq</sub>». El modelo numérico no usa ancho eficaz (placa de 9 m con los tándems de los carriles 1 y 2, fig. 4.25).</td></tr>` +
    (conn==="hinge" ? row(`m⁻<sub>pl,d</sub> de la rótula (ρ = ${f(rhoh*100,2)} %, d = ${f(dh,3)} m)`, `−${f(MplCalc,0)} kNm/m`, ex(`m⁻<sub>pl,d</sub> = f<sub>sd</sub> · ρ · d² · (1 − f<sub>sd</sub> · ρ / (2 · f<sub>cd</sub>))`, `${f(fsd,0)} MPa · ${f(rhoh,4)} · ${f(dh,3)}² m² · 10³ · (1 − ${f(fsd,0)} · ${f(rhoh,4)} / (2 · ${f(fcd,1)})) = ${f(MplCalc,0)} kNm/m`), "ec. 5.6 · PDF p. 116")
      + row(`m⁻<sub>pl,d</sub> usado en ec. 5.14`, `−${f(mplUse,0)} kNm/m`, ex($("mplMode").value==="thesis" ? `valor recomendado por la tesis` : `valor de la ec. 5.6`, ""), "PDF p. 127") : "") +
    row(`m⁺<sub>long,d</sub> (${mEq})`, `${f(mlong,0)} kNm/m`, mExpr, `${mEq} · PDF p. 133`) +
@@ -495,7 +491,7 @@ function calc(){
   $("idLine").textContent = `${$("proj").value || "—"} · ${$("elem").value || "—"} · L = ${fmt(Wab,1)} m · h = ${fmt(hmec,1)} m`;
   drawChart(set, eextr, uimp, uEnv, marg);
   drawElev({L,a,e0,h,hmec,Lv,phid,conn,Ldiag,eextr,Q1d});
-  drawPlan({L,Lv,B,Beq,Q1d,conn,Ldiag,Q1k,aQ,gQ});
+  drawPlan({L,Lv,B,Beq,Q1d,conn,Ldiag,Q1k,aQ,gQ,kenv});
 }
 
 /* ---------- figuras: alzado y planta ---------- */
@@ -590,7 +586,7 @@ function drawPlan(o){
   s+=dimH(X(xc-0.6),X(xc+0.6),Y(-wy/2)-8,`1,20 m`,bad);
   s+=dimH(X(0),X(o.Lv),Y(wy/2)+30,`L<tspan font-size="8" dy="2">vacío</tspan><tspan dy="-2"> = ${fmt(o.Lv,2)} m (luz de cálculo)</tspan>`,wa,"start");
   const wd=o.Q1d/2;
-  $("planNote").innerHTML=`Planta del carril 1 sobre la losa. Cuatro cargas puntuales, una por cada punto de contacto del tándem: <strong>${fmt(o.Q1k/2,0)} kN</strong> cada una (Q<sub>1k</sub>/2, valor característico, en kN sobre cada rueda); en ELU, γ<sub>Q</sub>·α<sub>Q1</sub>·Q<sub>1k</sub>/2 = ${fmt(o.gQ,2)}·${fmt(o.aQ,2)}·${fmt(o.Q1k,0)}/2 = <strong>${fmt(wd,1)} kN</strong> por rueda (${fmt(o.Q1d,0)} kN por eje, ${fmt(2*o.Q1d,0)} kN el tándem). Ruedas de 0,40 × 0,40 m, 1,20 m entre ejes y 2,00 m entre ruedas (modelo 1, fig. 4.25). <strong>Carga uniforme: no se aplica ninguna</strong>; la sobrecarga q del modelo 1 y el carril 2 quedan cubiertos por el coeficiente de envolvente k<sub>env</sub> = ${fmt(num("kenv"),2)} (fig. 5.29b), no por una carga explícita. La banda oscura es el ancho equivalente B<sub>eq</sub> = B<sub>vía</sub>/k<sub>env</sub>.`;
+  $("planNote").innerHTML=`Planta del carril 1 sobre la losa. Cuatro cargas puntuales, una por cada punto de contacto del tándem: <strong>${fmt(o.Q1k/2,0)} kN</strong> cada una (Q<sub>1k</sub>/2, valor característico, en kN sobre cada rueda); en ELU, γ<sub>Q</sub>·α<sub>Q1</sub>·Q<sub>1k</sub>/2 = ${fmt(o.gQ,2)}·${fmt(o.aQ,2)}·${fmt(o.Q1k,0)}/2 = <strong>${fmt(wd,1)} kN</strong> por rueda (${fmt(o.Q1d,0)} kN por eje, ${fmt(2*o.Q1d,0)} kN el tándem). Ruedas de 0,40 × 0,40 m, 1,20 m entre ejes y 2,00 m entre ruedas (modelo 1, fig. 4.25). <strong>Carga uniforme: no se aplica ninguna</strong>; la sobrecarga q del modelo 1 y el carril 2 quedan cubiertos por el coeficiente de envolvente k<sub>env</sub> = ${fmt(o.kenv,2)} (fig. 5.29b), no por una carga explícita. La banda oscura es el ancho equivalente B<sub>eq</sub> = B<sub>vía</sub>/k<sub>env</sub>.`;
   const H=Y(wy/2)+42; svg.setAttribute("viewBox",`0 0 ${X(xr)+110} ${H}`);
   svg.innerHTML=s;
 }
