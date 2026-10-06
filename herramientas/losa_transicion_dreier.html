@@ -485,10 +485,17 @@ function calc(){
    (conn==="hinge" ? barRow("Superior de la rótula (ρ = 0.3 %)","hinge",AsH,null,0,dh,false) : "");
 
   /* ---------- 5. comprobaciones aproximadas: cortante en los extremos y presión sobre el relleno ---------- */
-  const VRD_UNIT = 550;                                   // kN/m² (τ_Rd aproximada): V_Rd = 1.00 m · d · 550 kN/m²
+  // cortante resistente sin armadura transversal, EN 1992-1-1, 6.2.2 (b = 1 m); armadura longitudinal inferior elegida
+  const spL = secL.fail ? null : spacingFor(secL.As, PHI.long);
+  const AslV = spL!=null ? Math.PI*PHI.long*PHI.long/4*1000/spL : (secL.fail ? 0 : secL.As);   // mm²/m
+  const kV = Math.min(2, 1 + Math.sqrt(200/(d*1000)));
+  const rhoV = Math.min(0.02, AslV/(1000*d*1000));
+  const sigCp = -nd/(h*1000);                                                           // MPa (tracción n_d: negativa)
+  const CRDC = 0.18/gc, K1 = 0.15;
+  const tauC = Math.max(CRDC*kV*Math.cbrt(100*rhoV*fck) + K1*sigCp, 0.035*Math.pow(kV,1.5)*Math.sqrt(fck) + K1*sigCp);   // MPa
+  const VRd = Math.max(tauC,0)*1000*d;                    // kN/m
   const GAMMA_G = 1.35, SP_AXLES = 1.20;                    // factor de las acciones permanentes; separación de ejes (m)
   const W_SHEAR = 2.00 + 0.40 + 2*d;                      // m, ancho de reparto del cortante: ruedas (2.00 + 0.40) y 45° a lo largo de d
-  const VRd = 1.00*d*VRD_UNIT;                            // kN/m
   const reaction = (Ls, a) => { const r = x => x<Ls ? Q1d*(1 - x/Ls) : 0; return (r(a) + r(a+SP_AXLES))/W_SHEAR; };   // kN/m, tándem con el eje más próximo a una distancia a del apoyo
   const Ls = conn==="hinge" ? Math.max(Lv-Ldiag,0.01) : Math.max(Lv,0.01);              // luz de cálculo del cortante
   const VsdA = reaction(Ls, d) + (conn==="hinge" ? mplUse/Ls : 0);                       // extremo del estribo: la rótula transmite m⁻pl,d, que suma m⁻pl,d/Ls a la reacción
@@ -499,7 +506,7 @@ function calc(){
   const shearTag = (V)=> V<=VRd ? '<span class="tag ok">cumple</span>' : `<span class="tag bad">comprobar necesidad de cercos con V<sub>Sd</sub> = ${fmt(V,0)} kN/m</span>`;
   const shearCell = V => V<=VRd ? `${fmt(V,0)} kN/m ${shearTag(V)}` : shearTag(V);
   $("tC").innerHTML = hdr(["Magnitud","Valor"]) +
-   row2(`V<sub>Rd</sub> aproximado = 1.00 · d · ${VRD_UNIT} kN/m²`, `${fmt(VRd,0)} kN/m`) +
+   row2(`V<sub>Rd,c</sub> sin armadura de cortante (EC2 6.2.2)`, `${fmt(VRd,0)} kN/m`) +
    row2(`Ancho de reparto del cortante = 2.40 + 2 · d`, `${fmt(W_SHEAR,2)} m`) +
    row2(`V<sub>Sd</sub> en el extremo del estribo (luz ${fmt(Ls,2)} m)`, shearCell(VsdA)) +
    row2(`V<sub>Sd</sub> en el extremo del relleno`, shearCell(VsdB)) +
@@ -716,7 +723,7 @@ const EXPRESIONES = [
  ["s = mayor múltiplo de 5 mm, ≤ 250 mm, tal que (π · Ø² / 4) · 1000 / s ≥ A<sub>s</sub> para el diámetro Ø elegido","criterio de esta herramienta","no está en la tesis"],
  ["M<sub>Rd</sub> = (A<sub>s</sub> · f<sub>sd</sub> − n) · (d − a/2) + n · (d − h/2), a = (A<sub>s</sub> · f<sub>sd</sub> − n) / f<sub>cd</sub>, con A<sub>s</sub> = (π · Ø² / 4) · 1000 / s","SIA 262 (estándar)","no está en la tesis"],
  ["M<sub>Sd</sub>: longitudinal = máx(m<sup>+</sup><sub>long,d</sub> ; 100) con n<sub>d</sub>; transversal = 100; rótula: sin M<sub>Sd</sub> (−55 kNm/m solo se usa para m<sup>+</sup><sub>long,d</sub>)","§ 5.4.3 y p. 127","PDF p. 127, 133"],
- ["V<sub>Rd</sub> ≈ 1.00 m · d · 550 kN/m² (comprobación aproximada de cortante)","criterio de esta herramienta","no está en la tesis"],
+ ["V<sub>Rd,c</sub> = [C<sub>Rd,c</sub> · k · (100 · ρ<sub>l</sub> · f<sub>ck</sub>)<sup>1/3</sup> + k<sub>1</sub> · σ<sub>cp</sub>] · b · d ≥ (0.035 · k<sup>3/2</sup> · f<sub>ck</sub><sup>1/2</sup> + k<sub>1</sub> · σ<sub>cp</sub>) · b · d; C<sub>Rd,c</sub> = 0.18/γ<sub>c</sub>, k = 1 + √(200/d) ≤ 2 (d en mm), ρ<sub>l</sub> = A<sub>sl</sub>/(b · d) ≤ 0.02 con la armadura inferior longitudinal elegida, k<sub>1</sub> = 0.15, σ<sub>cp</sub> = −n<sub>d</sub>/h (tracción), b = 1 m","EN 1992-1-1, 6.2.2","comprobación aproximada de cortante"],
  ["V<sub>Sd</sub> = [Q<sub>1,d</sub> · (1 − a/L<sub>s</sub>) + Q<sub>1,d</sub> · (1 − (a + 1.20)/L<sub>s</sub>)] / (2.40 + 2 · d), con a = d y L<sub>s</sub> = L<sub>hueco</sub> (articulada) o L<sub>hueco</sub> − L<sub>diag</sub> (rótula); en el extremo del estribo, + |m<sup>−</sup><sub>pl,d</sub>| / L<sub>s</sub> si hay rótula","estática de viga biapoyada","no está en la tesis"],
  ["p<sub>Ed</sub> ≤ 250 kN/m² (límite de la presión sobre el relleno)","criterio de esta herramienta","no está en la tesis"],
  ["p<sub>Ed</sub> = 2 · Q<sub>1,d</sub> / (L<sub>DT,extr</sub> · b) + 1.35 · (γ<sub>relleno</sub> · e<sub>extr,DT</sub> + 25 · h<sub>DT</sub>), b = 2.00 + 0.40 + 2 · (e<sub>extr,DT</sub> + h<sub>DT</sub>)","criterio de esta herramienta","no está en la tesis"],
