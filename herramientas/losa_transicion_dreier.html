@@ -105,7 +105,7 @@ button:disabled{opacity:.6; cursor:progress}
   <fieldset><legend>Identificación</legend>
     <div class="row wide"><label for="proj">Proyecto</label><input type="text" id="proj" value="Obra de emergencia en la M305 PPK 0+800"></div>
     <div class="row wide"><label for="elem">Elemento</label><input type="text" id="elem" value="Estribo 1"></div>
-    <div class="row"><label>L<sub>estribo</sub> [m]<small>ancho del estribo (L = 13 m); da el nº de barras</small></label><input type="number" id="Wab" value="13" step="0.5" min="1"></div>
+    <div class="row"><label>L<sub>estribo</sub> [m]<small>ancho del estribo (L = 13 m); da el nº de barras</small></label><input type="text" inputmode="decimal" id="Wab" value="13" step="0.5" min="1"></div>
   </fieldset>
   <fieldset><legend>Red viaria</legend>
     <div class="seg">
@@ -120,22 +120,22 @@ button:disabled{opacity:.6; cursor:progress}
       <label><input type="radio" name="umode" value="dir"> Introducir u<sub>imp</sub></label>
     </div>
     <div id="ucalc">
-      <div class="row"><label>L<sub>pf</sub> [m]<small>punto fijo → estribo (L/2 si simétrico)</small></label><input type="number" id="Lpf" value="35" step="1" min="0"></div>
-      <div class="row"><label>k<sub>tablero</sub> [–]<small>≈ 1 con relleno granular (ec. 2.1)</small></label><input type="number" id="k" value="1" step="0.05" min="0"></div>
-      <div class="row"><label>Retracción [‰]</label><input type="number" id="esh" value="0.3" step="0.05" min="0"></div>
-      <div class="row"><label>Fluencia [‰]</label><input type="number" id="ecr" value="0.3" step="0.05" min="0"></div>
-      <div class="row"><label>Temperatura [‰]<small>α<sub>T</sub>·ΔT; 0,2 ‰ en la tesis</small></label><input type="number" id="eT" value="0.2" step="0.05" min="0"></div>
+      <div class="row"><label>L<sub>pf</sub> [m]<small>punto fijo → estribo (L/2 si simétrico)</small></label><input type="text" inputmode="decimal" id="Lpf" value="35" step="1" min="0"></div>
+      <div class="row"><label>k<sub>tablero</sub> [–]<small>≈ 1 con relleno granular (ec. 2.1)</small></label><input type="text" inputmode="decimal" id="k" value="1" step="0.05" min="0"></div>
+      <div class="row"><label>Retracción [‰]</label><input type="text" inputmode="decimal" id="esh" value="0.3" step="0.05" min="0"></div>
+      <div class="row"><label>Fluencia [‰]</label><input type="text" inputmode="decimal" id="ecr" value="0.3" step="0.05" min="0"></div>
+      <div class="row"><label>Temperatura [‰]<small>α<sub>T</sub>·ΔT; 0.2 ‰ en la tesis</small></label><input type="text" inputmode="decimal" id="eT" value="0.2" step="0.05" min="0"></div>
     </div>
-    <div class="row" id="udir" hidden><label>u<sub>imp</sub> [mm]<small>acortamiento (dirección activa)</small></label><input type="number" id="uimp" value="32" step="1" min="0"></div>
+    <div class="row" id="udir" hidden><label>u<sub>imp</sub> [mm]<small>acortamiento (dirección activa)</small></label><input type="text" inputmode="decimal" id="uimp" value="32" step="1" min="0"></div>
   </fieldset>
 
   <fieldset><legend>Geometría de la losa</legend>
-    <div class="row"><label>L<sub>DT</sub> [m]<small>longitud</small></label><input type="number" id="L" value="6" step="0.25" min="0"></div>
-    <div class="row"><label>α<sub>DT</sub> [%]<small>pendiente; 5–20 % (PDF p. 105)</small></label><input type="number" id="alpha" value="10" step="0.5" min="0"></div>
-    <div class="row"><label>e<sub>0,DT</sub> [m]<small>enterramiento inicial (0,10 en la tesis)</small></label><input type="number" id="e0" value="0.10" step="0.01" min="0"></div>
-    <div class="row"><label>h<sub>DT</sub> [m]<small>espesor (0,30 en la tesis)</small></label><input type="number" id="h" value="0.30" step="0.01" min="0.1"></div>
-    <div class="row"><label>d longitudinal [m]<small>canto útil armadura inferior</small></label><input type="number" id="d" value="0.25" step="0.005" min="0.05"></div>
-    <div class="row"><label>d transversal [m]<small>2.ª capa</small></label><input type="number" id="dt" value="0.23" step="0.005" min="0.05"></div>
+    <div class="row"><label>L<sub>DT</sub> [m]<small>longitud</small></label><input type="text" inputmode="decimal" id="L" value="6" step="0.25" min="0"></div>
+    <div class="row"><label>α<sub>DT</sub> [%]<small>pendiente; 5–20 % (PDF p. 105)</small></label><input type="text" inputmode="decimal" id="alpha" value="10" step="0.5" min="0"></div>
+    <div class="row"><label>e<sub>0,DT</sub> [m]<small>enterramiento inicial (0.10 en la tesis)</small></label><input type="text" inputmode="decimal" id="e0" value="0.10" step="0.01" min="0"></div>
+    <div class="row"><label>h<sub>DT</sub> [m]<small>espesor (0.30 en la tesis)</small></label><input type="text" inputmode="decimal" id="h" value="0.30" step="0.01" min="0.1"></div>
+    <div class="row"><label>d longitudinal [m]<small>canto útil armadura inferior</small></label><input type="text" inputmode="decimal" id="d" value="0.25" step="0.005" min="0.05"></div>
+    <div class="row"><label>d transversal [m]<small>2.ª capa</small></label><input type="text" inputmode="decimal" id="dt" value="0.23" step="0.005" min="0.05"></div>
   </fieldset>
 
   <fieldset><legend>Estribo y relleno</legend>
@@ -143,10 +143,10 @@ button:disabled{opacity:.6; cursor:progress}
       <label><input type="radio" name="abut" value="int" checked> Integral</label>
       <label><input type="radio" name="abut" value="semi"> Semi-integral</label>
     </div>
-    <div class="row"><label id="hmecLbl">h<sub>muro</sub> [m]<small>altura del mecanismo activo (PDF p. 101)</small></label><input type="number" id="hmec" value="5" step="0.1" min="0"></div>
-    <div class="row"><label>φ<sub>k</sub> del relleno [°]<small>grava compactada 37° (tabla 3.2)</small></label><input type="number" id="phik" value="37" step="0.5" min="20" max="50"></div>
-    <div class="row"><label>γ<sub>M</sub> sobre tan φ [–]<small>1,2 según SIA 267 (PDF p. 91)</small></label><input type="number" id="gphi" value="1.2" step="0.05" min="1"></div>
-    <div class="row"><label>γ<sub>relleno</sub> [kN/m³]</label><input type="number" id="gs" value="19.4" step="0.1"></div>
+    <div class="row"><label id="hmecLbl">h<sub>muro</sub> [m]<small>altura del mecanismo activo (PDF p. 101)</small></label><input type="text" inputmode="decimal" id="hmec" value="5" step="0.1" min="0"></div>
+    <div class="row"><label>φ<sub>k</sub> del relleno [°]<small>grava compactada 37° (tabla 3.2)</small></label><input type="text" inputmode="decimal" id="phik" value="37" step="0.5" min="20" max="50"></div>
+    <div class="row"><label>γ<sub>M</sub> sobre tan φ [–]<small>1.2 según SIA 267 (PDF p. 91)</small></label><input type="text" inputmode="decimal" id="gphi" value="1.2" step="0.05" min="1"></div>
+    <div class="row"><label>γ<sub>relleno</sub> [kN/m³]</label><input type="text" inputmode="decimal" id="gs" value="19.4" step="0.1"></div>
   </fieldset>
 
   <fieldset><legend>Unión estribo–losa</legend>
@@ -155,32 +155,32 @@ button:disabled{opacity:.6; cursor:progress}
       <label><input type="radio" name="conn" value="pin"> Articulada</label>
     </div>
     <div id="hingeIn">
-      <div class="row"><label>d armadura superior [m]<small>canto útil de la rótula (ρ = 0,3 %, tesis)</small></label><input type="number" id="dh" value="0.25" step="0.005"></div>
-      <div class="row"><label>L<sub>diag</sub> [m]<small>posición de la rótula (0,62 m)</small></label><input type="number" id="Ldiag" value="0.62" step="0.01"></div>
+      <div class="row"><label>d armadura superior [m]<small>canto útil de la rótula (ρ = 0.3 %, tesis)</small></label><input type="text" inputmode="decimal" id="dh" value="0.25" step="0.005"></div>
+      <div class="row"><label>L<sub>diag</sub> [m]<small>posición de la rótula (0.62 m)</small></label><input type="text" inputmode="decimal" id="Ldiag" value="0.62" step="0.01"></div>
     </div>
   </fieldset>
 
   <fieldset><legend>Cargas (SIA 261, modelo 1)</legend>
-    <div class="row"><label>Q<sub>1k</sub> por eje [kN]</label><input type="number" id="Q1k" value="300" step="10"></div>
-    <div class="row"><label>α<sub>Q1</sub> [–]</label><input type="number" id="aQ" value="0.9" step="0.05"></div>
-    <div class="row"><label>γ<sub>Q</sub> (ELU) [–]</label><input type="number" id="gQ" value="1.5" step="0.05"></div>
-    <div class="row"><label>Factor para el giro [–]<small>0,75 en la ec. 5.15 (PDF p. 129)</small></label><input type="number" id="psiQ" value="0.75" step="0.05"></div>
-    <div class="row"><label>B<sub>vía</sub> [m]<small>ancho de carril ficticio</small></label><input type="number" id="B" value="3" step="0.1"></div>
+    <div class="row"><label>Q<sub>1k</sub> por eje [kN]</label><input type="text" inputmode="decimal" id="Q1k" value="300" step="10"></div>
+    <div class="row"><label>α<sub>Q1</sub> [–]</label><input type="text" inputmode="decimal" id="aQ" value="0.9" step="0.05"></div>
+    <div class="row"><label>γ<sub>Q</sub> (ELU) [–]</label><input type="text" inputmode="decimal" id="gQ" value="1.5" step="0.05"></div>
+    <div class="row"><label>Factor para el giro [–]<small>0.75 en la ec. 5.15 (PDF p. 129)</small></label><input type="text" inputmode="decimal" id="psiQ" value="0.75" step="0.05"></div>
+    <div class="row"><label>B<sub>vía</sub> [m]<small>ancho de carril ficticio</small></label><input type="text" inputmode="decimal" id="B" value="3" step="0.1"></div>
     <div class="row"><label>n<sub>d</sub> axil</label>
       <select id="nMode"><option value="max">máx(100; ec. 5.11–5.12)</option><option value="thesis">100 kN/m (tesis)</option></select></div>
   </fieldset>
 
   <fieldset><legend>Materiales (SIA 262)</legend>
-    <div class="row"><label>f<sub>ck</sub> [MPa]<small>C30/37 por defecto</small></label><input type="number" id="fck" value="30" step="5"></div>
-    <div class="row"><label>γ<sub>c</sub> [–]</label><input type="number" id="gc" value="1.5" step="0.05"></div>
-    <div class="row"><label>f<sub>sk</sub> [MPa]<small>B500B</small></label><input type="number" id="fsk" value="500" step="10"></div>
-    <div class="row"><label>γ<sub>s</sub> [–]</label><input type="number" id="gsS" value="1.15" step="0.05"></div>
-    <div class="row"><label>E<sub>s</sub> [MPa]</label><input type="number" id="Es" value="205000" step="1000"></div>
-    <div class="row"><label>E<sub>c,0</sub> [MPa]<small>en blanco: 10 000·(f<sub>ck</sub>+8)<sup>1/3</sup></small></label><input type="number" id="Ec" placeholder="auto" step="100"></div>
+    <div class="row"><label>f<sub>ck</sub> [MPa]<small>C30/37 por defecto</small></label><input type="text" inputmode="decimal" id="fck" value="30" step="5"></div>
+    <div class="row"><label>γ<sub>c</sub> [–]</label><input type="text" inputmode="decimal" id="gc" value="1.5" step="0.05"></div>
+    <div class="row"><label>f<sub>sk</sub> [MPa]<small>B500B</small></label><input type="text" inputmode="decimal" id="fsk" value="500" step="10"></div>
+    <div class="row"><label>γ<sub>s</sub> [–]</label><input type="text" inputmode="decimal" id="gsS" value="1.15" step="0.05"></div>
+    <div class="row"><label>E<sub>s</sub> [MPa]</label><input type="text" inputmode="decimal" id="Es" value="205000" step="1000"></div>
+    <div class="row"><label>E<sub>c,0</sub> [MPa]<small>en blanco: 10 000·(f<sub>ck</sub>+8)<sup>1/3</sup></small></label><input type="text" inputmode="decimal" id="Ec" placeholder="auto" step="100"></div>
   </fieldset>
 
   <fieldset><legend>Margen</legend>
-    <div class="row"><label>Factor sobre u<sub>adm</sub> del ábaco<small>0,75 ≈ 30/40 y 40/55 de § 5.2.3 (PDF p. 110). 1 = sin margen</small></label><input type="number" id="marg" value="0.75" step="0.05" min="0.1" max="1"></div>
+    <div class="row"><label>Factor sobre u<sub>adm</sub> del ábaco<small>0.75 ≈ 30/40 y 40/55 de § 5.2.3 (PDF p. 110). 1 = sin margen</small></label><input type="text" inputmode="decimal" id="marg" value="0.75" step="0.05" min="0.1" max="1"></div>
   </fieldset>
   <div class="noprint" style="display:flex;gap:8px;margin-top:8px"><button type="button" id="reset">Valores por defecto</button></div>
 </form>
@@ -205,7 +205,7 @@ button:disabled{opacity:.6; cursor:progress}
   <section class="card">
     <h2>3 · Esfuerzos de cálculo (ELU, por metro de ancho)</h2>
     <div class="chartwrap"><svg id="plan" viewBox="0 0 640 260" width="100%" role="img" aria-label="Planta: tándem del carril 1 sobre la losa"></svg></div>
-    <p class="note" id="planNote">Planta del carril 1 sobre la losa. Ruedas de 0,40 × 0,40 m, 1,20 m entre ejes y 2,00 m entre ruedas (modelo 1, fig. 4.25).</p>
+    <p class="note" id="planNote">Planta del carril 1 sobre la losa. Ruedas de 0.40 × 0.40 m, 1.20 m entre ejes y 2.00 m entre ruedas (modelo 1, fig. 4.25).</p>
     <div class="tw"><table id="tF"></table></div>
   </section>
 
@@ -235,12 +235,12 @@ button:disabled{opacity:.6; cursor:progress}
     <h2>Anejo C · Notas de interpretación</h2>
 
       <ul>
-        <li><strong>Ec. 5.3.</strong> La tesis la escribe como h·tan(α<sub>R,a</sub>) con α<sub>R,a</sub> = 45° + φ/2, pero dice que da 0,60–0,45·h para φ = 30–40° (PDF p. 102). Eso solo cuadra con tan(45° − φ/2), que es lo que se usa aquí. Se toma φ<sub>d</sub> = atan(tan φ<sub>k</sub>/γ<sub>M</sub>), que da un hueco mayor, como en § 4.4.2 (φ<sub>d</sub> = 32°).</li>
+        <li><strong>Ec. 5.3.</strong> La tesis la escribe como h·tan(α<sub>R,a</sub>) con α<sub>R,a</sub> = 45° + φ/2, pero dice que da 0.60–0.45·h para φ = 30–40° (PDF p. 102). Eso solo cuadra con tan(45° − φ/2), que es lo que se usa aquí. Se toma φ<sub>d</sub> = atan(tan φ<sub>k</sub>/γ<sub>M</sub>), que da un hueco mayor, como en § 4.4.2 (φ<sub>d</sub> = 32°).</li>
         <li><strong>Ec. 5.15.</strong> El PDF imprime L<sub>hueco</sub> sin cuadrado, pero la normalización de la fig. 5.32(b) usa L²<sub>hueco</sub> y solo así la expresión es adimensional. Se usa L². La frase siguiente («Δα<sub>DT</sub> … 5 ‰ doit être considéré») tiene el signo de comparación ilegible en el PDF, así que no se aplica.</li>
-        <li><strong>m⁻<sub>pl,d</sub> = −55 kNm/m.</strong> Valor de la tesis (PDF p. 127), usado en la ec. 5.14 para la armadura inferior. La armadura superior de la rótula se toma con ρ = A<sub>s</sub>/(b·d) = 0,3 % (solo la armadura traccionada, como en los ensayos DT1) y debe resistir al menos 55 kNm/m.</li>
-        <li><strong>Ábaco.</strong> Los cálculos de la fig. 5.9 son de deformación plana con h<sub>DT</sub> = 0,30 m, e<sub>0</sub> = 0,10 m, grava compactada y solo dirección activa. No incluyen ciclos térmicos ni compactación por tráfico pesado, de ahí el margen de § 5.2.3. La tesis da como lectura redondeada para la losa estándar 40 mm (autopista) y 55 mm (nacional), y L<sub>pf,adm</sub> = 50 y 70 m (PDF p. 106, 110).</li>
+        <li><strong>m⁻<sub>pl,d</sub> = −55 kNm/m.</strong> Valor de la tesis (PDF p. 127), usado en la ec. 5.14 para la armadura inferior. La armadura superior de la rótula se toma con ρ = A<sub>s</sub>/(b·d) = 0.3 % (solo la armadura traccionada, como en los ensayos DT1) y debe resistir al menos 55 kNm/m.</li>
+        <li><strong>Ábaco.</strong> Los cálculos de la fig. 5.9 son de deformación plana con h<sub>DT</sub> = 0.30 m, e<sub>0</sub> = 0.10 m, grava compactada y solo dirección activa. No incluyen ciclos térmicos ni compactación por tráfico pesado, de ahí el margen de § 5.2.3. La tesis da como lectura redondeada para la losa estándar 40 mm (autopista) y 55 mm (nacional), y L<sub>pf,adm</sub> = 50 y 70 m (PDF p. 106, 110).</li>
         <li><strong>Armadura.</strong> La separación s se calcula para el diámetro elegido (Ø12, 16, 20 o 25) como la mayor, en múltiplos de 5 mm y no superior a 250 mm, que cubre A<sub>s</sub>. Las barras longitudinales y las de la rótula se reparten en el ancho del estribo; las transversales, a lo largo de L<sub>DT</sub>. Materiales: f<sub>cd</sub> y f<sub>sd</sub> según los datos de entrada.</li>
-        <li><strong>Longitud apoyada.</strong> La tesis solo define L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>hueco</sub> y no fija un mínimo. Con L<sub>hueco</sub>/L<sub>DT</sub> &lt; 0,5 el relleno bajo el extremo no plastifica y el momento no depende de L<sub>DT</sub>; cerca de 1 plastifica (PDF p. 126). El límite 0,5 es una lectura nuestra de esa frase; el mínimo de la tesis es L<sub>DT</sub> &gt; L<sub>hueco</sub>. Caso base de la tesis: L<sub>DT</sub> = 6 m con L<sub>hueco</sub> = 2 m (0,33).</li>
+        <li><strong>Longitud apoyada.</strong> La tesis solo define L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>hueco</sub> y no fija un mínimo. Con L<sub>hueco</sub>/L<sub>DT</sub> &lt; 0.5 el relleno bajo el extremo no plastifica y el momento no depende de L<sub>DT</sub>; cerca de 1 plastifica (PDF p. 126). El límite 0.5 es una lectura nuestra de esa frase; el mínimo de la tesis es L<sub>DT</sub> &gt; L<sub>hueco</sub>. Caso base de la tesis: L<sub>DT</sub> = 6 m con L<sub>hueco</sub> = 2 m (0.33).</li>
         <li><strong>Giro por u<sub>imp</sub>.</strong> ≈ 1 ‰ para 50 mm (fig. 4.29, PDF p. 93); aquí se escala linealmente, como orientación.</li>
         <li>No se cubre: cortante (la tesis remite a Fernández Ruiz et al. 2009), fisuración del aglomerado (ec. 4.5), dirección pasiva (no determinante, PDF p. 101) ni el muro del estribo.</li>
       </ul>
@@ -256,7 +256,7 @@ button:disabled{opacity:.6; cursor:progress}
 <script>
 "use strict";
 /* ---------- Datos digitalizados de la fig. 5.9 (PDF p. 105) ----------
-   Puntos [L_DT (m), u_imp,adm (mm)] por pendiente α (%). e_extr = 0,10 + α·L.
+   Puntos [L_DT (m), u_imp,adm (mm)] por pendiente α (%). e_extr = 0.10 + α·L.
    Faltan en el original: nacional 10 % L=8 m y 15 % L=7 m (fuera del gráfico). */
 const FIG59 = {
   auto:{chi:20, label:"autopista",
@@ -275,9 +275,9 @@ const ROT_LIMIT = 4;           // ‰, OFROU autopistas y nacionales (PDF p. 93)
 const ROT_UIMP = 1/50;         // ‰ por mm, fig. 4.29 (≈ 1 ‰ a 50 mm)
 
 const $ = id => document.getElementById(id);
-const num = id => { const v = parseFloat($(id).value); return isFinite(v) ? v : NaN; };
+const num = id => { const v = parseFloat(String($(id).value).replace(",", ".")); return isFinite(v) ? v : NaN; };   // los datos se escriben con punto decimal (se admite también la coma)
 const radio = n => document.querySelector(`input[name=${n}]:checked`).value;
-const fmt = (v, dec=1) => v!=null && isFinite(v) ? v.toLocaleString("es-ES",{minimumFractionDigits:dec, maximumFractionDigits:dec}) : "—";
+const fmt = (v, dec=1) => v!=null && isFinite(v) ? v.toLocaleString("en-US",{minimumFractionDigits:dec, maximumFractionDigits:dec, useGrouping:false}) : "—";   // separador decimal: punto
 const deg = r => r*180/Math.PI, rad = d => d*Math.PI/180;
 
 function interp(pts, x){ // lineal, null fuera de rango
@@ -363,8 +363,8 @@ function calc(){
   if (al>15) msgs.push(["warn","La fig. 5.9 solo cubre α ≤ 15 %. Con más pendiente el resultado se lee solo por e<sub>extr</sub>."]);
   const eMax = set.env[set.env.length-1][0], eMin=set.env[0][0];
   if (uEnv==null) msgs.push(["bad",`e<sub>extr,DT</sub> = ${fmt(eextr,2)} m está fuera del ábaco (${fmt(eMin,2)}–${fmt(eMax,2)} m en ${set.label}). No se extrapola.`]);
-  if (Math.abs(h-0.30)>0.005) msgs.push(["warn","El ábaco de la fig. 5.9 se obtuvo con h<sub>DT</sub> = 0,30 m; la tesis indica que adelgazar el extremo apenas cambia χ (fig. 5.11), pero h distinto no está estudiado."]);
-  if (Math.abs(e0-E0_FIG)>0.005) msgs.push(["warn","El ábaco se obtuvo con e<sub>0,DT</sub> = 0,10 m. Con otro valor se usa e<sub>extr</sub> como parámetro único, como propone la tesis (PDF p. 104)."]);
+  if (Math.abs(h-0.30)>0.005) msgs.push(["warn","El ábaco de la fig. 5.9 se obtuvo con h<sub>DT</sub> = 0.30 m; la tesis indica que adelgazar el extremo apenas cambia χ (fig. 5.11), pero h distinto no está estudiado."]);
+  if (Math.abs(e0-E0_FIG)>0.005) msgs.push(["warn","El ábaco se obtuvo con e<sub>0,DT</sub> = 0.10 m. Con otro valor se usa e<sub>extr</sub> como parámetro único, como propone la tesis (PDF p. 104)."]);
   if (uimp<5) msgs.push(["info","u<sub>imp</sub> < 5 mm: la OFROU permite prescindir de losa de transición (fig. 5.14, PDF p. 110)."]);
   if (uEnv!=null && !okU) msgs.push(["bad",`u<sub>imp</sub> = ${fmt(uimp)} mm supera el admisible ${fmt(uAdm)} mm. ${eReq!=null?`Hace falta e<sub>extr</sub> ≥ ${fmt(eReq,2)} m${Lreq!=null?` (con α = ${fmt(al,1)} %: L<sub>DT</sub> ≥ ${fmt(Lreq,2)} m)`:""}.`:"Ni el ábaco completo lo cubre: hay que reducir u<sub>imp</sub> o recurrir a junta."}`]);
 
@@ -375,7 +375,7 @@ function calc(){
   const ratio = Lv/L;
   const Lrec = Math.max(2*Lv, Lreq!=null ? Lreq : 0);
   if (Lext<=0) msgs.push(["bad",`La losa (${fmt(L,2)} m) no salva el hueco L<sub>hueco</sub> = ${fmt(Lv,2)} m: aumente L<sub>DT</sub> (PDF p. 101).`]);
-  else if (ratio>0.5) msgs.push(["warn",`L<sub>hueco</sub>/L<sub>DT</sub> = ${fmt(ratio,2)} > 0,5: el extremo apoyado se acerca a su capacidad portante y el momento empieza a depender de L<sub>DT</sub> (PDF p. 126). Criterio deducido: L<sub>DT</sub> ≥ 2·L<sub>hueco</sub> = ${fmt(2*Lv,2)} m.`]);
+  else if (ratio>0.5) msgs.push(["warn",`L<sub>hueco</sub>/L<sub>DT</sub> = ${fmt(ratio,2)} > 0.5: el extremo apoyado se acerca a su capacidad portante y el momento empieza a depender de L<sub>DT</sub> (PDF p. 126). Criterio deducido: L<sub>DT</sub> ≥ 2·L<sub>hueco</sub> = ${fmt(2*Lv,2)} m.`]);
 
   /* ---- 3. esfuerzos ---- */
   const Q1d = gQ*aQ*Q1k;
@@ -396,7 +396,7 @@ function calc(){
   const nEst = Geff*Math.cos(aA)*(Math.tan(delta)+Math.tan(aA));
   const nd = $("nMode").value==="thesis" ? 100 : Math.max(100,nEst);
   if (nEst>100) msgs.push(["warn",`El axil estimado con ec. 5.11–5.12 (${fmt(nEst,0)} kN/m) supera los 100 kN/m que fija la tesis para el caso extremo L = 8 m, α = 15 % (PDF p. 132).`]);
-  if (mlong>400) msgs.push(["bad",`m⁺<sub>long,d</sub> = ${fmt(mlong,0)} kNm/m > 400 kNm/m: con h = 0,30 m no se garantiza la ductilidad; aumente h<sub>DT</sub> (PDF p. 128).`]);
+  if (mlong>400) msgs.push(["bad",`m⁺<sub>long,d</sub> = ${fmt(mlong,0)} kNm/m > 400 kNm/m: con h = 0.30 m no se garantiza la ductilidad; aumente h<sub>DT</sub> (PDF p. 128).`]);
   // giro bajo vehículo (solo articulada)
   // E fisurado ec. 4.12 con la armadura longitudinal dispuesta
   const secL = designSection(mreq, nd, d, h, fcd, fsd);
@@ -413,7 +413,7 @@ function calc(){
     msgs.push(["info","La unión articulada con pasador solo se admite en estribos con juntas; en (semi)integrales la OFROU recomienda la placa de deslizamiento o, según la tesis, la rótula de hormigón (PDF p. 111)."]);
   } else {
   }
-  if (!secL.fail && secL.xd>0.35) msgs.push(["warn",`x/d = ${fmt(secL.xd,2)} > 0,35 en la armadura longitudinal: ductilidad dudosa (criterio SIA 262 habitual). Aumente h<sub>DT</sub>.`]);
+  if (!secL.fail && secL.xd>0.35) msgs.push(["warn",`x/d = ${fmt(secL.xd,2)} > 0.35 en la armadura longitudinal: ductilidad dudosa (criterio SIA 262 habitual). Aumente h<sub>DT</sub>.`]);
   if (secL.fail) msgs.push(["bad","La sección longitudinal no resiste el momento con el canto dado: aumente h<sub>DT</sub> o d."]);
 
   /* ---------- salida ---------- */
@@ -445,14 +445,14 @@ function calc(){
    row2(`L<sub>hueco</sub>`, `<strong>${f(Lv,2)} m</strong> (${f(Lv/hmec,2)}·h)`, ex(`L<sub>hueco</sub> = h<sub>mec</sub> · tan(45° − φ<sub>d</sub>/2)`, `${f(hmec,2)} · tan(45° − ${f(phid/2,2)}°) = ${f(Lv,2)} m`), "ec. 5.3 · PDF p. 101") +
    row2(`L<sub>DT,min</sub>`, `${f(Lv,2)} m ${ok(L>Lv)}`, ex(`L<sub>DT</sub> > L<sub>hueco</sub>`, `${f(L,2)} > ${f(Lv,2)}`), "§ 5.2.1 · PDF p. 101") +
    row2(`Longitud apoyada L<sub>DT,extr</sub>`, `${f(Lext,2)} m`, ex(`L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>hueco</sub>`, `${f(L,2)} − ${f(Lv,2)} = ${f(Lext,2)} m`), "§ 5.4 · PDF p. 125") +
-   row2(`L<sub>hueco</sub> / L<sub>DT</sub>`, `${f(ratio,2)} ${ratio<=0.5?'<span class="tag ok">≤ 0,5</span>':'<span class="tag warn">> 0,5</span>'}`, ex(`L<sub>hueco</sub> / L<sub>DT</sub> ≤ 0,5 (el relleno no plastifica)`, `${f(Lv,2)} / ${f(L,2)} = ${f(ratio,2)}`), "fig. 5.29 · PDF p. 126–127") +
+   row2(`L<sub>hueco</sub> / L<sub>DT</sub>`, `${f(ratio,2)} ${ratio<=0.5?'<span class="tag ok">≤ 0.5</span>':'<span class="tag warn">> 0.5</span>'}`, ex(`L<sub>hueco</sub> / L<sub>DT</sub> ≤ 0.5 (el relleno no plastifica)`, `${f(Lv,2)} / ${f(L,2)} = ${f(ratio,2)}`), "fig. 5.29 · PDF p. 126–127") +
    row2(`L<sub>DT</sub> ≥ 2·L<sub>hueco</sub> <span class="tag warn">criterio deducido</span>`, `${f(2*Lv,2)} m ${L>=2*Lv?'<span class="tag ok">cumple</span>':'<span class="tag warn">no cumple</span>'}`, ex(`2 · L<sub>hueco</sub> (apoyo ≥ hueco)`, `2 · ${f(Lv,2)} = ${f(2*Lv,2)} m`), "de fig. 5.29, no exigido") +
    row2(`L<sub>DT</sub> recomendada`, `<strong>${f(Lrec,2)} m</strong>`, ex(`máx(2 · L<sub>hueco</sub> ; L<sub>DT</sub> por planeidad)`, `máx(${f(2*Lv,2)} ; ${Lreq!=null?f(Lreq,2):"—"}) = ${f(Lrec,2)} m`), "§ 5.2 + fig. 5.29") +
    "";
 
   const mExpr = conn==="pin"
-    ? ex(`m⁺<sub>long,d</sub> = 1,5 · Q<sub>1,d</sub> · L<sub>hueco</sub> / (2 · B<sub>vía</sub>)`, `${f(kenv,2)} · ${f(Q1d,0)} · ${f(Lv,2)} / (2 · ${f(B,2)}) = ${f(mlong,0)} kNm/m`)
-    : ex(`m⁺<sub>long,d</sub> = 1,5 · [Q<sub>1,d</sub> · (L<sub>hueco</sub> − L<sub>diag</sub>) + m⁻<sub>pl,d</sub> · B<sub>vía</sub>] / (2 · B<sub>vía</sub>)`, `${f(kenv,2)} · [${f(Q1d,0)} · (${f(Lv,2)} − ${f(Ldiag,2)}) + (${f(-mplUse,0)}) · ${f(B,2)}] / (2 · ${f(B,2)}) = ${f(mlong,0)} kNm/m`);
+    ? ex(`m⁺<sub>long,d</sub> = 1.5 · Q<sub>1,d</sub> · L<sub>hueco</sub> / (2 · B<sub>vía</sub>)`, `${f(kenv,2)} · ${f(Q1d,0)} · ${f(Lv,2)} / (2 · ${f(B,2)}) = ${f(mlong,0)} kNm/m`)
+    : ex(`m⁺<sub>long,d</sub> = 1.5 · [Q<sub>1,d</sub> · (L<sub>hueco</sub> − L<sub>diag</sub>) + m⁻<sub>pl,d</sub> · B<sub>vía</sub>] / (2 · B<sub>vía</sub>)`, `${f(kenv,2)} · [${f(Q1d,0)} · (${f(Lv,2)} − ${f(Ldiag,2)}) + (${f(-mplUse,0)}) · ${f(B,2)}] / (2 · ${f(B,2)}) = ${f(mlong,0)} kNm/m`);
   $("tF").innerHTML = hdr(["Esfuerzo","Valor","Expresión usada","Fuente"]) +
    row(`Q<sub>1,d</sub> por eje del tándem del carril 1`, `${f(Q1d,0)} kN`, ex(`Q<sub>1,d</sub> = γ<sub>Q</sub> · α<sub>Q1</sub> · Q<sub>1k</sub>`, `${f(gQ,2)} · ${f(aQ,2)} · ${f(Q1k,0)} = ${f(Q1d,0)} kN`), "PDF p. 126") +
    `<tr><td colspan="4" class="note">m<sup>+</sup><sub>long,d</sub> se deduce en la tesis con modelos de losa de elementos finitos (fig. 5.29–5.30, PDF p. 126–129).</td></tr>` +
@@ -462,7 +462,7 @@ function calc(){
    row(`m⁺<sub>pl,d</sub> requerido transversal (mínimo)`, `<strong>100 kNm/m</strong>`, ex(`m⁺<sub>pl,d,trans</sub> ≥ 100 kNm/m`, ""), "§ 5.4.3 · PDF p. 133") +
    row(`n<sub>max</sub> estimado por rozamiento`, `${f(nEst,0)} kN/m`, ex(`n<sub>max</sub> = G<sub>ef</sub> · cos α · (tan δ + tan α), δ = 2φ<sub>k</sub>/3`, `G<sub>ef</sub> = ${f(Geff,0)} kN/m; α = ${f(deg(aA),2)}°; δ = ${f(deg(delta),1)}° → ${f(nEst,0)} kN/m`), "ec. 5.11–5.12 · PDF p. 132") +
    row(`n<sub>d</sub> de tracción usado`, `<strong>${f(nd,0)} kN/m</strong>`, ex(`n<sub>d</sub> = ${$("nMode").value==="thesis"?"100 kN/m (tesis)":"máx(100 ; n<sub>max</sub>)"}`, $("nMode").value==="thesis"?"":`máx(100 ; ${f(nEst,0)}) = ${f(nd,0)} kN/m`), "§ 5.4.3 · PDF p. 133") +
-   (conn==="pin" ? row(`Δα<sub>DT</sub> al paso del vehículo`, `${f(dAlpha,1)} ‰ ${dAlpha<=ROT_LIMIT?'<span class="tag ok">≤ 4 ‰</span>':'<span class="tag warn">> 4 ‰</span>'}`, ex(`Δα<sub>DT</sub> = 0,5 · 3 · Q · L<sub>hueco</sub>² / (B<sub>vía</sub> · h<sub>DT</sub>³ · E<sub>fis</sub>)`, `0,5 · 3 · ${f(Q1s,0)} kN · ${f(Lv,2)}² / (${f(B,2)} · ${f(h,2)}³ · ${f(Efis,0)} MPa) = ${f(dAlpha,1)} ‰`), "ec. 5.15 · PDF p. 134") : "") +
+   (conn==="pin" ? row(`Δα<sub>DT</sub> al paso del vehículo`, `${f(dAlpha,1)} ‰ ${dAlpha<=ROT_LIMIT?'<span class="tag ok">≤ 4 ‰</span>':'<span class="tag warn">> 4 ‰</span>'}`, ex(`Δα<sub>DT</sub> = 0.5 · 3 · Q · L<sub>hueco</sub>² / (B<sub>vía</sub> · h<sub>DT</sub>³ · E<sub>fis</sub>)`, `0,5 · 3 · ${f(Q1s,0)} kN · ${f(Lv,2)}² / (${f(B,2)} · ${f(h,2)}³ · ${f(Efis,0)} MPa) = ${f(dAlpha,1)} ‰`), "ec. 5.15 · PDF p. 134") : "") +
    row(`Δα<sub>DT</sub> por u<sub>imp</sub> (orientativo)`, `${f(dAlphaU,1)} ‰`, ex(`Δα<sub>DT</sub> ≈ (1 ‰ / 50 mm) · u<sub>imp</sub>`, `${f(ROT_UIMP,3)} · ${f(uimp,1)} = ${f(dAlphaU,1)} ‰`), "fig. 4.29 · PDF p. 93");
 
   const RHO_H = 0.003;                                    // cuantía de la armadura superior de la rótula (tesis, PDF p. 125)
@@ -534,7 +534,7 @@ function drawElev(o){
   // tándem
   const xc=o.Lv/2;
   for (const dx of [-0.6,0.6]){ const x=X(xc+dx); s+=`<line x1="${x}" x2="${x}" y1="${Y(0)-34}" y2="${Y(0)-3}" stroke="${col('--bad')}" stroke-width="2.5" marker-end="url(#ar2)"/>`; }
-  s+=`<text x="${X(xc)}" y="${Y(0)-40}" text-anchor="middle" font-size="11" style="fill:${col('--bad')}">2 × Q<tspan font-size="8" dy="2">1,d</tspan><tspan dy="-2"> = 2 × ${fmt(o.Q1d,0)} kN · 1,20 m</tspan></text>`;
+  s+=`<text x="${X(xc)}" y="${Y(0)-40}" text-anchor="middle" font-size="11" style="fill:${col('--bad')}">2 × Q<tspan font-size="8" dy="2">1,d</tspan><tspan dy="-2"> = 2 × ${fmt(o.Q1d,0)} kN · 1.20 m</tspan></text>`;
   // e_extr
   s+=`<line x1="${X(o.L)+10}" x2="${X(o.L)+10}" y1="${Y(0)}" y2="${Y(yt1)}" stroke="${fg}" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="${X(o.L)+14}" y="${(Y(0)+Y(yt1))/2+4}" font-size="11">e<tspan font-size="8" dy="2">extr</tspan><tspan dy="-2"> = ${fmt(o.eextr,2)} m</tspan></text>`;
   // cotas
@@ -575,11 +575,11 @@ function drawPlan(o){
   const xR=X(o.L)+12;
   const vdim=(y1,y2,x,label,c,ty)=>`<line x1="${x}" x2="${x}" y1="${Y(y1)}" y2="${Y(y2)}" stroke="${c}" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="${x+5}" y="${ty!=null?ty:(Y(y1)+Y(y2))/2+4}" font-size="11" style="fill:${c}">${label}</text>`;
   s+=vdim(-o.B/2,o.B/2,xR,`B<tspan font-size="8" dy="2">vía</tspan><tspan dy="-2"> = ${fmt(o.B,2)} m</tspan>`,fg);
-  s+=`<line x1="${X(xc)}" x2="${X(xc)}" y1="${Y(-1)}" y2="${Y(1)}" stroke="${bad}" marker-start="url(#ar)" marker-end="url(#ar)"/><text transform="translate(${X(xc)+15} ${Y(0)}) rotate(-90)" text-anchor="middle" font-size="11" style="fill:${bad}">2,00 m entre ruedas</text>`;
-  s+=dimH(X(xc-0.6),X(xc+0.6),Y(-wy/2)-8,`1,20 m`,bad);
+  s+=`<line x1="${X(xc)}" x2="${X(xc)}" y1="${Y(-1)}" y2="${Y(1)}" stroke="${bad}" marker-start="url(#ar)" marker-end="url(#ar)"/><text transform="translate(${X(xc)+15} ${Y(0)}) rotate(-90)" text-anchor="middle" font-size="11" style="fill:${bad}">2.00 m entre ruedas</text>`;
+  s+=dimH(X(xc-0.6),X(xc+0.6),Y(-wy/2)-8,`1.20 m`,bad);
   s+=dimH(X(0),X(o.Lv),Y(wy/2)+30,`L<tspan font-size="8" dy="2">hueco</tspan><tspan dy="-2"> = ${fmt(o.Lv,2)} m (luz de cálculo)</tspan>`,wa,"start");
   const wd=o.Q1d/2;
-  $("planNote").innerHTML=`Planta del carril 1 sobre la losa. Cuatro cargas puntuales, una por cada punto de contacto del tándem: <strong>${fmt(o.Q1k/2,0)} kN</strong> cada una (Q<sub>1k</sub>/2, valor característico); en ELU, γ<sub>Q</sub>·α<sub>Q1</sub>·Q<sub>1k</sub>/2 = ${fmt(o.gQ,2)}·${fmt(o.aQ,2)}·${fmt(o.Q1k,0)}/2 = <strong>${fmt(wd,1)} kN</strong> por rueda (${fmt(o.Q1d,0)} kN por eje, ${fmt(2*o.Q1d,0)} kN el tándem). Ruedas de 0,40 × 0,40 m, 1,20 m entre ejes y 2,00 m entre ruedas (modelo 1, fig. 4.25). No se aplica ninguna carga uniforme.`;
+  $("planNote").innerHTML=`Planta del carril 1 sobre la losa. Cuatro cargas puntuales, una por cada punto de contacto del tándem: <strong>${fmt(o.Q1k/2,0)} kN</strong> cada una (Q<sub>1k</sub>/2, valor característico); en ELU, γ<sub>Q</sub>·α<sub>Q1</sub>·Q<sub>1k</sub>/2 = ${fmt(o.gQ,2)}·${fmt(o.aQ,2)}·${fmt(o.Q1k,0)}/2 = <strong>${fmt(wd,1)} kN</strong> por rueda (${fmt(o.Q1d,0)} kN por eje, ${fmt(2*o.Q1d,0)} kN el tándem). Ruedas de 0.40 × 0.40 m, 1.20 m entre ejes y 2.00 m entre ruedas (modelo 1, fig. 4.25). No se aplica ninguna carga uniforme.`;
   const H=Y(wy/2)+42; svg.setAttribute("viewBox",`0 0 ${X(xr)+110} ${H}`);
   svg.innerHTML=s;
 }
@@ -638,7 +638,7 @@ const NOTACION = [
  ["χ, χ<sub>adm</sub>","Cambio de pendiente de la superficie entre dos rectas de 1 m, y su límite (20 ‰ autopistas, 28 ‰ nacionales)","‰","tesis"],
  ["h<sub>mec</sub>","Altura del mecanismo activo: muro del estribo (integral) o canto del tablero (semi-integral)","m","tesis"],
  ["φ<sub>k</sub>, φ<sub>d</sub>","Ángulo de rozamiento del relleno, característico y de cálculo","°","tesis"],
- ["γ<sub>M</sub>","Coeficiente parcial sobre tan φ (1,2, SIA 267)","–","tesis"],
+ ["γ<sub>M</sub>","Coeficiente parcial sobre tan φ (1.2, SIA 267)","–","tesis"],
  ["γ<sub>r</sub>","Peso específico del relleno","kN/m³","tesis"],
  ["L<sub>hueco</sub>","Longitud del hueco detrás del muro que la losa debe salvar","m","tesis (L<sub>vide</sub>)"],
  ["L<sub>DT,extr</sub>","Longitud de losa apoyada sobre el relleno = L<sub>DT</sub> − L<sub>hueco</sub>","m","tesis"],
@@ -648,7 +648,7 @@ const NOTACION = [
  ["m<sup>+</sup><sub>long,d</sub>","Momento positivo longitudinal de cálculo de la losa","kNm/m","tesis"],
  ["m<sup>+</sup><sub>pl,d</sub>","Momento plástico positivo de cálculo de la sección de la losa","kNm/m","tesis"],
  ["m<sup>−</sup><sub>pl,d</sub>","Momento plástico de cálculo de la rótula de hormigón (−55 kNm/m en la tesis)","kNm/m","tesis"],
- ["L<sub>diag</sub>","Posición de la rótula respecto al estribo (0,62 m)","m","tesis"],
+ ["L<sub>diag</sub>","Posición de la rótula respecto al estribo (0.62 m)","m","tesis"],
  ["n<sub>d</sub>, n<sub>max</sub>","Axil de tracción de cálculo en la losa y su máximo por rozamiento con el relleno","kN/m","tesis"],
  ["G<sub>ef</sub>","Peso efectivo sobre la interfaz losa–relleno (ec. 5.11)","kN/m","tesis"],
  ["δ","Ángulo de rozamiento de la interfaz = 2φ<sub>k</sub>/3","°","tesis"],
@@ -660,7 +660,7 @@ const NOTACION = [
  ["E<sub>fis</sub>","Rigidez de la losa fisurada","MPa","tesis (E<sub>fissuré</sub>)"],
  ["n<sub>0</sub>, x<sub>0</sub>","Relación de módulos E<sub>s</sub>/E<sub>c,0</sub> y profundidad de la fibra neutra fisurada","–, m","tesis"],
  ["Δα<sub>DT</sub>","Giro entre estribo y losa (límite OFROU 4 ‰ en autopistas y nacionales)","‰","tesis"],
- ["M<sub>s</sub>, a, x","Momento referido a la armadura, altura del bloque de compresiones (0,85·x) y profundidad de la fibra neutra","kNm/m, m","aquí"]
+ ["M<sub>s</sub>, a, x","Momento referido a la armadura, altura del bloque de compresiones (0.85·x) y profundidad de la fibra neutra","kNm/m, m","aquí"]
 ];
 const EXPRESIONES = [
  ["u<sub>imp</sub> = k<sub>tablero</sub> · L<sub>pf</sub> · ε<sub>imp</sub>, ε<sub>imp</sub> = ε<sub>sh</sub> + ε<sub>cr</sub> + ε<sub>ΔT</sub>","ec. 2.1","PDF p. 27"],
@@ -668,24 +668,24 @@ const EXPRESIONES = [
  ["χ(x) = [2·w(x) − w(x+1 m) − w(x−1 m)] / 1 m ≤ χ<sub>adm</sub>","ec. 4.4","PDF p. 76"],
  ["u<sub>imp,adm</sub> = f(e<sub>extr,DT</sub>), ábaco con χ<sub>adm</sub> = 20 ‰ / 28 ‰ (digitalizado)","fig. 5.9","PDF p. 105"],
  ["e<sub>extr,req</sub> tal que f<sub>margen</sub> · f(e<sub>extr,req</sub>) = u<sub>imp</sub> (inversa de la envolvente); L<sub>DT,nec</sub> = (e<sub>extr,req</sub> − e<sub>0,DT</sub>) / α<sub>DT</sub>","fig. 5.8 y 5.9","PDF p. 104–105"],
- ["u<sub>imp,adm,diseño</sub> = f<sub>margen</sub> · u<sub>imp,adm</sub> (f<sub>margen</sub> = 0,75 por defecto)","§ 5.2.3","PDF p. 110"],
+ ["u<sub>imp,adm,diseño</sub> = f<sub>margen</sub> · u<sub>imp,adm</sub> (f<sub>margen</sub> = 0.75 por defecto)","§ 5.2.3","PDF p. 110"],
  ["φ<sub>d</sub> = atan(tan φ<sub>k</sub> / γ<sub>M</sub>)","§ 4.4.2","PDF p. 91"],
  ["L<sub>hueco</sub> = h<sub>mec</sub> · tan(45° − φ<sub>d</sub>/2)","ec. 5.3 (corregida)","PDF p. 101–102"],
  ["L<sub>DT</sub> > L<sub>hueco</sub> (longitud mínima)","§ 5.2.1","PDF p. 101"],
  ["L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>hueco</sub>","§ 5.4","PDF p. 125"],
- ["L<sub>hueco</sub> / L<sub>DT</sub> ≤ 0,5 (el relleno bajo el extremo no plastifica; lectura nuestra)","fig. 5.29","PDF p. 126"],
+ ["L<sub>hueco</sub> / L<sub>DT</sub> ≤ 0.5 (el relleno bajo el extremo no plastifica; lectura nuestra)","fig. 5.29","PDF p. 126"],
  ["L<sub>DT</sub> ≥ 2 · L<sub>hueco</sub> (criterio deducido, no exigido por la tesis); L<sub>DT,rec</sub> = máx(2 · L<sub>hueco</sub> ; L<sub>DT,nec</sub>)","fig. 5.29","PDF p. 126–127"],
- ["Q<sub>1,d</sub> = γ<sub>Q</sub> · α<sub>Q1</sub> · Q<sub>1k</sub> = 1,5 · 0,9 · 300 = 405 kN","§ 5.4.1","PDF p. 126"],
- ["m<sup>+</sup><sub>long,d</sub> = 1,5 · Q<sub>1,d</sub> · L<sub>hueco</sub> / (2 · B<sub>vía</sub>) (unión articulada)","ec. 5.13","PDF p. 133"],
- ["m<sup>+</sup><sub>long,d</sub> = 1,5 · [Q<sub>1,d</sub> · (L<sub>hueco</sub> − L<sub>diag</sub>) + m<sup>−</sup><sub>pl,d</sub> · B<sub>vía</sub>] / (2 · B<sub>vía</sub>) (rótula)","ec. 5.14","PDF p. 133"],
+ ["Q<sub>1,d</sub> = γ<sub>Q</sub> · α<sub>Q1</sub> · Q<sub>1k</sub> = 1.5 · 0.9 · 300 = 405 kN","§ 5.4.1","PDF p. 126"],
+ ["m<sup>+</sup><sub>long,d</sub> = 1.5 · Q<sub>1,d</sub> · L<sub>hueco</sub> / (2 · B<sub>vía</sub>) (unión articulada)","ec. 5.13","PDF p. 133"],
+ ["m<sup>+</sup><sub>long,d</sub> = 1.5 · [Q<sub>1,d</sub> · (L<sub>hueco</sub> − L<sub>diag</sub>) + m<sup>−</sup><sub>pl,d</sub> · B<sub>vía</sub>] / (2 · B<sub>vía</sub>) (rótula)","ec. 5.14","PDF p. 133"],
  ["m<sup>+</sup><sub>pl,d</sub> ≥ 100 kNm/m (longitudinal y transversal); n<sub>d</sub> = 100 kN/m","§ 5.4.3","PDF p. 133"],
  ["G<sub>ef</sub> = γ<sub>r</sub> · [L<sub>DT</sub>/2 · (e<sub>0,DT</sub> + e<sub>extr,DT</sub>) + e<sub>extr,DT</sub>² / (2·tan(45° + φ/2))] + γ<sub>c</sub> · L<sub>DT</sub> · h<sub>DT</sub>","ec. 5.11","PDF p. 132"],
  ["δ<sub>ef</sub> = atan[n<sub>max</sub> / (G<sub>ef</sub> · cos α<sub>DT</sub>) − tan α<sub>DT</sub>] ⇒ n<sub>max</sub> = G<sub>ef</sub> · cos α · (tan δ + tan α), δ = 2φ/3","ec. 5.12 (despejada)","PDF p. 132–133"],
  ["E<sub>fis</sub> = ρ · d³ · E<sub>s</sub> · (1 − x<sub>0</sub>/d) · (1 − x<sub>0</sub>/(3d)) / (h³/12); x<sub>0</sub> = d · ρ · n<sub>0</sub> · (√(1 + 2/(ρ·n<sub>0</sub>)) − 1); n<sub>0</sub> = E<sub>s</sub>/E<sub>c,0</sub>","ec. 4.12","PDF p. 90–91"],
- ["Δα<sub>DT</sub> = 0,5 · 3 · Q<sub>1,d</sub> · L<sub>hueco</sub>² / (B<sub>vía</sub> · h<sub>DT</sub>³ · E<sub>fis</sub>) (con L² corregido)","ec. 5.15","PDF p. 134"],
+ ["Δα<sub>DT</sub> = 0.5 · 3 · Q<sub>1,d</sub> · L<sub>hueco</sub>² / (B<sub>vía</sub> · h<sub>DT</sub>³ · E<sub>fis</sub>) (con L² corregido)","ec. 5.15","PDF p. 134"],
  ["Δα<sub>DT</sub>(u<sub>imp</sub>) ≈ 1 ‰ · u<sub>imp</sub> / 50 mm","fig. 4.29","PDF p. 93"],
  ["M<sub>s</sub> = m − n · (d − h/2); a = d − √(d² − 2·M<sub>s</sub>/f<sub>cd</sub>); A<sub>s</sub> = (f<sub>cd</sub> · a + n) / f<sub>sd</sub>","SIA 262 (estándar)","no está en la tesis"],
- ["A<sub>s</sub> de la armadura superior de la rótula = máx(ρ · b · d ; A<sub>s</sub> para m = 55 kNm/m), ρ = 0,3 % (solo armadura traccionada, d = canto útil superior)","fig. 5.15 y § 5.3","PDF p. 112, 125, 127"],
+ ["A<sub>s</sub> de la armadura superior de la rótula = máx(ρ · b · d ; A<sub>s</sub> para m = 55 kNm/m), ρ = 0.3 % (solo armadura traccionada, d = canto útil superior)","fig. 5.15 y § 5.3","PDF p. 112, 125, 127"],
  ["s = mayor múltiplo de 5 mm, ≤ 250 mm, tal que (π · Ø² / 4) · 1000 / s ≥ A<sub>s</sub> para el diámetro Ø elegido","criterio de esta herramienta","no está en la tesis"],
  ["M<sub>Rd</sub> = (A<sub>s</sub> · f<sub>sd</sub> − n) · (d − a/2) + n · (d − h/2), a = (A<sub>s</sub> · f<sub>sd</sub> − n) / f<sub>cd</sub>, con A<sub>s</sub> = (π · Ø² / 4) · 1000 / s","SIA 262 (estándar)","no está en la tesis"],
  ["M<sub>Sd</sub>: longitudinal = máx(m<sup>+</sup><sub>long,d</sub> ; 100) con n<sub>d</sub>; transversal = 100; rótula = 55 kNm/m","§ 5.4.3 y p. 127","PDF p. 127, 133"],
