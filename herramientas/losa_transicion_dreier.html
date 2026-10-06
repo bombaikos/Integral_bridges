@@ -245,7 +245,7 @@ button:disabled{opacity:.6; cursor:progress}
         <li><strong>m⁻<sub>pl,d</sub> = −55 kNm/m.</strong> Valor de la tesis (PDF p. 127), usado en la ec. 5.14 para la armadura inferior. La armadura superior de la rótula se toma con ρ = A<sub>s</sub>/(b·d) = 0.3 % (solo la armadura traccionada, como en los ensayos DT1); de ella solo se da el M<sub>Rd</sub>.</li>
         <li><strong>Ábaco.</strong> Los cálculos de la fig. 5.9 son de deformación plana con h<sub>DT</sub> = 0.30 m, e<sub>0</sub> = 0.10 m, grava compactada y solo dirección activa. No incluyen ciclos térmicos ni compactación por tráfico pesado, de ahí el margen de § 5.2.3. La tesis da como lectura redondeada para la losa estándar 40 mm (autopista) y 55 mm (nacional), y L<sub>pf,adm</sub> = 50 y 70 m (PDF p. 106, 110).</li>
         <li><strong>Cortante.</strong> Comprobación aproximada: la tesis remite a Fernández Ruiz et al. 2009. Se coloca el tándem con el eje más próximo a una distancia d del apoyo y se reparte en 2.00 m; no se descuenta la carga que va directa al apoyo ni se suman otras cargas.</li>
-        <li><strong>Presión sobre el relleno.</strong> La carga del tándem se reparte con 45° desde la superficie hasta el relleno y se promedia en toda la longitud apoyada L<sub>DT,extr</sub>; en realidad se concentra cerca del extremo del hueco. σ<sub>v,pl,d</sub> ya usa φ<sub>d</sub> (γ<sub>M</sub> = 1.2), por eso no se divide de nuevo. Para las acciones permanentes se usa 1.35 (criterio de esta herramienta).</li>
+        <li><strong>Presión sobre el relleno.</strong> La carga del tándem se reparte con 45° desde la superficie hasta el relleno y se promedia en toda la longitud apoyada L<sub>DT,extr</sub>; en realidad se concentra cerca del extremo del hueco. El límite de 300 kN/m² es un criterio propio. Para las acciones permanentes se usa 1.35 (criterio de esta herramienta).</li>
         <li><strong>Armadura.</strong> La separación s se calcula para el diámetro elegido (Ø12, 16, 20 o 25) como la mayor, en múltiplos de 5 mm y no superior a 250 mm, que cubre A<sub>s</sub>. Las barras longitudinales y las de la rótula se reparten en el ancho del estribo; las transversales, a lo largo de L<sub>DT</sub>. Materiales: f<sub>cd</sub> y f<sub>sd</sub> según los datos de entrada.</li>
         <li><strong>Longitud apoyada.</strong> La tesis solo define L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>hueco</sub> y no fija un mínimo. Con L<sub>hueco</sub>/L<sub>DT</sub> &lt; 0.5 el relleno bajo el extremo no plastifica y el momento no depende de L<sub>DT</sub>; cerca de 1 plastifica (PDF p. 126). El límite 0.5 es una lectura nuestra de esa frase; el mínimo de la tesis es L<sub>DT</sub> &gt; L<sub>hueco</sub>. Caso base de la tesis: L<sub>DT</sub> = 6 m con L<sub>hueco</sub> = 2 m (0.33).</li>
         <li><strong>Giro por u<sub>imp</sub>.</strong> ≈ 1 ‰ para 50 mm (fig. 4.29, PDF p. 93); aquí se escala linealmente, como orientación.</li>
@@ -461,9 +461,6 @@ function calc(){
     ? ex(`m⁺<sub>long,d</sub> = 1.5 · Q<sub>1,d</sub> · L<sub>hueco</sub> / (2 · B<sub>vía</sub>)`, `${f(kenv,2)} · ${f(Q1d,0)} · ${f(Lv,2)} / (2 · ${f(B,2)}) = ${f(mlong,0)} kNm/m`)
     : ex(`m⁺<sub>long,d</sub> = 1.5 · [Q<sub>1,d</sub> · (L<sub>hueco</sub> − L<sub>diag</sub>) + m⁻<sub>pl,d</sub> · B<sub>vía</sub>] / (2 · B<sub>vía</sub>)`, `${f(kenv,2)} · [${f(Q1d,0)} · (${f(Lv,2)} − ${f(Ldiag,2)}) + (${f(-mplUse,0)}) · ${f(B,2)}] / (2 · ${f(B,2)}) = ${f(mlong,0)} kNm/m`);
   $("tF").innerHTML = hdr(["Esfuerzo","Valor","Expresión usada","Fuente"]) +
-   row(`Q<sub>1,d</sub> por eje del tándem del carril 1`, `${f(Q1d,0)} kN`, ex(`Q<sub>1,d</sub> = γ<sub>Q</sub> · α<sub>Q1</sub> · Q<sub>1k</sub>`, `${f(gQ,2)} · ${f(aQ,2)} · ${f(Q1k,0)} = ${f(Q1d,0)} kN`), "PDF p. 126") +
-   `<tr><td colspan="4" class="note">m<sup>+</sup><sub>long,d</sub> se deduce en la tesis con modelos de losa de elementos finitos (fig. 5.29–5.30, PDF p. 126–129).</td></tr>` +
-   (conn==="hinge" ? row(`m⁻<sub>pl,d</sub> de la rótula`, `−${f(mplUse,0)} kNm/m`, ex(`valor de la tesis`, ""), "PDF p. 127") : "")
    row(`m⁺<sub>long,d</sub> (${mEq})`, `${f(mlong,0)} kNm/m`, mExpr, `${mEq} · PDF p. 133`) +
    row(`m⁺<sub>pl,d</sub> requerido longitudinal`, `<strong>${f(mreq,0)} kNm/m</strong>`, ex(`m⁺<sub>pl,d</sub> ≥ máx(m⁺<sub>long,d</sub> ; 100)`, `máx(${f(mlong,0)} ; 100) = ${f(mreq,0)} kNm/m`), "§ 5.4.3 · PDF p. 133") +
    row(`m⁺<sub>pl,d</sub> requerido transversal (mínimo)`, `<strong>100 kNm/m</strong>`, ex(`m⁺<sub>pl,d,trans</sub> ≥ 100 kNm/m`, ""), "§ 5.4.3 · PDF p. 133") +
@@ -495,10 +492,7 @@ function calc(){
   const Ls = conn==="hinge" ? Math.max(Lv-Ldiag,0.01) : Math.max(Lv,0.01);              // luz de cálculo del cortante
   const VsdA = reaction(Ls, d);                                                          // extremo del estribo (rótula o unión articulada)
   const VsdB = reaction(Ls, d) + (conn==="hinge" ? mplUse/Ls : 0);                       // extremo del relleno: suma el momento de la rótula
-  const Nq = Math.exp(Math.PI*Math.tan(rad(phid)))*Math.pow(Math.tan(rad(45+phid/2)),2);
-  const zg = 1.5*(Nq-1)*Math.tan(rad(phid));
-  const hrem = (eextr + h)/2;
-  const sigPl = Lext>0 ? 0.5*gs*Lext*zg + gs*hrem*Nq : NaN;                             // kN/m², ec. 4.9–4.11
+  const P_LIM = 300;                                      // kN/m², límite de la presión sobre el relleno (criterio propio)
   const bPres = 2.00 + 0.40 + 2*(eextr + h);                                             // m, reparto a 45° desde la superficie hasta el relleno
   const pEd = Lext>0 ? 2*Q1d/(Lext*bPres) + GAMMA_G*(gs*eextr + 25*h) : NaN;            // kN/m²
   const shearTag = (V)=> V<=VRd ? '<span class="tag ok">cumple</span>' : `<span class="tag bad">comprobar necesidad de cercos con V<sub>Sd</sub> = ${fmt(V,0)} kN/m</span>`;
@@ -509,8 +503,7 @@ function calc(){
    row2(`V<sub>Sd</sub> en el extremo del relleno`, shearCell(VsdB)) +
    row2(`Ancho de reparto de la carga sobre el relleno`, Lext>0 ? `${fmt(bPres,2)} m` : "—") +
    row2(`Presión sobre el relleno p<sub>Ed</sub>`, Lext>0 ? `${fmt(pEd,0)} kN/m²` : "—") +
-   row2(`Presión de plastificación σ<sub>v,pl,d</sub>`, Lext>0 ? `${fmt(sigPl,0)} kN/m²` : "—") +
-   row2(`p<sub>Ed</sub> / σ<sub>v,pl,d</sub>`, Lext>0 ? `${fmt(pEd/sigPl,2)} ${pEd<=sigPl?'<span class="tag ok">cumple</span>':'<span class="tag bad">no cumple</span>'}` : "—");
+   row2(`Presión límite sobre el relleno (criterio propio)`, `${P_LIM} kN/m² ${Lext>0 ? (pEd<=P_LIM?'<span class="tag ok">cumple</span>':'<span class="tag bad">no cumple</span>') : ""}`);
 
   $("msgs").innerHTML = msgs.length ? msgs.map(([c,t])=>`<li class="${c}">${t}</li>`).join("") : `<li class="info">Sin avisos.</li>`;
 
@@ -722,7 +715,7 @@ const EXPRESIONES = [
  ["M<sub>Sd</sub>: longitudinal = máx(m<sup>+</sup><sub>long,d</sub> ; 100) con n<sub>d</sub>; transversal = 100; rótula: sin M<sub>Sd</sub> (−55 kNm/m solo se usa para m<sup>+</sup><sub>long,d</sub>)","§ 5.4.3 y p. 127","PDF p. 127, 133"],
  ["V<sub>Rd</sub> ≈ 1.00 m · d · 550 kN/m² (comprobación aproximada de cortante)","criterio de esta herramienta","no está en la tesis"],
  ["V<sub>Sd</sub> = [Q<sub>1,d</sub> · (1 − a/L<sub>s</sub>) + Q<sub>1,d</sub> · (1 − (a + 1.20)/L<sub>s</sub>)] / 2.00 m, con a = d y L<sub>s</sub> = L<sub>hueco</sub> (articulada) o L<sub>hueco</sub> − L<sub>diag</sub> (rótula); en el extremo del relleno, + |m<sup>−</sup><sub>pl,d</sub>| / L<sub>s</sub> si hay rótula","estática de viga biapoyada","no está en la tesis"],
- ["σ<sub>v,pl</sub> = ½ · γ<sub>relleno</sub> · B<sub>F</sub> · ζ<sub>γ</sub> + γ<sub>relleno</sub> · h<sub>relleno</sub> · ζ<sub>q</sub>; ζ<sub>q</sub> = e<sup>π·tan φ</sup> · tan²(45° + φ/2); ζ<sub>γ</sub> = 1.5 · (ζ<sub>q</sub> − 1) · tan φ; B<sub>F</sub> = L<sub>DT,extr</sub>; h<sub>relleno</sub> = (e<sub>extr,DT</sub> + h<sub>DT</sub>)/2; φ = φ<sub>d</sub>","ec. 4.9–4.11","PDF p. 90–91"],
+ ["p<sub>Ed</sub> ≤ 300 kN/m² (límite de la presión sobre el relleno)","criterio de esta herramienta","no está en la tesis"],
  ["p<sub>Ed</sub> = 2 · Q<sub>1,d</sub> / (L<sub>DT,extr</sub> · b) + 1.35 · (γ<sub>relleno</sub> · e<sub>extr,DT</sub> + 25 · h<sub>DT</sub>), b = 2.00 + 0.40 + 2 · (e<sub>extr,DT</sub> + h<sub>DT</sub>)","criterio de esta herramienta","no está en la tesis"],
  ["f<sub>cd</sub> = η<sub>fc</sub> · f<sub>ck</sub> / γ<sub>c</sub>; f<sub>sd</sub> = f<sub>sk</sub> / γ<sub>s</sub>; E<sub>c,0</sub> = 10 000 · (f<sub>ck</sub> + 8)<sup>1/3</sup>","SIA 262 (estándar)","no está en la tesis"]
 ];
