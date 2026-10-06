@@ -780,11 +780,11 @@ async function exportDocx(btn){
     children.push(new Paragraph({heading:HeadingLevel.HEADING_1,spacing:{before:240,after:100},children:[new TextRun({text:"Datos de entrada",font:FONT,bold:true,size:30,color:"1D5A8C"})]}));
     const inRows=[];
     inputs.forEach(([lg,parts])=>{
-      inRows.push(new TableRow({children:[new TableCell({columnSpan:2,width:{size:W,type:WidthType.DXA},shading:{type:ShadingType.CLEAR,fill:"E4EEF7",color:"auto"},borders:{top:bd,bottom:bd,left:bd,right:bd},children:[new Paragraph({children:[new TextRun({text:lg,bold:true,font:FONT,size:18})]})]})]}));
+      inRows.push(new TableRow({children:[new TableCell({columnSpan:2,width:{size:W,type:WidthType.DXA},shading:{type:ShadingType.CLEAR,fill:"E4EEF7",color:"auto"},borders:{top:bd,bottom:bd,left:bd,right:bd},children:[new Paragraph({style:"TextoTabla",children:[new TextRun({text:lg,bold:true,font:FONT})]})]})]}));
       parts.forEach(([lab,v])=>{
         inRows.push(new TableRow({children:[
-          new TableCell({width:{size:5600,type:WidthType.DXA},borders:{top:bd,bottom:bd,left:bd,right:bd},children:[new Paragraph({children:lab===""?[new TextRun({text:v,font:FONT,size:18})]:runsOf(lab,{size:18})})]}),
-          new TableCell({width:{size:W-5600,type:WidthType.DXA},borders:{top:bd,bottom:bd,left:bd,right:bd},children:[new Paragraph({alignment:AlignmentType.RIGHT,children:lab===""?[]:[new TextRun({text:v,font:FONT,size:18})]})]})]}));
+          new TableCell({width:{size:5600,type:WidthType.DXA},borders:{top:bd,bottom:bd,left:bd,right:bd},children:[new Paragraph({style:"TextoTabla",children:lab===""?[new TextRun({text:v,font:FONT})]:runsOf(lab,{})})]}),
+          new TableCell({width:{size:W-5600,type:WidthType.DXA},borders:{top:bd,bottom:bd,left:bd,right:bd},children:[new Paragraph({style:"TextoTabla",alignment:AlignmentType.RIGHT,children:lab===""?[]:[new TextRun({text:v,font:FONT})]})]})]}));
       });
     });
     children.push(new Table({width:{size:W,type:WidthType.DXA},columnWidths:[5600,W-5600],rows:inRows}));
@@ -800,7 +800,7 @@ async function exportDocx(btn){
         const isNote=c.classList.contains("note");
         return new TableCell({columnSpan:cs>1?cs:undefined,width:{size:w,type:WidthType.DXA},borders:{top:bd,bottom:bd,left:bd,right:bd},
           shading:c.tagName==="TH"?{type:ShadingType.CLEAR,fill:"E4EEF7",color:"auto"}:undefined,margins:{top:40,bottom:40,left:70,right:70},
-          children:[new Paragraph({alignment:c.classList.contains("n")?AlignmentType.RIGHT:AlignmentType.LEFT,children:runsOf(c,{size:isNote?16:(c.classList.contains("ref")?15:17),b:c.tagName==="TH",i:isNote})})]});})});});
+          children:[new Paragraph({style:isNote?"TextoTablaNota":(c.classList.contains("ref")?"TextoTablaRef":"TextoTabla"),alignment:c.classList.contains("n")?AlignmentType.RIGHT:AlignmentType.LEFT,children:runsOf(c,{b:c.tagName==="TH"})})]});})});});
       return new Table({width:{size:W,type:WidthType.DXA},columnWidths:cw,rows});
     };
     const walk=async(el)=>{
@@ -810,7 +810,7 @@ async function exportDocx(btn){
         else if(cl.contains("kpis")){
           const cells=[...n.children].map(k=>new TableCell({width:{size:Math.floor(W/n.children.length),type:WidthType.DXA},borders:{top:bd,bottom:bd,left:bd,right:bd},margins:{top:60,bottom:60,left:80,right:80},
             shading:k.classList.contains("ok")?{type:ShadingType.CLEAR,fill:"E3F3E9",color:"auto"}:(k.classList.contains("bad")?{type:ShadingType.CLEAR,fill:"F8E4E1",color:"auto"}:undefined),
-            children:[new Paragraph({children:runsOf(k.querySelector(".k"),{size:16,color:"5B6776"})}),new Paragraph({children:runsOf(k.querySelector(".v"),{size:28,b:true})}),new Paragraph({children:runsOf(k.querySelector(".s"),{size:15,color:"5B6776"})})]}));
+            children:[new Paragraph({style:"TextoTablaNota",children:runsOf(k.querySelector(".k"),{})}),new Paragraph({style:"TextoTabla",children:runsOf(k.querySelector(".v"),{size:28,b:true})}),new Paragraph({style:"TextoTablaRef",children:runsOf(k.querySelector(".s"),{})})]}));
           children.push(new Table({width:{size:W,type:WidthType.DXA},columnWidths:Array(cells.length).fill(Math.floor(W/cells.length)),rows:[new TableRow({children:cells})]}));
           children.push(new Paragraph({spacing:{after:80},children:[]}));
         }
@@ -829,7 +829,11 @@ async function exportDocx(btn){
     for(const sec of document.querySelectorAll("main > section.card")){ say("Procesando "+(sec.querySelector("h2")?.textContent||"")+"…"); await walk(sec); }
 
     const doc=new Document({creator:"Herramienta losa de transición",title:"Losa de transición de puentes integrales",
-      styles:{default:{document:{run:{font:FONT,size:21}}}},
+      styles:{default:{document:{run:{font:FONT,size:21}}},
+        paragraphStyles:[
+          {id:"TextoTabla",name:"Texto en tabla",basedOn:"Normal",quickFormat:true,run:{font:FONT,size:17},paragraph:{spacing:{before:20,after:20,line:240}}},
+          {id:"TextoTablaNota",name:"Texto en tabla (nota)",basedOn:"TextoTabla",quickFormat:true,run:{size:16,italics:true,color:"5B6776"}},
+          {id:"TextoTablaRef",name:"Texto en tabla (referencia)",basedOn:"TextoTabla",quickFormat:true,run:{size:15,color:"1D5A8C"}}]},
       sections:[{properties:{page:{size:{width:11906,height:16838},margin:{top:1134,bottom:1134,left:1134,right:1134}}},
         headers:{default:new Header({children:[new Paragraph({alignment:AlignmentType.RIGHT,children:[new TextRun({text:($("elem").value||"Losa de transición")+" · Dreier, EPFL 4880",size:16,color:"5B6776",font:FONT})]})]})},
         footers:{default:new Footer({children:[new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:"Página ",size:16,color:"5B6776",font:FONT}),new TextRun({children:[PageNumber.CURRENT],size:16,color:"5B6776",font:FONT})]})]})},
