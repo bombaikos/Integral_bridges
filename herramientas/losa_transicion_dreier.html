@@ -73,6 +73,7 @@ td.ref{font-family:var(--mono); font-size:.75rem; color:var(--accent); white-spa
 .msgs li.info{background:var(--accent-soft); border-color:var(--accent)}
 svg text{fill:var(--fg); font-family:var(--body)}
 .chartwrap{width:100%; overflow-x:auto}
+.chartwrap svg{max-width:720px; display:block; margin:0 auto}
 .note{font-size:.85rem; color:var(--muted)}
 .eq{font-family:var(--mono); font-size:.8rem; background:var(--bg); border:1px solid var(--rule); border-radius:5px; padding:8px 10px; white-space:pre; overflow-x:auto}
 details{margin-top:4px}
@@ -104,7 +105,7 @@ button:disabled{opacity:.6; cursor:progress}
   <fieldset><legend>Identificación</legend>
     <div class="row wide"><label for="proj">Proyecto</label><input type="text" id="proj" value="Obra de emergencia en la M305 PPK 0+800"></div>
     <div class="row wide"><label for="elem">Elemento</label><input type="text" id="elem" value="Estribo 1"></div>
-    <div class="row"><label>L<sub>estribo</sub> [m]<small>ancho del estribo (L = 13 m); da el nº de barras</small></label><input type="number" id="Wab" value="13" step="0.5" min="1"></div>
+    <div class="row"><label>L<sub>estribo</sub> [m]<small>ancho del estribo (L = 13 m); da el nº de barras</small></label><input type="text" inputmode="decimal" id="Wab" value="13" step="0.5" min="1"></div>
   </fieldset>
   <fieldset><legend>Red viaria</legend>
     <div class="seg">
@@ -119,22 +120,22 @@ button:disabled{opacity:.6; cursor:progress}
       <label><input type="radio" name="umode" value="dir"> Introducir u<sub>imp</sub></label>
     </div>
     <div id="ucalc">
-      <div class="row"><label>L<sub>pf</sub> [m]<small>punto fijo → estribo (L/2 si simétrico)</small></label><input type="number" id="Lpf" value="35" step="1" min="0"></div>
-      <div class="row"><label>k<sub>tablero</sub> [–]<small>≈ 1 con relleno granular (ec. 2.1)</small></label><input type="number" id="k" value="1" step="0.05" min="0"></div>
-      <div class="row"><label>Retracción [‰]</label><input type="number" id="esh" value="0.3" step="0.05" min="0"></div>
-      <div class="row"><label>Fluencia [‰]</label><input type="number" id="ecr" value="0.3" step="0.05" min="0"></div>
-      <div class="row"><label>Temperatura [‰]<small>α<sub>T</sub>·ΔT; 0,2 ‰ en la tesis</small></label><input type="number" id="eT" value="0.2" step="0.05" min="0"></div>
+      <div class="row"><label>L<sub>pf</sub> [m]<small>punto fijo → estribo (L/2 si simétrico)</small></label><input type="text" inputmode="decimal" id="Lpf" value="35" step="1" min="0"></div>
+      <div class="row"><label>k<sub>tablero</sub> [–]<small>≈ 1 con relleno granular (ec. 2.1)</small></label><input type="text" inputmode="decimal" id="k" value="1" step="0.05" min="0"></div>
+      <div class="row"><label>Retracción [‰]</label><input type="text" inputmode="decimal" id="esh" value="0.3" step="0.05" min="0"></div>
+      <div class="row"><label>Fluencia [‰]</label><input type="text" inputmode="decimal" id="ecr" value="0.3" step="0.05" min="0"></div>
+      <div class="row"><label>Temperatura [‰]<small>α<sub>T</sub>·ΔT; 0.2 ‰ en la tesis</small></label><input type="text" inputmode="decimal" id="eT" value="0.2" step="0.05" min="0"></div>
     </div>
-    <div class="row" id="udir" hidden><label>u<sub>imp</sub> [mm]<small>acortamiento (dirección activa)</small></label><input type="number" id="uimp" value="32" step="1" min="0"></div>
+    <div class="row" id="udir" hidden><label>u<sub>imp</sub> [mm]<small>acortamiento (dirección activa)</small></label><input type="text" inputmode="decimal" id="uimp" value="32" step="1" min="0"></div>
   </fieldset>
 
   <fieldset><legend>Geometría de la losa</legend>
-    <div class="row"><label>L<sub>DT</sub> [m]<small>longitud</small></label><input type="number" id="L" value="6" step="0.25" min="0"></div>
-    <div class="row"><label>α<sub>DT</sub> [%]<small>pendiente; 5–20 % (PDF p. 105)</small></label><input type="number" id="alpha" value="10" step="0.5" min="0"></div>
-    <div class="row"><label>e<sub>0,DT</sub> [m]<small>enterramiento inicial (0,10 en la tesis)</small></label><input type="number" id="e0" value="0.10" step="0.01" min="0"></div>
-    <div class="row"><label>h<sub>DT</sub> [m]<small>espesor (0,30 en la tesis)</small></label><input type="number" id="h" value="0.30" step="0.01" min="0.1"></div>
-    <div class="row"><label>d longitudinal [m]<small>canto útil armadura inferior</small></label><input type="number" id="d" value="0.25" step="0.005" min="0.05"></div>
-    <div class="row"><label>d transversal [m]<small>2.ª capa</small></label><input type="number" id="dt" value="0.23" step="0.005" min="0.05"></div>
+    <div class="row"><label>L<sub>DT</sub> [m]<small>longitud</small></label><input type="text" inputmode="decimal" id="L" value="6" step="0.25" min="0"></div>
+    <div class="row"><label>α<sub>DT</sub> [%]<small>pendiente; 5–20 % (PDF p. 105)</small></label><input type="text" inputmode="decimal" id="alpha" value="10" step="0.5" min="0"></div>
+    <div class="row"><label>e<sub>0,DT</sub> [m]<small>enterramiento inicial (0.10 en la tesis)</small></label><input type="text" inputmode="decimal" id="e0" value="0.10" step="0.01" min="0"></div>
+    <div class="row"><label>h<sub>DT</sub> [m]<small>espesor (0.30 en la tesis)</small></label><input type="text" inputmode="decimal" id="h" value="0.30" step="0.01" min="0.1"></div>
+    <div class="row"><label>d longitudinal [m]<small>canto útil armadura inferior</small></label><input type="text" inputmode="decimal" id="d" value="0.25" step="0.005" min="0.05"></div>
+    <div class="row"><label>d transversal [m]<small>2.ª capa</small></label><input type="text" inputmode="decimal" id="dt" value="0.23" step="0.005" min="0.05"></div>
   </fieldset>
 
   <fieldset><legend>Estribo y relleno</legend>
@@ -142,10 +143,10 @@ button:disabled{opacity:.6; cursor:progress}
       <label><input type="radio" name="abut" value="int" checked> Integral</label>
       <label><input type="radio" name="abut" value="semi"> Semi-integral</label>
     </div>
-    <div class="row"><label id="hmecLbl">h<sub>muro</sub> [m]<small>altura del mecanismo activo (PDF p. 101)</small></label><input type="number" id="hmec" value="5" step="0.1" min="0"></div>
-    <div class="row"><label>φ<sub>k</sub> del relleno [°]<small>grava compactada 37° (tabla 3.2)</small></label><input type="number" id="phik" value="37" step="0.5" min="20" max="50"></div>
-    <div class="row"><label>γ<sub>M</sub> sobre tan φ [–]<small>1,2 según SIA 267 (PDF p. 91)</small></label><input type="number" id="gphi" value="1.2" step="0.05" min="1"></div>
-    <div class="row"><label>γ<sub>relleno</sub> [kN/m³]</label><input type="number" id="gs" value="19.4" step="0.1"></div>
+    <div class="row"><label id="hmecLbl">h<sub>muro</sub> [m]<small>altura del mecanismo activo (PDF p. 101)</small></label><input type="text" inputmode="decimal" id="hmec" value="5" step="0.1" min="0"></div>
+    <div class="row"><label>φ<sub>k</sub> del relleno [°]<small>grava compactada 37° (tabla 3.2)</small></label><input type="text" inputmode="decimal" id="phik" value="37" step="0.5" min="20" max="50"></div>
+    <div class="row"><label>γ<sub>M</sub> sobre tan φ [–]<small>1.2 según SIA 267 (PDF p. 91)</small></label><input type="text" inputmode="decimal" id="gphi" value="1.2" step="0.05" min="1"></div>
+    <div class="row"><label>γ<sub>relleno</sub> [kN/m³]</label><input type="text" inputmode="decimal" id="gs" value="19.4" step="0.1"></div>
   </fieldset>
 
   <fieldset><legend>Unión estribo–losa</legend>
@@ -154,36 +155,31 @@ button:disabled{opacity:.6; cursor:progress}
       <label><input type="radio" name="conn" value="pin"> Articulada</label>
     </div>
     <div id="hingeIn">
-      <div class="row"><label>ρ rótula [%]<small>0,3 % recomendado (PDF p. 125)</small></label><input type="number" id="rhoh" value="0.3" step="0.05" min="0.05"></div>
-      <div class="row"><label>d rótula [m]<small>canto útil armadura superior</small></label><input type="number" id="dh" value="0.25" step="0.005"></div>
-      <div class="row"><label>L<sub>diag</sub> [m]<small>posición de la rótula (0,62 m)</small></label><input type="number" id="Ldiag" value="0.62" step="0.01"></div>
-      <div class="row"><label>m⁻<sub>pl,d</sub> en ec. 5.14</label>
-        <select id="mplMode"><option value="thesis">−55 (tesis)</option><option value="calc">ec. 5.6</option></select></div>
+      <div class="row"><label>d armadura superior [m]<small>canto útil de la rótula (ρ = 0.3 %, tesis)</small></label><input type="text" inputmode="decimal" id="dh" value="0.25" step="0.005"></div>
     </div>
   </fieldset>
 
   <fieldset><legend>Cargas (SIA 261, modelo 1)</legend>
-    <div class="row"><label>Q<sub>1k</sub> por eje [kN]</label><input type="number" id="Q1k" value="300" step="10"></div>
-    <div class="row"><label>α<sub>Q1</sub> [–]</label><input type="number" id="aQ" value="0.9" step="0.05"></div>
-    <div class="row"><label>γ<sub>Q</sub> (ELU) [–]</label><input type="number" id="gQ" value="1.5" step="0.05"></div>
-    <div class="row"><label>Factor para el giro [–]<small>0,75 en la ec. 5.15 (PDF p. 129)</small></label><input type="number" id="psiQ" value="0.75" step="0.05"></div>
-    <div class="row"><label>B<sub>vía</sub> [m]<small>ancho de carril ficticio</small></label><input type="number" id="B" value="3" step="0.1"></div>
-    <div class="row"><label>Coef. de envolvente [–]<small>1,5 de las ec. 5.13–5.14 (fig. 5.29b). No es γ<sub>Q</sub></small></label><input type="number" id="kenv" value="1.5" step="0.05" min="0.5"></div>
+    <div class="row"><label>Q<sub>1k</sub> por eje [kN]</label><input type="text" inputmode="decimal" id="Q1k" value="300" step="10"></div>
+    <div class="row"><label>α<sub>Q1</sub> [–]</label><input type="text" inputmode="decimal" id="aQ" value="0.9" step="0.05"></div>
+    <div class="row"><label>γ<sub>Q</sub> (ELU) [–]</label><input type="text" inputmode="decimal" id="gQ" value="1.5" step="0.05"></div>
+    <div class="row"><label>Factor para el giro [–]<small>0.75 en la ec. 5.15 (PDF p. 129)</small></label><input type="text" inputmode="decimal" id="psiQ" value="0.75" step="0.05"></div>
+    <div class="row"><label>B<sub>vía</sub> [m]<small>ancho de carril ficticio</small></label><input type="text" inputmode="decimal" id="B" value="3" step="0.1"></div>
     <div class="row"><label>n<sub>d</sub> axil</label>
       <select id="nMode"><option value="max">máx(100; ec. 5.11–5.12)</option><option value="thesis">100 kN/m (tesis)</option></select></div>
   </fieldset>
 
   <fieldset><legend>Materiales (SIA 262)</legend>
-    <div class="row"><label>f<sub>ck</sub> [MPa]<small>C30/37 por defecto</small></label><input type="number" id="fck" value="30" step="5"></div>
-    <div class="row"><label>γ<sub>c</sub> [–]</label><input type="number" id="gc" value="1.5" step="0.05"></div>
-    <div class="row"><label>f<sub>sk</sub> [MPa]<small>B500B</small></label><input type="number" id="fsk" value="500" step="10"></div>
-    <div class="row"><label>γ<sub>s</sub> [–]</label><input type="number" id="gsS" value="1.15" step="0.05"></div>
-    <div class="row"><label>E<sub>s</sub> [MPa]</label><input type="number" id="Es" value="205000" step="1000"></div>
-    <div class="row"><label>E<sub>c,0</sub> [MPa]<small>en blanco: 10 000·(f<sub>ck</sub>+8)<sup>1/3</sup></small></label><input type="number" id="Ec" placeholder="auto" step="100"></div>
+    <div class="row"><label>f<sub>ck</sub> [MPa]<small>C30/37 por defecto</small></label><input type="text" inputmode="decimal" id="fck" value="30" step="5"></div>
+    <div class="row"><label>γ<sub>c</sub> [–]</label><input type="text" inputmode="decimal" id="gc" value="1.5" step="0.05"></div>
+    <div class="row"><label>f<sub>sk</sub> [MPa]<small>B500B</small></label><input type="text" inputmode="decimal" id="fsk" value="500" step="10"></div>
+    <div class="row"><label>γ<sub>s</sub> [–]</label><input type="text" inputmode="decimal" id="gsS" value="1.15" step="0.05"></div>
+    <div class="row"><label>E<sub>s</sub> [MPa]</label><input type="text" inputmode="decimal" id="Es" value="205000" step="1000"></div>
+    <div class="row"><label>E<sub>c,0</sub> [MPa]<small>en blanco: 10 000·(f<sub>ck</sub>+8)<sup>1/3</sup></small></label><input type="text" inputmode="decimal" id="Ec" placeholder="auto" step="100"></div>
   </fieldset>
 
   <fieldset><legend>Margen</legend>
-    <div class="row"><label>Factor sobre u<sub>adm</sub> del ábaco<small>0,75 ≈ 30/40 y 40/55 de § 5.2.3 (PDF p. 110). 1 = sin margen</small></label><input type="number" id="marg" value="0.75" step="0.05" min="0.1" max="1"></div>
+    <div class="row"><label>Factor sobre u<sub>adm</sub> del ábaco<small>0.75 ≈ 30/40 y 40/55 de § 5.2.3 (PDF p. 110). 1 = sin margen</small></label><input type="text" inputmode="decimal" id="marg" value="0.75" step="0.05" min="0.1" max="1"></div>
   </fieldset>
   <div class="noprint" style="display:flex;gap:8px;margin-top:8px"><button type="button" id="reset">Valores por defecto</button></div>
 </form>
@@ -194,31 +190,38 @@ button:disabled{opacity:.6; cursor:progress}
     <h2>1 · Desplazamiento admisible (estado límite de servicio)</h2>
     <div class="kpis" id="kpis"></div>
     <div class="chartwrap"><svg id="chart" viewBox="0 0 640 380" width="100%" role="img" aria-label="Ábaco u_imp,adm frente a e_extr,DT"></svg></div>
-    <p class="note">Puntos: resultados de elementos finitos de la fig. 5.9 (PDF p. 105), <strong>digitalizados</strong> del vector del PDF (precisión ≈ ±0,5 mm). Línea continua: envolvente inferior de todos los puntos frente a e<sub>extr,DT</sub>. Línea discontinua: envolvente × factor de margen. Rombo: su losa.</p>
+    <p class="note">Puntos: resultados de elementos finitos de la fig. 5.9 (PDF p. 105), <strong>digitalizados</strong> del vector del PDF. Línea continua: envolvente inferior de todos los puntos frente a e<sub>extr,DT</sub>. Línea discontinua: envolvente × factor de margen. Rombo: su losa.</p>
     <div class="tw"><table id="tU"></table></div>
   </section>
 
   <section class="card">
-    <h2>2 · Vacío detrás del estribo y longitud mínima</h2>
-    <div class="chartwrap"><svg id="elev" viewBox="0 0 640 330" width="100%" role="img" aria-label="Alzado: vacío detrás del estribo, longitud apoyada y tándem"></svg></div>
-    <p class="note">Alzado a escala con sus datos. Cuña de Rankine con φ<sub>d</sub> (ec. 5.3); tándem en x ≈ L<sub>vacío</sub>/2, posición crítica según la fig. 5.28 (PDF p. 126). Los muelles marcan el tramo que apoya en el relleno, como en el modelo de la fig. 5.27.</p>
+    <h2>2 · Hueco detrás del estribo y longitud mínima</h2>
+    <div class="chartwrap"><svg id="elev" viewBox="0 0 640 330" width="100%" role="img" aria-label="Alzado: hueco detrás del estribo, longitud apoyada y tándem"></svg></div>
+    <p class="note">Alzado a escala con sus datos. Cuña de Rankine con φ<sub>d</sub> (ec. 5.3); tándem en x ≈ L<sub>hueco</sub>/2, posición crítica según la fig. 5.28 (PDF p. 126). Los muelles marcan el tramo que apoya en el relleno, como en el modelo de la fig. 5.27.</p>
     <div class="tw"><table id="tV"></table></div>
   </section>
 
   <section class="card">
     <h2>3 · Esfuerzos de cálculo (ELU, por metro de ancho)</h2>
-    <div class="chartwrap"><svg id="plan" viewBox="0 0 640 260" width="100%" role="img" aria-label="Planta: reparto del tándem en el ancho equivalente"></svg></div>
-    <p class="note">Planta del carril 1 sobre la losa. Ruedas de 0,40 × 0,40 m, 1,20 m entre ejes y 2,00 m entre ruedas (modelo 1, fig. 4.25). La banda oscura es el ancho equivalente B<sub>eq</sub> que resulta de la fórmula simplificada.</p>
+    <div class="chartwrap"><svg id="plan" viewBox="0 0 640 260" width="100%" role="img" aria-label="Planta: tándem del carril 1 sobre la losa"></svg></div>
+    <p class="note" id="planNote">Planta del carril 1 sobre la losa. Ruedas de 0.40 × 0.40 m, 1.20 m entre ejes y 2.00 m entre ruedas (modelo 1, fig. 4.25).</p>
     <div class="tw"><table id="tF"></table></div>
   </section>
 
   <section class="card">
     <h2>4 · Armadura necesaria</h2>
     <div class="tw"><table id="tA"></table></div>
+    <div class="chartwrap" id="hingeWrap"><svg id="hinge" viewBox="0 0 640 330" width="100%" role="img" aria-label="Esquema de la rótula: geometría y armadura"></svg></div>
+    <p class="note" id="hingeNote"></p>
   </section>
 
   <section class="card">
-    <h2>5 · Avisos</h2>
+    <h2>5 · Comprobaciones aproximadas</h2>
+    <div class="tw"><table id="tC"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>6 · Avisos</h2>
     <ul class="msgs" id="msgs"></ul>
   </section>
 
@@ -238,10 +241,14 @@ button:disabled{opacity:.6; cursor:progress}
     <h2>Anejo C · Notas de interpretación</h2>
 
       <ul>
-        <li><strong>Ec. 5.3.</strong> La tesis la escribe como h·tan(α<sub>R,a</sub>) con α<sub>R,a</sub> = 45° + φ/2, pero dice que da 0,60–0,45·h para φ = 30–40° (PDF p. 102). Eso solo cuadra con tan(45° − φ/2), que es lo que se usa aquí. Se toma φ<sub>d</sub> = atan(tan φ<sub>k</sub>/γ<sub>M</sub>), que da un vacío mayor, como en § 4.4.2 (φ<sub>d</sub> = 32°).</li>
-        <li><strong>Ec. 5.15.</strong> El PDF imprime L<sub>vacío</sub> sin cuadrado, pero la normalización de la fig. 5.32(b) usa L²<sub>vacío</sub> y solo así la expresión es adimensional. Se usa L². La frase siguiente («Δα<sub>DT</sub> … 5 ‰ doit être considéré») tiene el signo de comparación ilegible en el PDF, así que no se aplica.</li>
-        <li><strong>m⁻<sub>pl,d</sub> = −55 kNm/m.</strong> La tesis da el valor (PDF p. 127) sin el canto útil. Con d = 0,25 m y ρ = 0,3 % la ec. 5.6 da unos −79 kNm/m. En la ec. 5.14 un |m⁻| menor da un m⁺ mayor, así que −55 queda del lado de la seguridad. Para el extremo del tablero conviene el valor mayor; los ensayos con Ø12 superaron M<sub>pl</sub> en más de un 15 % por endurecimiento (PDF p. 116).</li>
-        <li><strong>Ábaco.</strong> Los cálculos de la fig. 5.9 son de deformación plana con h<sub>DT</sub> = 0,30 m, e<sub>0</sub> = 0,10 m, grava compactada y solo dirección activa. No incluyen ciclos térmicos ni compactación por tráfico pesado, de ahí el margen de § 5.2.3. La tesis da como lectura redondeada para la losa estándar 40 mm (autopista) y 55 mm (nacional), y L<sub>pf,adm</sub> = 50 y 70 m (PDF p. 106, 110).</li>
+        <li><strong>Ec. 5.3.</strong> La tesis la escribe como h·tan(α<sub>R,a</sub>) con α<sub>R,a</sub> = 45° + φ/2, pero dice que da 0.60–0.45·h para φ = 30–40° (PDF p. 102). Eso solo cuadra con tan(45° − φ/2), que es lo que se usa aquí. Se toma φ<sub>d</sub> = atan(tan φ<sub>k</sub>/γ<sub>M</sub>), que da un hueco mayor, como en § 4.4.2 (φ<sub>d</sub> = 32°).</li>
+        <li><strong>Ec. 5.15.</strong> El PDF imprime L<sub>hueco</sub> sin cuadrado, pero la normalización de la fig. 5.32(b) usa L²<sub>hueco</sub> y solo así la expresión es adimensional. Se usa L². La frase siguiente («Δα<sub>DT</sub> … 5 ‰ doit être considéré») tiene el signo de comparación ilegible en el PDF, así que no se aplica.</li>
+        <li><strong>m⁻<sub>pl,d</sub> = −55 kNm/m.</strong> Valor de la tesis (PDF p. 127), usado en la ec. 5.14 para la armadura inferior. La armadura superior de la rótula se toma con ρ = A<sub>s</sub>/(b·d) = 0.3 % (solo la armadura traccionada, como en los ensayos DT1); de ella solo se da el M<sub>Rd</sub>.</li>
+        <li><strong>Ábaco.</strong> Los cálculos de la fig. 5.9 son de deformación plana con h<sub>DT</sub> = 0.30 m, e<sub>0</sub> = 0.10 m, grava compactada y solo dirección activa. No incluyen ciclos térmicos ni compactación por tráfico pesado, de ahí el margen de § 5.2.3. La tesis da como lectura redondeada para la losa estándar 40 mm (autopista) y 55 mm (nacional), y L<sub>pf,adm</sub> = 50 y 70 m (PDF p. 106, 110).</li>
+        <li><strong>Cortante.</strong> Comprobación aproximada: la tesis remite a Fernández Ruiz et al. 2009. Se coloca el tándem con el borde de la rueda más próxima a 2d del apoyo (posición pésima, donde el efecto arco ya no reduce la carga) y se reparte a 45° a lo largo de 2d a cada lado de las ruedas (2.40 + 4·d); no se descuenta la carga que va directa al apoyo ni se suman otras cargas.</li>
+        <li><strong>Presión sobre el relleno.</strong> La carga del tándem se reparte con 45° desde la superficie hasta el relleno y se promedia en toda la longitud apoyada L<sub>DT,extr</sub>; en realidad se concentra cerca del extremo del hueco. El límite de 250 kN/m² es un criterio propio y conservador porque la carga se concentra en el extremo. Para las acciones permanentes se usa 1.35 (criterio de esta herramienta).</li>
+        <li><strong>Armadura.</strong> La separación s se calcula para el diámetro elegido (Ø12, 16, 20 o 25) como la mayor, en múltiplos de 5 mm y no superior a 250 mm, que cubre A<sub>s</sub>. Las barras longitudinales y las de la rótula se reparten en el ancho del estribo; las transversales, a lo largo de L<sub>DT</sub>. Materiales: f<sub>cd</sub> y f<sub>sd</sub> según los datos de entrada.</li>
+        <li><strong>Longitud apoyada.</strong> La tesis solo define L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>hueco</sub> y no fija un mínimo. Con L<sub>hueco</sub>/L<sub>DT</sub> &lt; 0.5 el relleno bajo el extremo no plastifica y el momento no depende de L<sub>DT</sub>; cerca de 1 plastifica (PDF p. 126). El límite 0.5 es una lectura nuestra de esa frase; el mínimo de la tesis es L<sub>DT</sub> &gt; L<sub>hueco</sub>. Caso base de la tesis: L<sub>DT</sub> = 6 m con L<sub>hueco</sub> = 2 m (0.33).</li>
         <li><strong>Giro por u<sub>imp</sub>.</strong> ≈ 1 ‰ para 50 mm (fig. 4.29, PDF p. 93); aquí se escala linealmente, como orientación.</li>
         <li>No se cubre: cortante (la tesis remite a Fernández Ruiz et al. 2009), fisuración del aglomerado (ec. 4.5), dirección pasiva (no determinante, PDF p. 101) ni el muro del estribo.</li>
       </ul>
@@ -257,7 +264,7 @@ button:disabled{opacity:.6; cursor:progress}
 <script>
 "use strict";
 /* ---------- Datos digitalizados de la fig. 5.9 (PDF p. 105) ----------
-   Puntos [L_DT (m), u_imp,adm (mm)] por pendiente α (%). e_extr = 0,10 + α·L.
+   Puntos [L_DT (m), u_imp,adm (mm)] por pendiente α (%). e_extr = 0.10 + α·L.
    Faltan en el original: nacional 10 % L=8 m y 15 % L=7 m (fuera del gráfico). */
 const FIG59 = {
   auto:{chi:20, label:"autopista",
@@ -272,13 +279,13 @@ const FIG59 = {
     env:[[0.30,47.0],[0.50,49.5],[0.60,53.1],[0.70,56.8],[0.85,65.1],[1.00,79.4]]}
 };
 const E0_FIG = 0.10;
+const LDIAG = 0.62;            // m, posición de la rótula en el detalle de la tesis (fig. 5.15(b); ec. 5.14, PDF p. 133), fija: todos los ensayos se hicieron con este valor
 const ROT_LIMIT = 4;           // ‰, OFROU autopistas y nacionales (PDF p. 93)
-const ROT_UIMP = 1/50;         // ‰ por mm, fig. 4.29 (≈ 1 ‰ a 50 mm)
 
 const $ = id => document.getElementById(id);
-const num = id => { const v = parseFloat($(id).value); return isFinite(v) ? v : NaN; };
+const num = id => { const v = parseFloat(String($(id).value).replace(",", ".")); return isFinite(v) ? v : NaN; };   // los datos se escriben con punto decimal (se admite también la coma)
 const radio = n => document.querySelector(`input[name=${n}]:checked`).value;
-const fmt = (v, dec=1) => isFinite(v) ? v.toLocaleString("es-ES",{minimumFractionDigits:dec, maximumFractionDigits:dec}) : "—";
+const fmt = (v, dec=1) => v!=null && isFinite(v) ? v.toLocaleString("en-US",{minimumFractionDigits:dec, maximumFractionDigits:dec, useGrouping:false}) : "—";   // separador decimal: punto
 const deg = r => r*180/Math.PI, rad = d => d*Math.PI/180;
 
 function interp(pts, x){ // lineal, null fuera de rango
@@ -307,16 +314,6 @@ function familyValue(set, L, a){ // interpolación en L dentro de cada familia �
   if (vlo==null||vhi==null) return null;
   return vlo+(vhi-vlo)*(a-lo)/(hi-lo);
 }
-// armado: barras y separaciones habituales
-const DIAMS=[10,12,16,20,25,32], SEPS=[100,125,150,200,250];   // diámetros disponibles (José Luis) y separaciones habituales
-function pickBars(As, len){ // As en mm²/m; len en m (longitud sobre la que se reparten las barras)
-  let best=null;
-  for (const s of SEPS) for (const f of DIAMS){
-    const a=Math.PI*f*f/4*1000/s;
-    if (a>=As && (!best || a<best.a-1 || (Math.abs(a-best.a)<1 && s>best.s))) best={f,s,a};
-  }
-  return best ? `Ø${best.f} c/${best.s} (${fmt(best.a,0)} mm²/m)` + (len>0 ? ` · ${Math.floor(len*1000/best.s)+1} barras en ${fmt(len,2)} m` : "") : "fuera de tabla";
-}
 // sección rectangular b = 1 m, flexión + tracción n (kN/m) ; m en kNm/m ; d,h en m ; fcd,fsd en MPa
 function designSection(m, n, d, h, fcd, fsd){
   const Ms = m - n*(d - h/2);                 // kNm/m respecto a la armadura traccionada
@@ -328,6 +325,15 @@ function designSection(m, n, d, h, fcd, fsd){
   const x = a/0.85;
   return {Ms, a, x, xd:x/d, As};
 }
+
+const PHIS=[12,16,20,25], PHI_DEF={long:16,trans:16,hinge:12}, PHI_KEY="dreier-losa-phi", S_MAX=250, S_STEP=5;   // diámetros ofrecidos; s máx. 250 mm; s en múltiplos de 5 mm
+const PHI={...PHI_DEF};
+try{ const o=JSON.parse(localStorage.getItem(PHI_KEY)||"null"); if(o) for(const k in PHI_DEF) if(PHIS.includes(o[k])) PHI[k]=o[k]; }catch(e){}
+function savePhi(){ try{ localStorage.setItem(PHI_KEY, JSON.stringify(PHI)); }catch(e){} }
+// separación (mm) para el diámetro elegido: la mayor, múltiplo de 5 mm y ≤ 250 mm, que da al menos As (mm²/m)
+function spacingFor(As, phi){ const ab=Math.PI*phi*phi/4; const s=Math.min(S_MAX, Math.floor(ab*1000/As/S_STEP)*S_STEP); return s>=50 ? s : null; }
+// momento resistente (kNm/m) de A_s (mm²/m) con tracción n (kN/m): equilibrio A_s·f_sd = f_cd·a + n
+function mrdSection(As, n, d, h, fcd, fsd){ const F=As*fsd, N=n*1000, a=(F-N)/(fcd*1000); return (F-N)*(d*1000 - a/2)/1e6 + n*(d - h/2); }
 
 function calc(){
   const road = radio("road"), set = FIG59[road];
@@ -358,36 +364,35 @@ function calc(){
   const LpfAdm = (uAdm!=null && eps>0 && k>0) ? uAdm/(k*eps) : null;
   const eReq = invInterp(set.env, uimp/marg);
   const Lreq = eReq!=null && a>0 ? (eReq-e0)/a : null;
+  const uReq = uimp/marg, free = uReq < set.env[0][1];   // por debajo del mínimo del ábaco: no condiciona
   const okU = uAdm!=null && uimp<=uAdm;
 
   if (al<5 || al>20) msgs.push(["bad",`α<sub>DT</sub> = ${fmt(al,1)} % fuera del rango recomendado 5–20 % (PDF p. 105).`]);
   if (al>15) msgs.push(["warn","La fig. 5.9 solo cubre α ≤ 15 %. Con más pendiente el resultado se lee solo por e<sub>extr</sub>."]);
   const eMax = set.env[set.env.length-1][0], eMin=set.env[0][0];
   if (uEnv==null) msgs.push(["bad",`e<sub>extr,DT</sub> = ${fmt(eextr,2)} m está fuera del ábaco (${fmt(eMin,2)}–${fmt(eMax,2)} m en ${set.label}). No se extrapola.`]);
-  if (Math.abs(h-0.30)>0.005) msgs.push(["warn","El ábaco de la fig. 5.9 se obtuvo con h<sub>DT</sub> = 0,30 m; la tesis indica que adelgazar el extremo apenas cambia χ (fig. 5.11), pero h distinto no está estudiado."]);
-  if (Math.abs(e0-E0_FIG)>0.005) msgs.push(["warn","El ábaco se obtuvo con e<sub>0,DT</sub> = 0,10 m. Con otro valor se usa e<sub>extr</sub> como parámetro único, como propone la tesis (PDF p. 104)."]);
+  if (Math.abs(h-0.30)>0.005) msgs.push(["warn","El ábaco de la fig. 5.9 se obtuvo con h<sub>DT</sub> = 0.30 m; la tesis indica que adelgazar el extremo apenas cambia χ (fig. 5.11), pero h distinto no está estudiado."]);
+  if (Math.abs(e0-E0_FIG)>0.005) msgs.push(["warn","El ábaco se obtuvo con e<sub>0,DT</sub> = 0.10 m. Con otro valor se usa e<sub>extr</sub> como parámetro único, como propone la tesis (PDF p. 104)."]);
   if (uimp<5) msgs.push(["info","u<sub>imp</sub> < 5 mm: la OFROU permite prescindir de losa de transición (fig. 5.14, PDF p. 110)."]);
   if (uEnv!=null && !okU) msgs.push(["bad",`u<sub>imp</sub> = ${fmt(uimp)} mm supera el admisible ${fmt(uAdm)} mm. ${eReq!=null?`Hace falta e<sub>extr</sub> ≥ ${fmt(eReq,2)} m${Lreq!=null?` (con α = ${fmt(al,1)} %: L<sub>DT</sub> ≥ ${fmt(Lreq,2)} m)`:""}.`:"Ni el ábaco completo lo cubre: hay que reducir u<sub>imp</sub> o recurrir a junta."}`]);
 
-  /* ---- 2. vacío ---- */
+  /* ---- 2. hueco ---- */
   const phid = deg(Math.atan(Math.tan(rad(phik))/gphi));
   const Lv = hmec*Math.tan(rad(45-phid/2));
   const Lext = L - Lv;
   const ratio = Lv/L;
   const Lrec = Math.max(2*Lv, Lreq!=null ? Lreq : 0);
-  if (Lext<=0) msgs.push(["bad",`La losa (${fmt(L,2)} m) no salva el vacío L<sub>vacío</sub> = ${fmt(Lv,2)} m: aumente L<sub>DT</sub> (PDF p. 101).`]);
-  else if (ratio>0.5) msgs.push(["warn",`L<sub>vacío</sub>/L<sub>DT</sub> = ${fmt(ratio,2)} > 0,5: el extremo apoyado se acerca a su capacidad portante y el momento empieza a depender de L<sub>DT</sub> (PDF p. 126). Criterio deducido: L<sub>DT</sub> ≥ 2·L<sub>vacío</sub> = ${fmt(2*Lv,2)} m.`]);
+  if (Lext<=0) msgs.push(["bad",`La losa (${fmt(L,2)} m) no salva el hueco L<sub>hueco</sub> = ${fmt(Lv,2)} m: aumente L<sub>DT</sub> (PDF p. 101).`]);
+  else if (ratio>0.5) msgs.push(["warn",`L<sub>hueco</sub>/L<sub>DT</sub> = ${fmt(ratio,2)} > 0.5: el extremo apoyado se acerca a su capacidad portante y el momento empieza a depender de L<sub>DT</sub> (PDF p. 126). Criterio deducido: L<sub>DT</sub> ≥ 2·L<sub>hueco</sub> = ${fmt(2*Lv,2)} m.`]);
 
   /* ---- 3. esfuerzos ---- */
   const Q1d = gQ*aQ*Q1k;
-  const kenv = num("kenv");
-  const Beq = B/kenv;                                     // ancho de reparto equivalente del tándem
+  const kenv = 1.5;                                       // resultado de los cálculos de elementos finitos de la tesis (fig. 5.29b): no es un dato de entrada
   const fcd = Math.min(1,Math.cbrt(30/fck))*fck/gc, fsd = fsk/gsS;
   const etafc = Math.min(1,Math.cbrt(30/fck));
   // rótula ec. 5.6 (valores de cálculo)
-  const rhoh=num("rhoh")/100, dh=num("dh"), Ldiag=num("Ldiag");
-  const MplCalc = fsd*1000*rhoh*1*dh*dh*(1 - fsd*rhoh/(2*etafc*fck/gc)); // kNm/m (fc de cálculo ya incluye η en fcd; aquí η explícito)
-  const mplUse = $("mplMode").value==="thesis" ? 55 : MplCalc;
+  const dh=num("dh"), Ldiag=LDIAG;
+  const mplUse = 55;                                     // m⁻pl,d de la tesis (kNm/m), PDF p. 127
   let mlong, mEq;
   if (conn==="pin"){ mlong = kenv*Q1d*Math.max(Lv,0)/(2*B); mEq="ec. 5.13"; }
   else { mlong = kenv*(Q1d*Math.max(Lv-Ldiag,0) - mplUse*B)/(2*B); mEq="ec. 5.14"; if (mlong<0) mlong=0; }
@@ -399,7 +404,7 @@ function calc(){
   const nEst = Geff*Math.cos(aA)*(Math.tan(delta)+Math.tan(aA));
   const nd = $("nMode").value==="thesis" ? 100 : Math.max(100,nEst);
   if (nEst>100) msgs.push(["warn",`El axil estimado con ec. 5.11–5.12 (${fmt(nEst,0)} kN/m) supera los 100 kN/m que fija la tesis para el caso extremo L = 8 m, α = 15 % (PDF p. 132).`]);
-  if (mlong>400) msgs.push(["bad",`m⁺<sub>long,d</sub> = ${fmt(mlong,0)} kNm/m > 400 kNm/m: con h = 0,30 m no se garantiza la ductilidad; aumente h<sub>DT</sub> (PDF p. 128).`]);
+  if (mlong>400) msgs.push(["bad",`m⁺<sub>long,d</sub> = ${fmt(mlong,0)} kNm/m > 400 kNm/m: con h = 0.30 m no se garantiza la ductilidad; aumente h<sub>DT</sub> (PDF p. 128).`]);
   // giro bajo vehículo (solo articulada)
   // E fisurado ec. 4.12 con la armadura longitudinal dispuesta
   const secL = designSection(mreq, nd, d, h, fcd, fsd);
@@ -410,15 +415,12 @@ function calc(){
   const Efis = rhoL*d**3*Es*(1-x0/d)*(1-x0/(3*d))/(h**3/12); // MPa
   const Q1s = psiQ*aQ*Q1k;
   const dAlpha = 0.5*3*Q1s*Lv*Lv/(B*h**3*Efis*1000)*1000;    // ‰
-  const dAlphaU = ROT_UIMP*uimp;
   if (conn==="pin"){
     if (dAlpha>ROT_LIMIT) msgs.push(["warn",`Giro al paso del vehículo Δα<sub>DT</sub> ≈ ${fmt(dAlpha,1)} ‰ > 4 ‰: riesgo de fisuración del aglomerado sobre la unión articulada (§ 4.5.2, PDF p. 93–94). La rótula de hormigón reparte ese giro.`]);
     msgs.push(["info","La unión articulada con pasador solo se admite en estribos con juntas; en (semi)integrales la OFROU recomienda la placa de deslizamiento o, según la tesis, la rótula de hormigón (PDF p. 111)."]);
   } else {
-    if (rhoh>0.0045) msgs.push(["bad",`ρ de la rótula = ${fmt(rhoh*100,2)} %: con 0,7 % los ensayos rompieron por cortante sin cercos o por desprendimiento del recubrimiento. La tesis recomienda 0,3 % sin cercos (PDF p. 125).`]);
-    msgs.push(["info",`El extremo del tablero debe resistir el momento de la rótula, M<sub>pl</sub> ≈ ${fmt(MplCalc,0)} kNm/m según ec. 5.6 con valores de cálculo; los ensayos lo superaron en más de un 15 % (PDF p. 116, 125).`]);
   }
-  if (!secL.fail && secL.xd>0.35) msgs.push(["warn",`x/d = ${fmt(secL.xd,2)} > 0,35 en la armadura longitudinal: ductilidad dudosa (criterio SIA 262 habitual). Aumente h<sub>DT</sub>.`]);
+  if (!secL.fail && secL.xd>0.35) msgs.push(["warn",`x/d = ${fmt(secL.xd,2)} > 0.35 en la armadura longitudinal: ductilidad dudosa (criterio SIA 262 habitual). Aumente h<sub>DT</sub>.`]);
   if (secL.fail) msgs.push(["bad","La sección longitudinal no resiste el momento con el canto dado: aumente h<sub>DT</sub> o d."]);
 
   /* ---------- salida ---------- */
@@ -426,83 +428,108 @@ function calc(){
   $("kpis").innerHTML =
     kp("", "u<sub>imp</sub> actuante", fmt(uimp)+" mm", umode==="calc"?`${fmt(k,2)} · ${fmt(Lpf,1)} m · ${fmt(eps,2)} ‰`:"introducido") +
     kp(uAdm==null?"bad":(okU?"ok":"bad"), "u<sub>imp,adm</sub> de diseño", uAdm==null?"fuera de ábaco":fmt(uAdm)+" mm", `envolvente ${fmt(uEnv)} × ${fmt(marg,2)}`) +
-    kp("", "e<sub>extr,DT</sub>", fmt(eextr,2)+" m", `${fmt(e0,2)} + ${fmt(a,3)} · ${fmt(L,2)}`) +
-    kp("", "L<sub>pf,adm</sub>", LpfAdm==null?"—":fmt(LpfAdm,0)+" m", `con ε = ${fmt(eps,2)} ‰, k = ${fmt(k,2)}`);
+    kp("", "e<sub>extr,DT</sub>", fmt(eextr,2)+" m", `${fmt(e0,2)} + ${fmt(a,3)} · ${fmt(L,2)}`);
 
   const ok = b => b?'<span class="tag ok">cumple</span>':'<span class="tag bad">no cumple</span>';
   const ex=(sym,num)=>`<div class="ex">${sym}${num?`<br>= ${num}`:""}</div>`;
   const f=(v,d=2)=>fmt(v,d);
   const hdr=(c)=>`<tr>${c.map(t=>`<th>${t}</th>`).join("")}</tr>`;
+  const row2=(name,val)=>`<tr><td>${name}</td><td class="n">${val}</td></tr>`;
   const row=(name,val,expr,ref,cls="n")=>`<tr><td>${name}</td><td class="${cls}">${val}</td><td>${expr}</td><td class="ref">${ref}</td></tr>`;
 
-  $("tU").innerHTML = hdr(["Magnitud","Valor","Expresión usada","Fuente"]) +
-   row(`Criterio de servicio χ<sub>adm</sub> (${set.label})`, `${set.chi} ‰`, ex("χ<sub>adm</sub> = 20 ‰ (autopistas) · 28 ‰ (carreteras nacionales)", ""), "ec. 4.4 · PDF p. 76") +
-   row(`u<sub>imp,adm</sub> envolvente inferior (sin margen)`, uEnv==null?"—":f(uEnv,1)+" mm", ex(`u<sub>imp,adm</sub> = mín. de los puntos de la fig. 5.9 en e<sub>extr</sub>, interpolación lineal`, `f(${f(eextr,2)} m) = ${uEnv==null?"—":f(uEnv,1)} mm`), "fig. 5.9 · PDF p. 105") +
-   row(`u<sub>imp,adm</sub> en la curva de su familia (α, L)`, uFam==null?"n/d":f(uFam,1)+" mm", ex(`interpolación en L<sub>DT</sub> y α<sub>DT</sub> entre las curvas α = 5, 10 y 15 %`, `f(L = ${f(L,2)} m; α = ${f(al,1)} %) = ${uFam==null?"n/d":f(uFam,1)} mm`), "fig. 5.9 · PDF p. 105") +
-   row(`u<sub>imp,adm</sub> de diseño (× ${f(marg,2)})`, `<strong>${uAdm==null?"—":f(uAdm,1)+" mm"}</strong>`, ex(`u<sub>imp,adm</sub> = f<sub>margen</sub> · u<sub>imp,adm,env</sub>`, `${f(marg,2)} · ${uEnv==null?"—":f(uEnv,1)} = ${uAdm==null?"—":f(uAdm,1)} mm`), "§ 5.2.3 · PDF p. 110") +
-   row(`u<sub>imp</sub> actuante`, `${f(uimp,1)} mm ${uAdm==null?"":ok(okU)}`, umode==="calc"
+  $("tU").innerHTML = hdr(["Magnitud","Valor"]) +
+   row2(`Criterio de servicio χ<sub>adm</sub> (${set.label})`, `${set.chi} ‰`, ex("χ<sub>adm</sub> = 20 ‰ (autopistas) · 28 ‰ (carreteras nacionales)", ""), "ec. 4.4 · PDF p. 76") +
+   row2(`u<sub>imp,adm</sub> envolvente inferior (sin margen)`, uEnv==null?"—":f(uEnv,1)+" mm", ex(`u<sub>imp,adm</sub> = mín. de los puntos de la fig. 5.9 en e<sub>extr</sub>, interpolación lineal`, `f(${f(eextr,2)} m) = ${uEnv==null?"—":f(uEnv,1)} mm`), "fig. 5.9 · PDF p. 105") +
+   row2(`u<sub>imp,adm</sub> de diseño (× ${f(marg,2)})`, `<strong>${uAdm==null?"—":f(uAdm,1)+" mm"}</strong>`, ex(`u<sub>imp,adm</sub> = f<sub>margen</sub> · u<sub>imp,adm,env</sub>`, `${f(marg,2)} · ${uEnv==null?"—":f(uEnv,1)} = ${uAdm==null?"—":f(uAdm,1)} mm`), "§ 5.2.3 · PDF p. 110") +
+   row2(`u<sub>imp</sub> actuante`, `${f(uimp,1)} mm ${uAdm==null?"":ok(okU)}`, umode==="calc"
       ? ex(`u<sub>imp</sub> = k<sub>tablero</sub> · L<sub>pf</sub> · (ε<sub>sh</sub> + ε<sub>cr</sub> + ε<sub>ΔT</sub>)`, `${f(k,2)} · ${f(Lpf,1)} m · (${f(num("esh"),2)} + ${f(num("ecr"),2)} + ${f(num("eT"),2)}) ‰ = ${f(uimp,1)} mm`)
       : ex(`u<sub>imp</sub> = dato introducido`, `${f(uimp,1)} mm`), "ec. 2.1 · PDF p. 27") +
-   row(`e<sub>extr,DT</sub> necesario para u<sub>imp</sub>`, eReq==null?"fuera de ábaco":f(eReq,2)+" m", ex(`e<sub>extr,req</sub> tal que f(e<sub>extr,req</sub>) · f<sub>margen</sub> = u<sub>imp</sub>`, `inversa de la envolvente en ${f(uimp/marg,1)} mm`), "fig. 5.9 inversa") +
-   row(`L<sub>DT</sub> necesaria con α = ${f(al,1)} %`, Lreq==null?"—":f(Lreq,2)+" m", ex(`L<sub>DT</sub> = (e<sub>extr,req</sub> − e<sub>0,DT</sub>) / α<sub>DT</sub>`, Lreq==null?"—":`(${f(eReq,2)} − ${f(e0,2)}) / ${f(a,3)} = ${f(Lreq,2)} m`), "fig. 5.8 · PDF p. 105");
+   row2(`e<sub>extr,DT</sub> necesario para u<sub>imp</sub>`, eReq!=null?f(eReq,2)+" m":(free?"no condiciona":"fuera de ábaco"), ex(`e<sub>extr,req</sub> tal que f(e<sub>extr,req</sub>) · f<sub>margen</sub> = u<sub>imp</sub>`, free?`u<sub>imp</sub> / f<sub>margen</sub> = ${f(uReq,1)} mm es menor que el mínimo del ábaco (${f(set.env[0][1],1)} mm): cualquier e<sub>extr</sub> del ábaco lo cumple`:`inversa de la envolvente en ${f(uReq,1)} mm`), "fig. 5.9 inversa") +
+   row2(`L<sub>DT</sub> necesaria con α = ${f(al,1)} %`, Lreq==null?(free?"no condiciona":"—"):f(Lreq,2)+" m", ex(`L<sub>DT</sub> = (e<sub>extr,req</sub> − e<sub>0,DT</sub>) / α<sub>DT</sub>`, Lreq==null?(free?"la planeidad no limita la longitud: manda L<sub>hueco</sub>":"—"):`(${f(eReq,2)} − ${f(e0,2)}) / ${f(a,3)} = ${f(Lreq,2)} m`), "fig. 5.8 · PDF p. 105");
 
-  $("tV").innerHTML = hdr(["Magnitud","Valor","Expresión usada","Fuente"]) +
-   row(`φ<sub>d</sub>`, `${f(phid,1)}°`, ex(`φ<sub>d</sub> = atan(tan φ<sub>k</sub> / γ<sub>M</sub>)`, `atan(tan ${f(phik,1)}° / ${f(gphi,2)}) = ${f(phid,1)}°`), "§ 4.4.2 · PDF p. 91") +
-   row(`L<sub>vacío</sub>`, `<strong>${f(Lv,2)} m</strong> (${f(Lv/hmec,2)}·h)`, ex(`L<sub>vacío</sub> = h<sub>mec</sub> · tan(45° − φ<sub>d</sub>/2)`, `${f(hmec,2)} · tan(45° − ${f(phid/2,2)}°) = ${f(Lv,2)} m`), "ec. 5.3 · PDF p. 101") +
-   row(`L<sub>DT,min</sub>`, `${f(Lv,2)} m ${ok(L>Lv)}`, ex(`L<sub>DT</sub> > L<sub>vacío</sub>`, `${f(L,2)} > ${f(Lv,2)}`), "§ 5.2.1 · PDF p. 101") +
-   row(`Longitud apoyada L<sub>DT,extr</sub>`, `${f(Lext,2)} m`, ex(`L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>vacío</sub>`, `${f(L,2)} − ${f(Lv,2)} = ${f(Lext,2)} m`), "§ 5.4 · PDF p. 125") +
-   row(`L<sub>vacío</sub> / L<sub>DT</sub>`, `${f(ratio,2)} ${ratio<=0.5?'<span class="tag ok">≤ 0,5</span>':'<span class="tag warn">> 0,5</span>'}`, ex(`L<sub>vacío</sub> / L<sub>DT</sub> ≤ 0,5 (el relleno no plastifica)`, `${f(Lv,2)} / ${f(L,2)} = ${f(ratio,2)}`), "fig. 5.29 · PDF p. 126–127") +
-   row(`L<sub>DT</sub> ≥ 2·L<sub>vacío</sub> <span class="tag warn">criterio deducido</span>`, `${f(2*Lv,2)} m ${L>=2*Lv?'<span class="tag ok">cumple</span>':'<span class="tag warn">no cumple</span>'}`, ex(`2 · L<sub>vacío</sub> (apoyo ≥ vacío)`, `2 · ${f(Lv,2)} = ${f(2*Lv,2)} m`), "de fig. 5.29, no exigido") +
-   row(`L<sub>DT</sub> recomendada`, `<strong>${f(Lrec,2)} m</strong>`, ex(`máx(2 · L<sub>vacío</sub> ; L<sub>DT</sub> por planeidad)`, `máx(${f(2*Lv,2)} ; ${Lreq!=null?f(Lreq,2):"—"}) = ${f(Lrec,2)} m`), "§ 5.2 + fig. 5.29") +
-   `<tr><td colspan="4" class="note">La tesis solo define L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>vacío</sub> y no fija un mínimo. Con L<sub>vacío</sub>/L<sub>DT</sub> < 0,5 el relleno bajo el extremo no plastifica y el momento no depende de L<sub>DT</sub>; cerca de 1 plastifica (PDF p. 126). El límite 0,5 es una lectura nuestra de esa frase; el mínimo de la tesis es L<sub>DT</sub> > L<sub>vacío</sub>. Caso base de la tesis: L<sub>DT</sub> = 6 m con L<sub>vacío</sub> = 2 m (0,33).</td></tr>`;
+  $("tV").innerHTML = hdr(["Magnitud","Valor"]) +
+   row2(`φ<sub>d</sub>`, `${f(phid,1)}°`, ex(`φ<sub>d</sub> = atan(tan φ<sub>k</sub> / γ<sub>M</sub>)`, `atan(tan ${f(phik,1)}° / ${f(gphi,2)}) = ${f(phid,1)}°`), "§ 4.4.2 · PDF p. 91") +
+   row2(`L<sub>hueco</sub>`, `<strong>${f(Lv,2)} m</strong> (${f(Lv/hmec,2)}·h)`, ex(`L<sub>hueco</sub> = h<sub>mec</sub> · tan(45° − φ<sub>d</sub>/2)`, `${f(hmec,2)} · tan(45° − ${f(phid/2,2)}°) = ${f(Lv,2)} m`), "ec. 5.3 · PDF p. 101") +
+   row2(`L<sub>DT,min</sub>`, `${f(Lv,2)} m ${ok(L>Lv)}`, ex(`L<sub>DT</sub> > L<sub>hueco</sub>`, `${f(L,2)} > ${f(Lv,2)}`), "§ 5.2.1 · PDF p. 101") +
+   row2(`Longitud apoyada L<sub>DT,extr</sub>`, `${f(Lext,2)} m`, ex(`L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>hueco</sub>`, `${f(L,2)} − ${f(Lv,2)} = ${f(Lext,2)} m`), "§ 5.4 · PDF p. 125") +
+   row2(`L<sub>hueco</sub> / L<sub>DT</sub>`, `${f(ratio,2)} ${ratio<=0.5?'<span class="tag ok">≤ 0.5</span>':'<span class="tag warn">> 0.5</span>'}`, ex(`L<sub>hueco</sub> / L<sub>DT</sub> ≤ 0.5 (el relleno no plastifica)`, `${f(Lv,2)} / ${f(L,2)} = ${f(ratio,2)}`), "fig. 5.29 · PDF p. 126–127") +
+   row2(`L<sub>DT</sub> ≥ 2·L<sub>hueco</sub> <span class="tag warn">criterio deducido</span>`, `${f(2*Lv,2)} m ${L>=2*Lv?'<span class="tag ok">cumple</span>':'<span class="tag warn">no cumple</span>'}`, ex(`2 · L<sub>hueco</sub> (apoyo ≥ hueco)`, `2 · ${f(Lv,2)} = ${f(2*Lv,2)} m`), "de fig. 5.29, no exigido") +
+   row2(`L<sub>DT</sub> recomendada`, `<strong>${f(Lrec,2)} m</strong>`, ex(`máx(2 · L<sub>hueco</sub> ; L<sub>DT</sub> por planeidad)`, `máx(${f(2*Lv,2)} ; ${Lreq!=null?f(Lreq,2):"—"}) = ${f(Lrec,2)} m`), "§ 5.2 + fig. 5.29") +
+   "";
 
   const mExpr = conn==="pin"
-    ? ex(`m⁺<sub>long,d</sub> = k<sub>env</sub> · Q<sub>1,d</sub> · L<sub>vacío</sub> / (2 · B<sub>vía</sub>)`, `${f(kenv,2)} · ${f(Q1d,0)} · ${f(Lv,2)} / (2 · ${f(B,2)}) = ${f(mlong,0)} kNm/m`)
-    : ex(`m⁺<sub>long,d</sub> = k<sub>env</sub> · [Q<sub>1,d</sub> · (L<sub>vacío</sub> − L<sub>diag</sub>) + m⁻<sub>pl,d</sub> · B<sub>vía</sub>] / (2 · B<sub>vía</sub>)`, `${f(kenv,2)} · [${f(Q1d,0)} · (${f(Lv,2)} − ${f(Ldiag,2)}) + (${f(-mplUse,0)}) · ${f(B,2)}] / (2 · ${f(B,2)}) = ${f(mlong,0)} kNm/m`);
-  $("tF").innerHTML = hdr(["Esfuerzo","Valor","Expresión usada","Fuente"]) +
-   row(`Q<sub>1,d</sub> por eje del tándem del carril 1`, `${f(Q1d,0)} kN`, ex(`Q<sub>1,d</sub> = γ<sub>Q</sub> · α<sub>Q1</sub> · Q<sub>1k</sub>`, `${f(gQ,2)} · ${f(aQ,2)} · ${f(Q1k,0)} = ${f(Q1d,0)} kN`), "PDF p. 126") +
-   row(`Ancho de reparto equivalente del tándem B<sub>eq</sub>`, `<strong>${f(Beq,2)} m</strong>`, ex(`B<sub>eq</sub> = B<sub>vía</sub> / k<sub>env</sub>`, `${f(B,2)} / ${f(kenv,2)} = ${f(Beq,2)} m`), "ec. 5.13 desarrollada") +
-   `<tr><td colspan="4" class="note">${conn==="pin"
-     ? `m⁺ = ${fmt(kenv,2)}·Q<sub>1,d</sub>·L<sub>vacío</sub>/(2·B<sub>vía</sub>) = [(2·Q<sub>1,d</sub>)·L<sub>vacío</sub>/4] / B<sub>eq</sub>: viga biapoyada de luz L<sub>vacío</sub> con los dos ejes (2 × ${fmt(Q1d,0)} kN) en el centro, repartidos en ${fmt(Beq,2)} m.`
-     : `m⁺ = [(2·Q<sub>1,d</sub>)·(L<sub>vacío</sub> − L<sub>diag</sub>)/4 + m⁻<sub>pl,d</sub>·B<sub>vía</sub>/2] / B<sub>eq</sub>: los dos ejes (2 × ${fmt(Q1d,0)} kN) repartidos en ${fmt(Beq,2)} m sobre la luz L<sub>vacío</sub> − L<sub>diag</sub>, descontando el momento de la rótula.`}
-     El coeficiente ${fmt(kenv,2)} es la envolvente empírica de la fig. 5.29(b): cubre el carril 2, la sobrecarga q, el peso propio y el reparto real en la placa (PDF p. 126–127). En el modelo numérico no hay ancho eficaz: es una placa de 9 m con los tándems de los carriles 1 y 2 junto al borde (fig. 4.25).</td></tr>` +
-   (conn==="hinge" ? row(`m⁻<sub>pl,d</sub> de la rótula (ρ = ${f(rhoh*100,2)} %, d = ${f(dh,3)} m)`, `−${f(MplCalc,0)} kNm/m`, ex(`m⁻<sub>pl,d</sub> = f<sub>sd</sub> · ρ · d² · (1 − f<sub>sd</sub> · ρ / (2 · f<sub>cd</sub>))`, `${f(fsd,0)} MPa · ${f(rhoh,4)} · ${f(dh,3)}² m² · 10³ · (1 − ${f(fsd,0)} · ${f(rhoh,4)} / (2 · ${f(fcd,1)})) = ${f(MplCalc,0)} kNm/m`), "ec. 5.6 · PDF p. 116")
-     + row(`m⁻<sub>pl,d</sub> usado en ec. 5.14`, `−${f(mplUse,0)} kNm/m`, ex($("mplMode").value==="thesis" ? `valor recomendado por la tesis` : `valor de la ec. 5.6`, ""), "PDF p. 127") : "") +
-   row(`m⁺<sub>long,d</sub> (${mEq})`, `${f(mlong,0)} kNm/m`, mExpr, `${mEq} · PDF p. 133`) +
-   row(`m⁺<sub>pl,d</sub> requerido longitudinal`, `<strong>${f(mreq,0)} kNm/m</strong>`, ex(`m⁺<sub>pl,d</sub> ≥ máx(m⁺<sub>long,d</sub> ; 100)`, `máx(${f(mlong,0)} ; 100) = ${f(mreq,0)} kNm/m`), "§ 5.4.3 · PDF p. 133") +
-   row(`m⁺<sub>pl,d</sub> requerido transversal (mínimo)`, `<strong>100 kNm/m</strong>`, ex(`m⁺<sub>pl,d,trans</sub> ≥ 100 kNm/m`, ""), "§ 5.4.3 · PDF p. 133") +
-   row(`n<sub>max</sub> estimado por rozamiento`, `${f(nEst,0)} kN/m`, ex(`n<sub>max</sub> = G<sub>ef</sub> · cos α · (tan δ + tan α), δ = 2φ<sub>k</sub>/3`, `G<sub>ef</sub> = ${f(Geff,0)} kN/m; α = ${f(deg(aA),2)}°; δ = ${f(deg(delta),1)}° → ${f(nEst,0)} kN/m`), "ec. 5.11–5.12 · PDF p. 132") +
-   row(`n<sub>d</sub> de tracción usado`, `<strong>${f(nd,0)} kN/m</strong>`, ex(`n<sub>d</sub> = ${$("nMode").value==="thesis"?"100 kN/m (tesis)":"máx(100 ; n<sub>max</sub>)"}`, $("nMode").value==="thesis"?"":`máx(100 ; ${f(nEst,0)}) = ${f(nd,0)} kN/m`), "§ 5.4.3 · PDF p. 133") +
-   (conn==="pin" ? row(`Δα<sub>DT</sub> al paso del vehículo`, `${f(dAlpha,1)} ‰ ${dAlpha<=ROT_LIMIT?'<span class="tag ok">≤ 4 ‰</span>':'<span class="tag warn">> 4 ‰</span>'}`, ex(`Δα<sub>DT</sub> = 0,5 · 3 · Q · L<sub>vacío</sub>² / (B<sub>vía</sub> · h<sub>DT</sub>³ · E<sub>fis</sub>)`, `0,5 · 3 · ${f(Q1s,0)} kN · ${f(Lv,2)}² / (${f(B,2)} · ${f(h,2)}³ · ${f(Efis,0)} MPa) = ${f(dAlpha,1)} ‰`), "ec. 5.15 · PDF p. 134") : "") +
-   row(`Δα<sub>DT</sub> por u<sub>imp</sub> (orientativo)`, `${f(dAlphaU,1)} ‰`, ex(`Δα<sub>DT</sub> ≈ (1 ‰ / 50 mm) · u<sub>imp</sub>`, `${f(ROT_UIMP,3)} · ${f(uimp,1)} = ${f(dAlphaU,1)} ‰`), "fig. 4.29 · PDF p. 93");
+    ? ex(`m⁺<sub>long,d</sub> = 1.5 · Q<sub>1,d</sub> · L<sub>hueco</sub> / (2 · B<sub>vía</sub>)`, `${f(kenv,2)} · ${f(Q1d,0)} · ${f(Lv,2)} / (2 · ${f(B,2)}) = ${f(mlong,0)} kNm/m`)
+    : ex(`m⁺<sub>long,d</sub> = 1.5 · [Q<sub>1,d</sub> · (L<sub>hueco</sub> − L<sub>diag</sub>) + m⁻<sub>pl,d</sub> · B<sub>vía</sub>] / (2 · B<sub>vía</sub>)`, `${f(kenv,2)} · [${f(Q1d,0)} · (${f(Lv,2)} − ${f(Ldiag,2)}) + (${f(-mplUse,0)}) · ${f(B,2)}] / (2 · ${f(B,2)}) = ${f(mlong,0)} kNm/m`);
+  $("tF").innerHTML = hdr(["Esfuerzo","Valor"]) +
+   row2(`m⁺<sub>long,d</sub> (${mEq})`, `${f(mlong,0)} kNm/m`, mExpr, `${mEq} · PDF p. 133`) +
+   row2(`m⁺<sub>pl,d</sub> requerido longitudinal`, `<strong>${f(mreq,0)} kNm/m</strong>`, ex(`m⁺<sub>pl,d</sub> ≥ máx(m⁺<sub>long,d</sub> ; 100)`, `máx(${f(mlong,0)} ; 100) = ${f(mreq,0)} kNm/m`), "§ 5.4.3 · PDF p. 133") +
+   row2(`m⁺<sub>pl,d</sub> requerido transversal (mínimo)`, `<strong>100 kNm/m</strong>`, ex(`m⁺<sub>pl,d,trans</sub> ≥ 100 kNm/m`, ""), "§ 5.4.3 · PDF p. 133") +
+   row2(`n<sub>max</sub> estimado por rozamiento`, `${f(nEst,0)} kN/m`, ex(`n<sub>max</sub> = G<sub>ef</sub> · cos α · (tan δ + tan α), δ = 2φ<sub>k</sub>/3`, `G<sub>ef</sub> = ${f(Geff,0)} kN/m; α = ${f(deg(aA),2)}°; δ = ${f(deg(delta),1)}° → ${f(nEst,0)} kN/m`), "ec. 5.11–5.12 · PDF p. 132") +
+   row2(`n<sub>d</sub> de tracción usado`, `<strong>${f(nd,0)} kN/m</strong>`, ex(`n<sub>d</sub> = ${$("nMode").value==="thesis"?"100 kN/m (tesis)":"máx(100 ; n<sub>max</sub>)"}`, $("nMode").value==="thesis"?"":`máx(100 ; ${f(nEst,0)}) = ${f(nd,0)} kN/m`), "§ 5.4.3 · PDF p. 133") +
+   (conn==="pin" ? row2(`Δα<sub>DT</sub> al paso del vehículo`, `${f(dAlpha,1)} ‰ ${dAlpha<=ROT_LIMIT?'<span class="tag ok">≤ 4 ‰</span>':'<span class="tag warn">> 4 ‰</span>'}`, ex(`Δα<sub>DT</sub> = 0.5 · 3 · Q · L<sub>hueco</sub>² / (B<sub>vía</sub> · h<sub>DT</sub>³ · E<sub>fis</sub>)`, `0,5 · 3 · ${f(Q1s,0)} kN · ${f(Lv,2)}² / (${f(B,2)} · ${f(h,2)}³ · ${f(Efis,0)} MPa) = ${f(dAlpha,1)} ‰`), "ec. 5.15 · PDF p. 134") : "");
 
-  const asRow = (name, s, expr, ref, len) => s.fail
-    ? `<tr><td>${name}</td><td class="n" colspan="3"><span class="tag bad">sección insuficiente</span></td><td>${expr}</td><td class="ref">${ref}</td></tr>`
-    : `<tr><td>${name}</td><td class="n">${f(s.As,0)}</td><td>${pickBars(s.As,len)}</td><td class="n">${f(s.xd,2)} ${s.xd<=0.35?'<span class="tag ok">dúctil</span>':'<span class="tag warn">revisar</span>'}</td><td>${expr}</td><td class="ref">${ref}</td></tr>`;
-  const secEx = (m,n,dd,s)=> ex(`M<sub>s</sub> = m − n · (d − h/2); a = d − √(d² − 2M<sub>s</sub>/f<sub>cd</sub>); A<sub>s</sub> = (f<sub>cd</sub> · a + n) / f<sub>sd</sub>`,
-      s.fail ? `M<sub>s</sub> = ${f(s.Ms,0)} kNm/m: no hay solución` : `M<sub>s</sub> = ${f(m,0)} − ${f(n,0)} · (${f(dd,3)} − ${f(h/2,3)}) = ${f(s.Ms,0)} kNm/m; a = ${f(s.a*1000,1)} mm; A<sub>s</sub> = (${f(fcd,1)} · ${f(s.a*1000,1)} + ${f(n,0)}·10⁻³·10³) / ${f(fsd,0)} = ${f(s.As,0)} mm²/m`);
-  const AsH = rhoh*dh*1e6;
-  $("tA").innerHTML = hdr(["Armadura","A<sub>s</sub> [mm²/m]","Propuesta","x/d","Expresión usada","Base"]) +
-   asRow(`Inferior longitudinal (m = ${f(mreq,0)}, n = ${f(nd,0)}, d = ${f(d,3)})`, secL, secEx(mreq,nd,d,secL), "§ 5.4.3 + SIA 262", Wab) +
-   asRow(`Inferior transversal (m = 100, d = ${f(dt,3)})`, secT, secEx(100,0,dt,secT), "§ 5.4.3 + SIA 262", L) +
-   (conn==="hinge" ? `<tr><td>Superior en la rótula (ρ = ${f(rhoh*100,2)} %, d = ${f(dh,3)}), sin cercos</td><td class="n">${f(AsH,0)}</td><td>${pickBars(AsH,Wab)}</td><td class="n">—</td><td>${ex(`A<sub>s</sub> = ρ · b · d`, `${f(rhoh,4)} · 1000 mm · ${f(dh*1000,0)} mm = ${f(AsH,0)} mm²/m`)}</td><td class="ref">fig. 5.15 · PDF p. 112, 125</td></tr>` : "") +
-   `<tr><td colspan="6" class="note">Materiales: f<sub>cd</sub> = η<sub>fc</sub>·f<sub>ck</sub>/γ<sub>c</sub> = ${f(etafc,3)} · ${f(fck,0)} / ${f(gc,2)} = ${f(fcd,1)} MPa; f<sub>sd</sub> = f<sub>sk</sub>/γ<sub>s</sub> = ${f(fsk,0)} / ${f(gsS,2)} = ${f(fsd,0)} MPa; E<sub>c,0</sub> = ${f(Ec,0)} MPa. Barras longitudinales repartidas en el ancho del estribo (L = ${f(Wab,1)} m); las transversales, a lo largo de L<sub>DT</sub>. Propuestas con los diámetros disponibles Ø10, 12, 16, 20, 25 y 32 mm y separaciones de 100 a 250 mm. En los ensayos, ρ = 0,3 % era Ø12 c/150 en banda de 0,30 m (PDF p. 113–114). Flexión compuesta con tracción: bloque rectangular de compresiones con a = 0,85·x; cálculo seccional estándar (SIA 262), no está en la tesis.</td></tr>`;
+  const RHO_H = 0.003;                                    // cuantía de la armadura superior de la rótula (tesis, PDF p. 125)
+  const AsH = RHO_H*dh*1e6;                              // mm²/m
+  const barRow = (name, key, Asreq, Msd, n, dd, fail) => {
+    if (fail) return `<tr><td>${name}</td><td class="n" colspan="5"><span class="tag bad">sección insuficiente</span></td></tr>`;
+    const phi=PHI[key], sp=spacingFor(Asreq,phi);
+    const sel=`<select class="phi" data-k="${key}">${PHIS.map(p=>`<option value="${p}"${p===phi?" selected":""}>Ø${p}</option>`).join("")}</select>`;
+    if (sp==null) return `<tr><td>${name}</td><td class="n">${f(Asreq,0)}</td><td>${sel}</td><td class="n" colspan="3"><span class="tag bad">no cabe: use mayor diámetro</span></td></tr>`;
+    const Mrd=mrdSection(Math.PI*phi*phi/4*1000/sp, n, dd, h, fcd, fsd);
+    return `<tr><td>${name}</td><td class="n">${f(Asreq,0)}</td><td>${sel}</td><td class="n">${f(sp/1000,3)}</td><td class="n">${Msd==null?"—":f(Msd,0)}</td><td class="n">${f(Mrd,0)} ${Msd==null?"":(Mrd>=Msd-1e-6?'<span class="tag ok">cumple</span>':'<span class="tag bad">no cumple</span>')}</td></tr>`;
+  };
+  $("tA").innerHTML = hdr(["Armadura","A<sub>s</sub> [mm²/m]","Diámetro","s [m]","M<sub>Sd</sub> [kNm/m]","M<sub>Rd</sub> [kNm/m]"]) +
+   barRow("Inferior longitudinal","long",secL.As,mreq,nd,d,secL.fail) +
+   barRow("Inferior transversal","trans",secT.As,100,0,dt,secT.fail) +
+   (conn==="hinge" ? barRow("Superior de la rótula (ρ = 0.3 %)","hinge",AsH,null,0,dh,false) : "");
+
+  /* ---------- 5. comprobaciones aproximadas: cortante en los extremos y presión sobre el relleno ---------- */
+  // cortante resistente sin armadura transversal, EN 1992-1-1, 6.2.2 (b = 1 m); armadura longitudinal inferior elegida
+  const spL = secL.fail ? null : spacingFor(secL.As, PHI.long);
+  const AslV = spL!=null ? Math.PI*PHI.long*PHI.long/4*1000/spL : (secL.fail ? 0 : secL.As);   // mm²/m
+  const kV = Math.min(2, 1 + Math.sqrt(200/(d*1000)));
+  const rhoV = Math.min(0.02, AslV/(1000*d*1000));
+  const sigCp = -nd/(h*1000);                                                           // MPa (tracción n_d: negativa)
+  const CRDC = 0.18/gc, K1 = 0.15;
+  const tauC = Math.max(CRDC*kV*Math.cbrt(100*rhoV*fck) + K1*sigCp, 0.035*Math.pow(kV,1.5)*Math.sqrt(fck) + K1*sigCp);   // MPa
+  const VRd = Math.max(tauC,0)*1000*d;                    // kN/m
+  const GAMMA_G = 1.35, SP_AXLES = 1.20;                    // factor de las acciones permanentes; separación de ejes (m)
+  const AV = 2*d;                                         // m, distancia libre del borde de la rueda al apoyo (posición pésima, β = a_v / 2d = 1)
+  const W_SHEAR = 2.00 + 0.40 + 2*AV;                     // m, ancho de reparto del cortante: ruedas (2.00 + 0.40) y 45° a lo largo de a_v a cada lado
+  const reaction = (Ls, a) => { const r = x => x<Ls ? Q1d*(1 - x/Ls) : 0; return (r(a) + r(a+SP_AXLES))/W_SHEAR; };   // kN/m, tándem con el eje más próximo a una distancia a del apoyo
+  const Ls = conn==="hinge" ? Math.max(Lv-Ldiag,0.01) : Math.max(Lv,0.01);              // luz de cálculo del cortante
+  const VsdA = reaction(Ls, AV+0.20) + (conn==="hinge" ? mplUse/Ls : 0);                       // extremo del estribo: la rótula transmite m⁻pl,d, que suma m⁻pl,d/Ls a la reacción
+  const VsdB = reaction(Ls, AV+0.20);                                                          // extremo del relleno (apoyo simple)
+  const P_LIM = 250;                                      // kN/m², límite de la presión sobre el relleno (criterio propio)
+  const bPres = 2.00 + 0.40 + 2*(eextr + h);                                             // m, reparto a 45° desde la superficie hasta el relleno
+  const pEd = Lext>0 ? 2*Q1d/(Lext*bPres) + GAMMA_G*(gs*eextr + 25*h) : NaN;            // kN/m²
+  const shearTag = (V)=> V<=VRd ? '<span class="tag ok">cumple</span>' : `<span class="tag bad">comprobar necesidad de cercos con V<sub>Sd</sub> = ${fmt(V,0)} kN/m</span>`;
+  const shearCell = V => V<=VRd ? `${fmt(V,0)} kN/m ${shearTag(V)}` : shearTag(V);
+  $("tC").innerHTML = hdr(["Magnitud","Valor"]) +
+   row2(`V<sub>Rd,c</sub> sin armadura de cortante (EC2 6.2.2)`, `${fmt(VRd,0)} kN/m`) +
+   row2(`Ancho de reparto del cortante = 2.40 + 4 · d`, `${fmt(W_SHEAR,2)} m`) +
+   row2(`V<sub>Sd</sub> en el extremo del estribo (luz ${fmt(Ls,2)} m)`, shearCell(VsdA)) +
+   row2(`V<sub>Sd</sub> en el extremo del relleno`, shearCell(VsdB)) +
+   row2(`Ancho de reparto de la carga sobre el relleno`, Lext>0 ? `${fmt(bPres,2)} m` : "—") +
+   row2(`Presión sobre el relleno p<sub>Ed</sub>`, Lext>0 ? `${fmt(pEd,0)} kN/m²` : "—") +
+   row2(`Presión límite sobre el relleno (criterio propio)`, `${P_LIM} kN/m² ${Lext>0 ? (pEd<=P_LIM?'<span class="tag ok">cumple</span>':'<span class="tag bad">no cumple</span>') : ""}`);
 
   $("msgs").innerHTML = msgs.length ? msgs.map(([c,t])=>`<li class="${c}">${t}</li>`).join("") : `<li class="info">Sin avisos.</li>`;
 
   $("idLine").textContent = `${$("proj").value || "—"} · ${$("elem").value || "—"} · L = ${fmt(Wab,1)} m · h = ${fmt(hmec,1)} m`;
   drawChart(set, eextr, uimp, uEnv, marg);
   drawElev({L,a,e0,h,hmec,Lv,phid,conn,Ldiag,eextr,Q1d});
-  drawPlan({L,Lv,B,Beq,Q1d,conn,Ldiag});
+  drawHinge({conn});
+  drawPlan({L,Lv,B,Q1d,conn,Ldiag,Q1k,aQ,gQ});
 }
 
 /* ---------- figuras: alzado y planta ---------- */
 function col(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
-function dimH(x1,x2,y,label,color){ // cota horizontal
+function dimH(x1,x2,y,label,color,anchor){ // cota horizontal (anchor="start": rótulo a partir de x1)
   const c=color||col('--fg');
   return `<line x1="${x1}" x2="${x2}" y1="${y}" y2="${y}" stroke="${c}" marker-start="url(#ar)" marker-end="url(#ar)"/>
   <line x1="${x1}" x2="${x1}" y1="${y-6}" y2="${y+6}" stroke="${c}"/><line x1="${x2}" x2="${x2}" y1="${y-6}" y2="${y+6}" stroke="${c}"/>
-  <text x="${(x1+x2)/2}" y="${y-5}" text-anchor="middle" font-size="11" style="fill:${c}">${label}</text>`;
+  <text x="${anchor==="start"?x1+4:(x1+x2)/2}" y="${y-5}" text-anchor="${anchor||"middle"}" font-size="11" style="fill:${c}">${label}</text>`;
 }
 function defs(){ return `<defs><marker id="ar" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="${col('--fg')}"/></marker>
   <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="${col('--bad')}"/></marker>
@@ -541,19 +568,58 @@ function drawElev(o){
   // tándem
   const xc=o.Lv/2;
   for (const dx of [-0.6,0.6]){ const x=X(xc+dx); s+=`<line x1="${x}" x2="${x}" y1="${Y(0)-34}" y2="${Y(0)-3}" stroke="${col('--bad')}" stroke-width="2.5" marker-end="url(#ar2)"/>`; }
-  s+=`<text x="${X(xc)}" y="${Y(0)-40}" text-anchor="middle" font-size="11" style="fill:${col('--bad')}">2 × Q<tspan font-size="8" dy="2">1,d</tspan><tspan dy="-2"> = 2 × ${fmt(o.Q1d,0)} kN · 1,20 m</tspan></text>`;
+  s+=`<text x="${X(xc)}" y="${Y(0)-40}" text-anchor="middle" font-size="11" style="fill:${col('--bad')}">2 × Q<tspan font-size="8" dy="2">1,d</tspan><tspan dy="-2"> = 2 × ${fmt(o.Q1d,0)} kN · 1.20 m</tspan></text>`;
   // e_extr
   s+=`<line x1="${X(o.L)+10}" x2="${X(o.L)+10}" y1="${Y(0)}" y2="${Y(yt1)}" stroke="${fg}" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="${X(o.L)+14}" y="${(Y(0)+Y(yt1))/2+4}" font-size="11">e<tspan font-size="8" dy="2">extr</tspan><tspan dy="-2"> = ${fmt(o.eextr,2)} m</tspan></text>`;
   // cotas
   const yd=Y(depth)+18;
-  s+=dimH(X(0),X(o.Lv),yd,`L<tspan font-size="8" dy="2">vacío</tspan><tspan dy="-2"> = ${fmt(o.Lv,2)} m</tspan>`,wa);
+  s+=dimH(X(0),X(o.Lv),yd,`L<tspan font-size="8" dy="2">hueco</tspan><tspan dy="-2"> = ${fmt(o.Lv,2)} m</tspan>`,wa);
   if (o.L>o.Lv) s+=dimH(X(o.Lv),X(o.L),yd+28,`L<tspan font-size="8" dy="2">DT,extr</tspan><tspan dy="-2"> = ${fmt(o.L-o.Lv,2)} m (apoyada)</tspan>`,ok);
   s+=dimH(X(0),X(o.L),yd+56,`L<tspan font-size="8" dy="2">DT</tspan><tspan dy="-2"> = ${fmt(o.L,2)} m</tspan>`,fg);
   const okL=o.L>=2*o.Lv, c2=okL?ok:wa;
   s+=`<line x1="${X(2*o.Lv)}" x2="${X(2*o.Lv)}" y1="${Y(0)+4}" y2="${yd+64}" stroke="${c2}" stroke-dasharray="4 3"/>`;
-  s+=`<text x="${X(2*o.Lv)+4}" y="${yd+80}" font-size="11" style="fill:${c2}">2·L<tspan font-size="8" dy="2">vacío</tspan><tspan dy="-2"> = ${fmt(2*o.Lv,2)} m ${okL?"✓":"(la losa no llega)"}</tspan></text>`;
+  s+=`<text x="${X(2*o.Lv)+4}" y="${yd+80}" font-size="11" style="fill:${c2}">2·L<tspan font-size="8" dy="2">hueco</tspan><tspan dy="-2"> = ${fmt(2*o.Lv,2)} m ${okL?"✓":"(la losa no llega)"}</tspan></text>`;
   const H=yd+90; svg.setAttribute("viewBox",`0 0 ${Math.max(X(xr)+140, X(2*o.Lv)+190)} ${H}`);
   svg.innerHTML=s;
+}
+
+function drawHinge(o){
+  const svg=$("hinge"), wrap=$("hingeWrap"), note=$("hingeNote");
+  const show = o.conn==="hinge";
+  wrap.hidden=!show; note.hidden=!show;
+  if(!show){ svg.innerHTML=""; return; }
+  const fg=col('--fg'), mu=col('--muted'), ac=col('--accent'), bad=col('--bad'), bg=col('--bg');
+  // Geometría del detalle de la fig. 5.15(b) (cm): x desde la cara del estribo (cara vertical del apoyo de la losa), z hacia abajo desde el paramento superior del estribo
+  const sc=2.8, X=x=>230+x*sc, Y=z=>62+z*sc, XE=126;
+  const P=(pts)=>pts.map(q=>X(q[0])+","+Y(q[1])).join(" ");
+  let s=defs();
+  // hormigón del estribo y de la losa (monolítico)
+  s+=`<polygon points="${P([[-70,0],[0,0],[26,20],[XE,29.4],[XE,59.4],[30.6,50],[0,50],[0,80],[-70,80]])}" fill="${mu}" opacity=".35" stroke="${fg}" stroke-width="1.3"/>`;
+  // hormigón de limpieza (10 cm) sobre el estribo
+  s+=`<polygon points="${P([[0,50],[30.6,50],[XE,59.4],[XE,69.4],[0,57]])}" fill="${mu}" opacity=".12" stroke="${mu}" stroke-dasharray="4 3"/>`;
+  s+=`<text x="${X(40)}" y="${Y(63)+3}" font-size="10" style="fill:${mu}">hormigón de limpieza</text>`;
+  // armadura superior de la losa (continua desde el estribo) y barra inclinada de conexión
+  s+=`<polyline points="${P([[-70,21.7],[0,21.7],[XE-4,34.2]])}" fill="none" stroke="${fg}" stroke-width="3"/>`;
+  s+=`<polyline points="${P([[-70,5.1],[0,5.1],[LDIAG*100,47.4],[XE-4,53.6]])}" fill="none" stroke="${ac}" stroke-width="3"/>`;
+  // sección de la rótula
+  const xh=LDIAG*100;
+  s+=`<line x1="${X(xh)}" x2="${X(xh)}" y1="${Y(-12)}" y2="${Y(76)}" stroke="${bad}" stroke-dasharray="5 3" stroke-width="1.5"/>`;
+  // cotas
+  const hd=(x1,x2,z,t,c)=>`<line x1="${X(x1)}" x2="${X(x2)}" y1="${Y(z)}" y2="${Y(z)}" stroke="${c||fg}" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="${(X(x1)+X(x2))/2}" y="${Y(z)-4}" text-anchor="middle" font-size="11" style="fill:${c||fg}">${t}</text>`;
+  const vd=(x,z1,z2,t,c,side)=>`<line x1="${X(x)}" x2="${X(x)}" y1="${Y(z1)}" y2="${Y(z2)}" stroke="${c||fg}" marker-start="url(#ar)" marker-end="url(#ar)"/><text transform="translate(${X(x)+(side||-5)} ${Y((z1+z2)/2)}) rotate(-90)" text-anchor="middle" font-size="11" style="fill:${c||fg}">${t}</text>`;
+  s+=hd(0,26,-12,"26 cm",fg);
+  s+=`<line x1="${X(0)}" x2="${X(0)}" y1="${Y(-12)}" y2="${Y(0)}" stroke="${mu}" stroke-dasharray="2 3"/><line x1="${X(26)}" x2="${X(26)}" y1="${Y(-12)}" y2="${Y(20)}" stroke="${mu}" stroke-dasharray="2 3"/>`;
+  s+=hd(0,xh,88,`L<tspan font-size="8" dy="2">diag</tspan><tspan dy="-2"> = ${fmt(xh,0)} cm</tspan>`,bad);
+  s+=`<line x1="${X(0)}" x2="${X(0)}" y1="${Y(80)}" y2="${Y(90)}" stroke="${mu}" stroke-dasharray="2 3"/><line x1="${X(xh)}" x2="${X(xh)}" y1="${Y(76)}" y2="${Y(90)}" stroke="${bad}" stroke-dasharray="2 3"/>`;
+  s+=vd(-24,0,50,"50 cm",fg,-5);
+  s+=vd(-8,0,20,"20 cm",fg,-5);
+  s+=vd(XE+10,29.4,59.4,"30 cm",fg,12);
+  s+=vd(XE+10,59.4,69.4,"10 cm",mu,12);
+  s+=`<text x="${X(66)}" y="${Y(49)+14}" font-size="10" style="fill:${ac}">barra inclinada (6)</text>`;
+  s+=`<text x="${X(70)}" y="${Y(28)-2}" font-size="10" style="fill:${fg}">armadura superior</text>`;
+  s+=`<text x="${X(-60)}" y="${Y(68)}" font-size="11" style="fill:${fg}">estribo</text>`;
+  svg.innerHTML=s;
+  note.textContent="Detalle de la fig. 5.15(b) de la tesis y fig. 5.3 de la directriz ASTRA 12004 (cap. 3), redibujado a escala.";
 }
 
 function drawPlan(o){
@@ -566,27 +632,27 @@ function drawPlan(o){
   // losa
   s+=`<rect x="${X(0)}" y="${Y(-wy/2)}" width="${o.L*sc}" height="${wy*sc}" fill="${col('--bg')}" stroke="${mu}"/>`;
   s+=`<rect x="${X(-0.6)}" y="${Y(-wy/2)}" width="${0.6*sc}" height="${wy*sc}" fill="${mu}" opacity=".55"/>`;
-  s+=`<text x="${X(-0.3)}" y="${Y(-wy/2)-6}" text-anchor="middle" font-size="11">estribo</text>`;
+  s+=`<text transform="translate(${X(-0.3)+4} ${Y(0)}) rotate(-90)" text-anchor="middle" font-size="11" style="fill:#fff">estribo</text>`;
   // zona apoyada
   if (o.L>o.Lv) s+=`<rect x="${X(o.Lv)}" y="${Y(-wy/2)}" width="${(o.L-o.Lv)*sc}" height="${wy*sc}" fill="${ok}" opacity=".12"/>`;
   s+=`<line x1="${X(o.Lv)}" x2="${X(o.Lv)}" y1="${Y(-wy/2)}" y2="${Y(wy/2)}" stroke="${wa}" stroke-dasharray="5 3"/>`;
-  s+=`<text x="${X(o.Lv)+4}" y="${Y(-wy/2)+12}" font-size="10" style="fill:${wa}">fin del vacío</text>`;
-  // carril y ancho equivalente
+  s+=`<text x="${X(o.Lv)+4}" y="${Y(-wy/2)+12}" font-size="10" style="fill:${wa}">fin del hueco</text>`;
+  // carril
   s+=`<rect x="${X(0)}" y="${Y(-o.B/2)}" width="${o.L*sc}" height="${o.B*sc}" fill="none" stroke="${fg}" stroke-dasharray="6 4"/>`;
-  s+=`<rect x="${X(0)}" y="${Y(-o.Beq/2)}" width="${o.Lv*sc}" height="${o.Beq*sc}" fill="${ac}" opacity=".28"/>`;
   // ruedas
   const xc=o.Lv/2;
   for (const dx of [-0.6,0.6]) for (const dy of [-1.0,1.0]){
-    s+=`<rect x="${X(xc+dx-0.2)}" y="${Y(dy-0.2)}" width="${0.4*sc}" height="${0.4*sc}" fill="${bad}"/>`;
+    s+=`<rect x="${X(xc+dx-0.2)}" y="${Y(dy-0.2)}" width="${0.4*sc}" height="${0.4*sc}" fill="${bad}"/><text x="${X(xc+dx)}" y="${Y(dy)+3.5}" text-anchor="middle" font-size="10" font-weight="600" style="fill:#fff">${fmt(o.Q1k/2,0)}</text>`;
   }
   // cotas laterales
   const xR=X(o.L)+12;
-  const vdim=(y1,y2,x,label,c)=>`<line x1="${x}" x2="${x}" y1="${Y(y1)}" y2="${Y(y2)}" stroke="${c}" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="${x+5}" y="${(Y(y1)+Y(y2))/2+4}" font-size="11" style="fill:${c}">${label}</text>`;
+  const vdim=(y1,y2,x,label,c,ty)=>`<line x1="${x}" x2="${x}" y1="${Y(y1)}" y2="${Y(y2)}" stroke="${c}" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="${x+5}" y="${ty!=null?ty:(Y(y1)+Y(y2))/2+4}" font-size="11" style="fill:${c}">${label}</text>`;
   s+=vdim(-o.B/2,o.B/2,xR,`B<tspan font-size="8" dy="2">vía</tspan><tspan dy="-2"> = ${fmt(o.B,2)} m</tspan>`,fg);
-  s+=vdim(-o.Beq/2,o.Beq/2,X(o.Lv)+8 > xR-60 ? xR+0 : X(o.Lv)+8,`B<tspan font-size="8" dy="2">eq</tspan><tspan dy="-2"> = ${fmt(o.Beq,2)} m</tspan>`,ac);
-  s+=`<line x1="${X(xc)}" x2="${X(xc)}" y1="${Y(-1)}" y2="${Y(1)}" stroke="${bad}" marker-start="url(#ar)" marker-end="url(#ar)"/><text x="${X(xc)+5}" y="${Y(0)+4}" font-size="11" style="fill:${bad}">2,00 m entre ruedas</text>`;
-  s+=dimH(X(xc-0.6),X(xc+0.6),Y(-wy/2)-8,`1,20 m`,bad);
-  s+=dimH(X(0),X(o.Lv),Y(wy/2)+30,`L<tspan font-size="8" dy="2">vacío</tspan><tspan dy="-2"> = ${fmt(o.Lv,2)} m (luz de cálculo)</tspan>`,wa);
+  s+=`<line x1="${X(xc)}" x2="${X(xc)}" y1="${Y(-1)}" y2="${Y(1)}" stroke="${bad}" marker-start="url(#ar)" marker-end="url(#ar)"/><text transform="translate(${X(xc)+15} ${Y(0)}) rotate(-90)" text-anchor="middle" font-size="11" style="fill:${bad}">2.00 m entre ruedas</text>`;
+  s+=dimH(X(xc-0.6),X(xc+0.6),Y(-wy/2)-8,`1.20 m`,bad);
+  s+=dimH(X(0),X(o.Lv),Y(wy/2)+30,`L<tspan font-size="8" dy="2">hueco</tspan><tspan dy="-2"> = ${fmt(o.Lv,2)} m (luz de cálculo)</tspan>`,wa,"start");
+  const wd=o.Q1d/2;
+  $("planNote").innerHTML=`Planta del carril 1 sobre la losa. Cuatro cargas puntuales, una por cada punto de contacto del tándem: <strong>${fmt(o.Q1k/2,0)} kN</strong> cada una (Q<sub>1k</sub>/2, valor característico); en ELU, γ<sub>Q</sub>·α<sub>Q1</sub>·Q<sub>1k</sub>/2 = ${fmt(o.gQ,2)}·${fmt(o.aQ,2)}·${fmt(o.Q1k,0)}/2 = <strong>${fmt(wd,1)} kN</strong> por rueda (${fmt(o.Q1d,0)} kN por eje, ${fmt(2*o.Q1d,0)} kN el tándem). Ruedas de 0.40 × 0.40 m, 1.20 m entre ejes y 2.00 m entre ruedas (modelo 1, fig. 4.25). No se aplica ninguna carga uniforme.`;
   const H=Y(wy/2)+42; svg.setAttribute("viewBox",`0 0 ${X(xr)+110} ${H}`);
   svg.innerHTML=s;
 }
@@ -599,10 +665,11 @@ function drawChart(set, ex, uimp, uEnv, marg){
   const css=getComputedStyle(document.documentElement);
   const c=n=>css.getPropertyValue(n).trim();
   let s="";
-  for (let x=0;x<=1.2001;x+=0.2){ s+=`<line x1="${sx(x)}" x2="${sx(x)}" y1="${sy(0)}" y2="${sy(100)}" stroke="${c('--rule')}"/><text x="${sx(x)}" y="${sy(0)+18}" text-anchor="middle" font-size="12">${fmt(x,1)}</text>`; }
-  for (let y=0;y<=100;y+=20){ s+=`<line x1="${sx(0)}" x2="${sx(1.2)}" y1="${sy(y)}" y2="${sy(y)}" stroke="${c('--rule')}"/><text x="${sx(0)-8}" y="${sy(y)+4}" text-anchor="end" font-size="12">${y}</text>`; }
-  s+=`<text x="${(sx(0)+sx(1.2))/2}" y="${H-8}" text-anchor="middle" font-size="13">e<tspan font-size="10" dy="3">extr,DT</tspan><tspan dy="-3"> [m]</tspan></text>`;
-  s+=`<text transform="translate(16 ${(sy(0)+sy(100))/2}) rotate(-90)" text-anchor="middle" font-size="13">u<tspan font-size="10" dy="3">imp,adm</tspan><tspan dy="-3"> [mm]</tspan></text>`;
+  for (let x=0;x<=1.2001;x+=0.2){ s+=`<line x1="${sx(x)}" x2="${sx(x)}" y1="${sy(0)}" y2="${sy(100)}" stroke="${c('--rule')}"/><text x="${sx(x)}" y="${sy(0)+18}" text-anchor="middle" font-size="10">${fmt(x,1)}</text>`; }
+  for (let y=5;y<=100;y+=10){ s+=`<line x1="${sx(0)}" x2="${sx(1.2)}" y1="${sy(y)}" y2="${sy(y)}" stroke="${c('--rule')}" stroke-width=".5" opacity=".6"/>`; }
+  for (let y=0;y<=100;y+=10){ s+=`<line x1="${sx(0)}" x2="${sx(1.2)}" y1="${sy(y)}" y2="${sy(y)}" stroke="${c('--rule')}"/><text x="${sx(0)-8}" y="${sy(y)+4}" text-anchor="end" font-size="10">${y}</text>`; }
+  s+=`<text x="${(sx(0)+sx(1.2))/2}" y="${H-8}" text-anchor="middle" font-size="11">e<tspan font-size="8" dy="3">extr,DT</tspan><tspan dy="-3"> [m]</tspan></text>`;
+  s+=`<text transform="translate(16 ${(sy(0)+sy(100))/2}) rotate(-90)" text-anchor="middle" font-size="11">u<tspan font-size="8" dy="3">imp,adm</tspan><tspan dy="-3"> [mm]</tspan></text>`;
   const env=set.env;
   s+=`<polyline fill="none" stroke="${c('--fg')}" stroke-width="2" points="${env.map(p=>sx(p[0])+","+sy(p[1])).join(" ")}"/>`;
   s+=`<polyline fill="none" stroke="${c('--fg')}" stroke-width="1.5" stroke-dasharray="6 4" points="${env.map(p=>sx(p[0])+","+sy(p[1]*marg)).join(" ")}"/>`;
@@ -613,19 +680,19 @@ function drawChart(set, ex, uimp, uEnv, marg){
        : a===10 ? `<circle cx="${sx(e)}" cy="${sy(u)}" r="6" fill="none" stroke="${cols[a]}" stroke-width="2"><title>α=${a} %, L=${L} m: ${fmt(u)} mm</title></circle>`
        : `<circle cx="${sx(e)}" cy="${sy(u)}" r="4.5" fill="${cols[a]}"><title>α=${a} %, L=${L} m: ${fmt(u)} mm</title></circle>`;
   }
-  if (isFinite(uimp) && uimp<=100){ s+=`<line x1="${sx(0)}" x2="${sx(1.2)}" y1="${sy(uimp)}" y2="${sy(uimp)}" stroke="${c('--bad')}" stroke-dasharray="3 3"/><text x="${sx(0)+6}" y="${sy(uimp)-5}" font-size="11" style="fill:${c('--bad')}">u<tspan font-size="9" dy="2">imp</tspan><tspan dy="-2"> = ${fmt(uimp)} mm</tspan></text>`; }
+  if (isFinite(uimp) && uimp<=100){ s+=`<line x1="${sx(0)}" x2="${sx(1.2)}" y1="${sy(uimp)}" y2="${sy(uimp)}" stroke="${c('--bad')}" stroke-dasharray="3 3"/><text x="${sx(0)+6}" y="${sy(uimp)-5}" font-size="9.5" style="fill:${c('--bad')}">u<tspan font-size="8" dy="2">imp</tspan><tspan dy="-2"> = ${fmt(uimp)} mm</tspan></text>`; }
   if (isFinite(ex) && ex>=0 && ex<=1.2){
     s+=`<line x1="${sx(ex)}" x2="${sx(ex)}" y1="${sy(0)}" y2="${sy(100)}" stroke="${c('--accent')}" stroke-dasharray="3 3"/>`;
     if (uEnv!=null){ const y=sy(uEnv*marg), x=sx(ex); s+=`<path d="M${x} ${y-8} L${x+8} ${y} L${x} ${y+8} L${x-8} ${y} Z" fill="${c('--accent')}" stroke="${c('--card')}" stroke-width="1.5"/>`; }
   }
   // leyenda
   const lx=sx(0)+10, ly=sy(100)+14;
-  s+=`<rect x="${lx-6}" y="${ly-12}" width="214" height="92" rx="5" fill="${c('--card')}" stroke="${c('--rule')}"/>`;
-  s+=`<circle cx="${lx+6}" cy="${ly}" r="4" fill="none" stroke="${cols[5]}" stroke-width="2"/><text x="${lx+18}" y="${ly+4}" font-size="11">α = 5 %, L = 4–8 m</text>`;
-  s+=`<circle cx="${lx+6}" cy="${ly+16}" r="6" fill="none" stroke="${cols[10]}" stroke-width="2"/><text x="${lx+18}" y="${ly+20}" font-size="11">α = 10 %, L = 4–8 m</text>`;
-  s+=`<circle cx="${lx+6}" cy="${ly+32}" r="4.5" fill="${cols[15]}"/><text x="${lx+18}" y="${ly+36}" font-size="11">α = 15 %, L = 4–7 m</text>`;
-  s+=`<line x1="${lx}" x2="${lx+14}" y1="${ly+48}" y2="${ly+48}" stroke="${c('--fg')}" stroke-width="2"/><text x="${lx+18}" y="${ly+52}" font-size="11">envolvente inferior (χ = ${set.chi} ‰)</text>`;
-  s+=`<line x1="${lx}" x2="${lx+14}" y1="${ly+64}" y2="${ly+64}" stroke="${c('--fg')}" stroke-width="1.5" stroke-dasharray="6 4"/><text x="${lx+18}" y="${ly+68}" font-size="11">× factor de margen</text>`;
+  s+=`<rect x="${lx-6}" y="${ly-12}" width="180" height="82" rx="5" fill="${c('--card')}" stroke="${c('--rule')}"/>`;
+  s+=`<circle cx="${lx+6}" cy="${ly}" r="4" fill="none" stroke="${cols[5]}" stroke-width="2"/><text x="${lx+18}" y="${ly+4}" font-size="9.5">α = 5 %, L = 4–8 m</text>`;
+  s+=`<circle cx="${lx+6}" cy="${ly+14}" r="6" fill="none" stroke="${cols[10]}" stroke-width="2"/><text x="${lx+18}" y="${ly+18}" font-size="9.5">α = 10 %, L = 4–8 m</text>`;
+  s+=`<circle cx="${lx+6}" cy="${ly+28}" r="4.5" fill="${cols[15]}"/><text x="${lx+18}" y="${ly+32}" font-size="9.5">α = 15 %, L = 4–7 m</text>`;
+  s+=`<line x1="${lx}" x2="${lx+14}" y1="${ly+42}" y2="${ly+42}" stroke="${c('--fg')}" stroke-width="2"/><text x="${lx+18}" y="${ly+46}" font-size="9.5">envolvente inferior (χ = ${set.chi} ‰)</text>`;
+  s+=`<line x1="${lx}" x2="${lx+14}" y1="${ly+56}" y2="${ly+56}" stroke="${c('--fg')}" stroke-width="1.5" stroke-dasharray="6 4"/><text x="${lx+18}" y="${ly+60}" font-size="9.5">× factor de margen</text>`;
   s+=`<rect x="${sx(0)}" y="${sy(100)}" width="${sx(1.2)-sx(0)}" height="${sy(0)-sy(100)}" fill="none" stroke="${c('--muted')}"/>`;
   $("chart").innerHTML=s;
 }
@@ -645,19 +712,17 @@ const NOTACION = [
  ["χ, χ<sub>adm</sub>","Cambio de pendiente de la superficie entre dos rectas de 1 m, y su límite (20 ‰ autopistas, 28 ‰ nacionales)","‰","tesis"],
  ["h<sub>mec</sub>","Altura del mecanismo activo: muro del estribo (integral) o canto del tablero (semi-integral)","m","tesis"],
  ["φ<sub>k</sub>, φ<sub>d</sub>","Ángulo de rozamiento del relleno, característico y de cálculo","°","tesis"],
- ["γ<sub>M</sub>","Coeficiente parcial sobre tan φ (1,2, SIA 267)","–","tesis"],
+ ["γ<sub>M</sub>","Coeficiente parcial sobre tan φ (1.2, SIA 267)","–","tesis"],
  ["γ<sub>r</sub>","Peso específico del relleno","kN/m³","tesis"],
- ["L<sub>vacío</sub>","Longitud del hueco detrás del muro que la losa debe salvar","m","tesis (L<sub>vide</sub>)"],
- ["L<sub>DT,extr</sub>","Longitud de losa apoyada sobre el relleno = L<sub>DT</sub> − L<sub>vacío</sub>","m","tesis"],
+ ["L<sub>hueco</sub>","Longitud del hueco detrás del muro que la losa debe salvar","m","tesis (L<sub>vide</sub>)"],
+ ["L<sub>DT,extr</sub>","Longitud de losa apoyada sobre el relleno = L<sub>DT</sub> − L<sub>hueco</sub>","m","tesis"],
  ["Q<sub>1k</sub>, α<sub>Q1</sub>, γ<sub>Q</sub>","Eje del tándem del modelo de carga 1, factor de ajuste y coeficiente de mayoración","kN, –, –","SIA 261"],
  ["Q<sub>1,d</sub>","Valor de cálculo de un eje del tándem = γ<sub>Q</sub>·α<sub>Q1</sub>·Q<sub>1k</sub>","kN","tesis"],
  ["B<sub>vía</sub>","Ancho de carril ficticio (3 m)","m","tesis (B<sub>voie</sub>)"],
- ["k<sub>env</sub>","Coeficiente de envolvente 1,5 de las ec. 5.13–5.14 (no es γ<sub>Q</sub>)","–","aquí"],
- ["B<sub>eq</sub>","Ancho de reparto equivalente del tándem = B<sub>vía</sub>/k<sub>env</sub>","m","aquí"],
  ["m<sup>+</sup><sub>long,d</sub>","Momento positivo longitudinal de cálculo de la losa","kNm/m","tesis"],
  ["m<sup>+</sup><sub>pl,d</sub>","Momento plástico positivo de cálculo de la sección de la losa","kNm/m","tesis"],
  ["m<sup>−</sup><sub>pl,d</sub>","Momento plástico de cálculo de la rótula de hormigón (−55 kNm/m en la tesis)","kNm/m","tesis"],
- ["L<sub>diag</sub>","Posición de la rótula respecto al estribo (0,62 m)","m","tesis"],
+ ["L<sub>diag</sub>","Posición de la rótula respecto al estribo (0.62 m)","m","tesis"],
  ["n<sub>d</sub>, n<sub>max</sub>","Axil de tracción de cálculo en la losa y su máximo por rozamiento con el relleno","kN/m","tesis"],
  ["G<sub>ef</sub>","Peso efectivo sobre la interfaz losa–relleno (ec. 5.11)","kN/m","tesis"],
  ["δ","Ángulo de rozamiento de la interfaz = 2φ<sub>k</sub>/3","°","tesis"],
@@ -669,29 +734,39 @@ const NOTACION = [
  ["E<sub>fis</sub>","Rigidez de la losa fisurada","MPa","tesis (E<sub>fissuré</sub>)"],
  ["n<sub>0</sub>, x<sub>0</sub>","Relación de módulos E<sub>s</sub>/E<sub>c,0</sub> y profundidad de la fibra neutra fisurada","–, m","tesis"],
  ["Δα<sub>DT</sub>","Giro entre estribo y losa (límite OFROU 4 ‰ en autopistas y nacionales)","‰","tesis"],
- ["M<sub>s</sub>, a, x","Momento referido a la armadura, altura del bloque de compresiones (0,85·x) y profundidad de la fibra neutra","kNm/m, m","aquí"]
+ ["M<sub>s</sub>, a, x","Momento referido a la armadura, altura del bloque de compresiones (0.85·x) y profundidad de la fibra neutra","kNm/m, m","aquí"]
 ];
 const EXPRESIONES = [
  ["u<sub>imp</sub> = k<sub>tablero</sub> · L<sub>pf</sub> · ε<sub>imp</sub>, ε<sub>imp</sub> = ε<sub>sh</sub> + ε<sub>cr</sub> + ε<sub>ΔT</sub>","ec. 2.1","PDF p. 27"],
  ["e<sub>extr,DT</sub> = e<sub>0,DT</sub> + α<sub>DT</sub> · L<sub>DT</sub>","fig. 5.8","PDF p. 104–105"],
  ["χ(x) = [2·w(x) − w(x+1 m) − w(x−1 m)] / 1 m ≤ χ<sub>adm</sub>","ec. 4.4","PDF p. 76"],
  ["u<sub>imp,adm</sub> = f(e<sub>extr,DT</sub>), ábaco con χ<sub>adm</sub> = 20 ‰ / 28 ‰ (digitalizado)","fig. 5.9","PDF p. 105"],
- ["u<sub>imp,adm,diseño</sub> = f<sub>margen</sub> · u<sub>imp,adm</sub> (f<sub>margen</sub> = 0,75 por defecto)","§ 5.2.3","PDF p. 110"],
+ ["e<sub>extr,req</sub> tal que f<sub>margen</sub> · f(e<sub>extr,req</sub>) = u<sub>imp</sub> (inversa de la envolvente); L<sub>DT,nec</sub> = (e<sub>extr,req</sub> − e<sub>0,DT</sub>) / α<sub>DT</sub>","fig. 5.8 y 5.9","PDF p. 104–105"],
+ ["u<sub>imp,adm,diseño</sub> = f<sub>margen</sub> · u<sub>imp,adm</sub> (f<sub>margen</sub> = 0.75 por defecto)","§ 5.2.3","PDF p. 110"],
  ["φ<sub>d</sub> = atan(tan φ<sub>k</sub> / γ<sub>M</sub>)","§ 4.4.2","PDF p. 91"],
- ["L<sub>vacío</sub> = h<sub>mec</sub> · tan(45° − φ<sub>d</sub>/2)","ec. 5.3 (corregida)","PDF p. 101–102"],
- ["L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>vacío</sub>","§ 5.4","PDF p. 125"],
- ["L<sub>DT</sub> ≥ 2 · L<sub>vacío</sub> (criterio deducido, no exigido por la tesis)","fig. 5.29","PDF p. 126–127"],
- ["Q<sub>1,d</sub> = γ<sub>Q</sub> · α<sub>Q1</sub> · Q<sub>1k</sub> = 1,5 · 0,9 · 300 = 405 kN","§ 5.4.1","PDF p. 126"],
- ["m<sup>+</sup><sub>long,d</sub> = 1,5 · Q<sub>1,d</sub> · L<sub>vacío</sub> / (2 · B<sub>vía</sub>) = (2·Q<sub>1,d</sub>)·L<sub>vacío</sub>/4 / B<sub>eq</sub>, B<sub>eq</sub> = B<sub>vía</sub>/1,5 (unión articulada)","ec. 5.13","PDF p. 133"],
- ["m<sup>+</sup><sub>long,d</sub> = 1,5 · [Q<sub>1,d</sub> · (L<sub>vacío</sub> − L<sub>diag</sub>) + m<sup>−</sup><sub>pl,d</sub> · B<sub>vía</sub>] / (2 · B<sub>vía</sub>) (rótula)","ec. 5.14","PDF p. 133"],
- ["m<sup>+</sup><sub>pl,d</sub> ≥ 100 kNm/m (longitudinal y transversal); n<sub>d</sub> = 100 kN/m","§ 5.4.3","PDF p. 133"],
+ ["L<sub>hueco</sub> = h<sub>mec</sub> · tan(45° − φ<sub>d</sub>/2)","ec. 5.3 (corregida)","PDF p. 101–102"],
+ ["L<sub>DT</sub> > L<sub>hueco</sub> (longitud mínima)","§ 5.2.1","PDF p. 101"],
+ ["L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>hueco</sub>","§ 5.4","PDF p. 125"],
+ ["L<sub>hueco</sub> / L<sub>DT</sub> ≤ 0.5 (el relleno bajo el extremo no plastifica; lectura nuestra)","fig. 5.29","PDF p. 126"],
+ ["L<sub>DT</sub> ≥ 2 · L<sub>hueco</sub> (criterio deducido, no exigido por la tesis); L<sub>DT,rec</sub> = máx(2 · L<sub>hueco</sub> ; L<sub>DT,nec</sub>)","fig. 5.29","PDF p. 126–127"],
+ ["Q<sub>1,d</sub> = γ<sub>Q</sub> · α<sub>Q1</sub> · Q<sub>1k</sub> = 1.5 · 0.9 · 300 = 405 kN","§ 5.4.1","PDF p. 126"],
+ ["m<sup>+</sup><sub>long,d</sub> = 1.5 · Q<sub>1,d</sub> · L<sub>hueco</sub> / (2 · B<sub>vía</sub>) (unión articulada)","ec. 5.13","PDF p. 133"],
+ ["m<sup>+</sup><sub>long,d</sub> = 1.5 · [Q<sub>1,d</sub> · (L<sub>hueco</sub> − L<sub>diag</sub>) + m<sup>−</sup><sub>pl,d</sub> · B<sub>vía</sub>] / (2 · B<sub>vía</sub>) (rótula)","ec. 5.14","PDF p. 133"],
+ ["m<sup>+</sup><sub>pl,d,long</sub> requerido = máx(m<sup>+</sup><sub>long,d</sub> ; 100 kNm/m); transversal = 100 kNm/m","§ 5.4.3","PDF p. 133"],
+ ["n<sub>d</sub> = máx(100 kN/m ; n<sub>max</sub>), o 100 kN/m si se elige el valor de la tesis","§ 5.4.3","PDF p. 133"],
  ["G<sub>ef</sub> = γ<sub>r</sub> · [L<sub>DT</sub>/2 · (e<sub>0,DT</sub> + e<sub>extr,DT</sub>) + e<sub>extr,DT</sub>² / (2·tan(45° + φ/2))] + γ<sub>c</sub> · L<sub>DT</sub> · h<sub>DT</sub>","ec. 5.11","PDF p. 132"],
  ["δ<sub>ef</sub> = atan[n<sub>max</sub> / (G<sub>ef</sub> · cos α<sub>DT</sub>) − tan α<sub>DT</sub>] ⇒ n<sub>max</sub> = G<sub>ef</sub> · cos α · (tan δ + tan α), δ = 2φ/3","ec. 5.12 (despejada)","PDF p. 132–133"],
- ["M<sub>pl</sub> = f<sub>s</sub> · ρ · b · d² · (1 − f<sub>s</sub> · ρ / (2 · η<sub>fc</sub> · f<sub>c</sub>)), η<sub>fc</sub> = (30/f<sub>c</sub>)<sup>1/3</sup> ≤ 1","ec. 5.6","PDF p. 116"],
  ["E<sub>fis</sub> = ρ · d³ · E<sub>s</sub> · (1 − x<sub>0</sub>/d) · (1 − x<sub>0</sub>/(3d)) / (h³/12); x<sub>0</sub> = d · ρ · n<sub>0</sub> · (√(1 + 2/(ρ·n<sub>0</sub>)) − 1); n<sub>0</sub> = E<sub>s</sub>/E<sub>c,0</sub>","ec. 4.12","PDF p. 90–91"],
- ["Δα<sub>DT</sub> = 0,5 · 3 · Q<sub>1,d</sub> · L<sub>vacío</sub>² / (B<sub>vía</sub> · h<sub>DT</sub>³ · E<sub>fis</sub>) (con L² corregido)","ec. 5.15","PDF p. 134"],
- ["Δα<sub>DT</sub>(u<sub>imp</sub>) ≈ 1 ‰ · u<sub>imp</sub> / 50 mm","fig. 4.29","PDF p. 93"],
+ ["Δα<sub>DT</sub> = 0.5 · 3 · Q<sub>1,d</sub> · L<sub>hueco</sub>² / (B<sub>vía</sub> · h<sub>DT</sub>³ · E<sub>fis</sub>) (con L² corregido)","ec. 5.15","PDF p. 134"],
  ["M<sub>s</sub> = m − n · (d − h/2); a = d − √(d² − 2·M<sub>s</sub>/f<sub>cd</sub>); A<sub>s</sub> = (f<sub>cd</sub> · a + n) / f<sub>sd</sub>","SIA 262 (estándar)","no está en la tesis"],
+ ["A<sub>s</sub> de la armadura superior de la rótula = ρ · b · d, ρ = 0.3 % (solo armadura traccionada, d = canto útil superior)","fig. 5.15 y § 5.3","PDF p. 112, 125, 127"],
+ ["s = mayor múltiplo de 5 mm, ≤ 250 mm, tal que (π · Ø² / 4) · 1000 / s ≥ A<sub>s</sub> para el diámetro Ø elegido","criterio de esta herramienta","no está en la tesis"],
+ ["M<sub>Rd</sub> = (A<sub>s</sub> · f<sub>sd</sub> − n) · (d − a/2) + n · (d − h/2), a = (A<sub>s</sub> · f<sub>sd</sub> − n) / f<sub>cd</sub>, con A<sub>s</sub> = (π · Ø² / 4) · 1000 / s","SIA 262 (estándar)","no está en la tesis"],
+ ["M<sub>Sd</sub>: longitudinal = máx(m<sup>+</sup><sub>long,d</sub> ; 100) con n<sub>d</sub>; transversal = 100; rótula: sin M<sub>Sd</sub> (−55 kNm/m solo se usa para m<sup>+</sup><sub>long,d</sub>)","§ 5.4.3 y p. 127","PDF p. 127, 133"],
+ ["V<sub>Rd,c</sub> = [C<sub>Rd,c</sub> · k · (100 · ρ<sub>l</sub> · f<sub>ck</sub>)<sup>1/3</sup> + k<sub>1</sub> · σ<sub>cp</sub>] · b · d ≥ (0.035 · k<sup>3/2</sup> · f<sub>ck</sub><sup>1/2</sup> + k<sub>1</sub> · σ<sub>cp</sub>) · b · d; C<sub>Rd,c</sub> = 0.18/γ<sub>c</sub>, k = 1 + √(200/d) ≤ 2 (d en mm), ρ<sub>l</sub> = A<sub>sl</sub>/(b · d) ≤ 0.02 con la armadura inferior longitudinal elegida, k<sub>1</sub> = 0.15, σ<sub>cp</sub> = −n<sub>d</sub>/h (tracción), b = 1 m","EN 1992-1-1, 6.2.2","comprobación aproximada de cortante"],
+ ["V<sub>Sd</sub> = [Q<sub>1,d</sub> · (1 − a/L<sub>s</sub>) + Q<sub>1,d</sub> · (1 − (a + 1.20)/L<sub>s</sub>)] / (2.40 + 4 · d), con a = 2 · d + 0.20 (el borde de la rueda a 2d del apoyo, sin reducción por efecto arco, β = 1) y L<sub>s</sub> = L<sub>hueco</sub> (articulada) o L<sub>hueco</sub> − L<sub>diag</sub> (rótula); en el extremo del estribo, + |m<sup>−</sup><sub>pl,d</sub>| / L<sub>s</sub> si hay rótula","estática de viga biapoyada","no está en la tesis"],
+ ["p<sub>Ed</sub> ≤ 250 kN/m² (límite de la presión sobre el relleno)","criterio de esta herramienta","no está en la tesis"],
+ ["p<sub>Ed</sub> = 2 · Q<sub>1,d</sub> / (L<sub>DT,extr</sub> · b) + 1.35 · (γ<sub>relleno</sub> · e<sub>extr,DT</sub> + 25 · h<sub>DT</sub>), b = 2.00 + 0.40 + 2 · (e<sub>extr,DT</sub> + h<sub>DT</sub>)","criterio de esta herramienta","no está en la tesis"],
  ["f<sub>cd</sub> = η<sub>fc</sub> · f<sub>ck</sub> / γ<sub>c</sub>; f<sub>sd</sub> = f<sub>sk</sub> / γ<sub>s</sub>; E<sub>c,0</sub> = 10 000 · (f<sub>ck</sub> + 8)<sup>1/3</sup>","SIA 262 (estándar)","no está en la tesis"]
 ];
 (function renderAnejos(){
@@ -737,14 +812,15 @@ async function exportDocx(btn){
     btn.disabled=true; say("Preparando el informe…");
     document.documentElement.setAttribute("data-theme","light"); calc();     // figuras en colores claros
     const D=await loadDocx();
-    const {Document,Packer,Paragraph,TextRun,HeadingLevel,Table,TableRow,TableCell,WidthType,ImageRun,AlignmentType,ShadingType,BorderStyle,Footer,Header,PageNumber}=D;
-    const FONT="Calibri";
+    const {Document,Packer,Paragraph,TextRun,HeadingLevel,Table,TableRow,TableCell,WidthType,ImageRun,AlignmentType,ShadingType,BorderStyle,Footer,Header,PageNumber,LevelFormat,TableOfContents,PageBreak,LineRuleType}=D;
+    const FONT="Calibri", MATH="Cambria";
     const runsOf=(node,st={})=>{
       const out=[];
       node.childNodes.forEach(n=>{
-        if(n.nodeType===3){const t=n.nodeValue.replace(/\s+/g," "); if(t) out.push(new TextRun({text:t,font:FONT,italics:!!st.i,bold:!!st.b,subScript:!!st.sub,superScript:!!st.sup,color:st.color,size:st.size})); return;}
+        if(n.nodeType===3){const t=n.nodeValue.replace(/\s+/g," "); if(t) out.push(new TextRun({text:t,font:st.i?MATH:FONT,italics:!!st.i,bold:!!st.b,subScript:!!st.sub,superScript:!!st.sup,color:st.color,size:st.size})); return;}
         if(n.nodeType!==1||n.tagName.toLowerCase()==="svg") return;
         const tg=n.tagName, s2={...st};
+        if(tg==="SELECT"){ out.push(new TextRun({text:n.options[n.selectedIndex].text,font:FONT,bold:!!st.b,size:st.size})); return; }
         if(tg==="SUB") s2.sub=true; if(tg==="SUP") s2.sup=true;
         if(tg==="EM"||tg==="I") s2.i=true;
         if(tg==="B"||tg==="STRONG") s2.b=true;
@@ -755,14 +831,17 @@ async function exportDocx(btn){
       });
       return out;
     };
-    const para=(node,o={})=>new Paragraph({children:runsOf(node,o.st||{}),spacing:{after:100},...(o.p||{})});
+    const para=(node,o={})=>new Paragraph({children:runsOf(node,o.st||{}),alignment:AlignmentType.JUSTIFIED,widowControl:true,spacing:{after:140},...(o.p||{})});
     const bd={style:BorderStyle.SINGLE,size:4,color:"D6DDE5"};
     const W=9638;
     const children=[];
-    children.push(new Paragraph({heading:HeadingLevel.TITLE,spacing:{after:80},children:[new TextRun({text:"Losa de transición de puentes integrales",font:FONT,bold:true,size:40,color:"1D5A8C"})]}));
+    children.push(new Paragraph({heading:HeadingLevel.TITLE,children:[new TextRun("Losa de transición de puentes integrales")]}));
     children.push(new Paragraph({children:[new TextRun({text:"Proyecto: ",bold:true,font:FONT}),new TextRun({text:$("proj").value||"—",font:FONT})]}));
     children.push(new Paragraph({children:[new TextRun({text:"Elemento: ",bold:true,font:FONT}),new TextRun({text:$("elem").value||"—",font:FONT}),new TextRun({text:"   ·   L = "+fmt(num("Wab"),1)+" m   ·   h = "+fmt(num("hmec"),1)+" m",font:FONT})]}));
     children.push(new Paragraph({spacing:{after:160},children:[new TextRun({text:"Predimensionamiento según D. Dreier, tesis EPFL nº 4880 (2010). Fecha: "+new Date().toLocaleDateString("es-ES")+". Generado por la herramienta; no sustituye a la comprobación con la tesis y la normativa.",font:FONT,italics:true,color:"5B6776",size:20})]}));
+    children.push(new Paragraph({children:[new PageBreak()]}));
+    children.push(new TableOfContents("Índice",{hyperlink:true,headingStyleRange:"1-2"}));   // Word lo actualiza al abrir
+    children.push(new Paragraph({children:[new PageBreak()]}));
     // datos de entrada
     const inputs=[];
     document.querySelectorAll("#f fieldset").forEach(fs=>{
@@ -777,7 +856,7 @@ async function exportDocx(btn){
       });
       inputs.push([lg,parts]);
     });
-    children.push(new Paragraph({heading:HeadingLevel.HEADING_1,spacing:{before:240,after:100},children:[new TextRun({text:"Datos de entrada",font:FONT,bold:true,size:30,color:"1D5A8C"})]}));
+    children.push(new Paragraph({heading:HeadingLevel.HEADING_1,children:[new TextRun("Datos de entrada")]}));
     const inRows=[];
     inputs.forEach(([lg,parts])=>{
       inRows.push(new TableRow({children:[new TableCell({columnSpan:2,width:{size:W,type:WidthType.DXA},shading:{type:ShadingType.CLEAR,fill:"E4EEF7",color:"auto"},borders:{top:bd,bottom:bd,left:bd,right:bd},children:[new Paragraph({style:"TextoTabla",children:[new TextRun({text:lg,bold:true,font:FONT})]})]})]}));
@@ -806,7 +885,7 @@ async function exportDocx(btn){
     const walk=async(el)=>{
       for(const n of el.children){
         const tg=n.tagName, cl=n.classList;
-        if(tg==="H2") children.push(new Paragraph({heading:HeadingLevel.HEADING_1,keepNext:true,spacing:{before:300,after:100},children:[new TextRun({text:n.textContent,font:FONT,bold:true,size:30,color:"1D5A8C"})]}));
+        if(tg==="H2") children.push(new Paragraph({heading:HeadingLevel.HEADING_1,children:[new TextRun(n.textContent)]}));
         else if(cl.contains("kpis")){
           const cells=[...n.children].map(k=>new TableCell({width:{size:Math.floor(W/n.children.length),type:WidthType.DXA},borders:{top:bd,bottom:bd,left:bd,right:bd},margins:{top:60,bottom:60,left:80,right:80},
             shading:k.classList.contains("ok")?{type:ShadingType.CLEAR,fill:"E3F3E9",color:"auto"}:(k.classList.contains("bad")?{type:ShadingType.CLEAR,fill:"F8E4E1",color:"auto"}:undefined),
@@ -821,19 +900,24 @@ async function exportDocx(btn){
         }
         else if(cl.contains("tw")){const t=n.querySelector("table"); if(t){children.push(tableOf(t)); children.push(new Paragraph({spacing:{after:100},children:[]}));}}
         else if(cl.contains("note")||tg==="P") children.push(para(n,{st:{size:18,color:cl.contains("note")?"5B6776":undefined}}));
-        else if(tg==="UL"){ for(const li of n.children) children.push(new Paragraph({children:[new TextRun({text:"• ",font:FONT}),...runsOf(li,{size:19})],indent:{left:360},spacing:{after:60}})); }
-        else if(tg==="H3") children.push(new Paragraph({heading:HeadingLevel.HEADING_2,spacing:{before:160,after:60},children:runsOf(n,{b:true,size:24})}));
+        else if(tg==="UL"){ for(const li of n.children) children.push(new Paragraph({numbering:{reference:"vinetas",level:0},alignment:AlignmentType.LEFT,widowControl:true,spacing:{after:60},children:runsOf(li,{size:19})})); }
+        else if(tg==="H3") children.push(new Paragraph({heading:HeadingLevel.HEADING_2,children:runsOf(n)}));
         else if(tg==="DETAILS"||tg==="DIV") await walk(n);
       }
     };
     for(const sec of document.querySelectorAll("main > section.card")){ say("Procesando "+(sec.querySelector("h2")?.textContent||"")+"…"); await walk(sec); }
 
     const doc=new Document({creator:"Herramienta losa de transición",title:"Losa de transición de puentes integrales",
-      styles:{default:{document:{run:{font:FONT,size:21}}},
+      styles:{default:{document:{run:{font:FONT,size:21},paragraph:{spacing:{line:276,lineRule:LineRuleType.AUTO,after:140},widowControl:true}}},
         paragraphStyles:[
-          {id:"TextoTabla",name:"Texto en tabla",basedOn:"Normal",quickFormat:true,run:{font:FONT,size:17},paragraph:{spacing:{before:20,after:20,line:240}}},
+          {id:"Title",name:"Title",basedOn:"Normal",next:"Normal",quickFormat:true,run:{font:FONT,bold:true,size:44,color:"1D5A8C"},paragraph:{alignment:AlignmentType.LEFT,spacing:{before:0,after:200,line:240,lineRule:LineRuleType.AUTO},keepNext:true}},
+          {id:"Heading1",name:"Heading 1",basedOn:"Normal",next:"Normal",quickFormat:true,run:{font:FONT,bold:true,size:30,color:"1D5A8C"},paragraph:{alignment:AlignmentType.LEFT,spacing:{before:420,after:160,line:240,lineRule:LineRuleType.AUTO},outlineLevel:0,keepNext:true,keepLines:true}},
+          {id:"Heading2",name:"Heading 2",basedOn:"Normal",next:"Normal",quickFormat:true,run:{font:FONT,bold:true,size:24,color:"2A7BB8"},paragraph:{alignment:AlignmentType.LEFT,spacing:{before:240,after:120,line:240,lineRule:LineRuleType.AUTO},outlineLevel:1,keepNext:true,keepLines:true}},
+          {id:"TextoTabla",name:"Texto en tabla",basedOn:"Normal",quickFormat:true,run:{font:FONT,size:17},paragraph:{alignment:AlignmentType.LEFT,widowControl:true,contextualSpacing:false,spacing:{before:20,after:20,line:240,lineRule:LineRuleType.AUTO}}},
           {id:"TextoTablaNota",name:"Texto en tabla (nota)",basedOn:"TextoTabla",quickFormat:true,run:{size:16,italics:true,color:"5B6776"}},
           {id:"TextoTablaRef",name:"Texto en tabla (referencia)",basedOn:"TextoTabla",quickFormat:true,run:{size:15,color:"1D5A8C"}}]},
+      features:{updateFields:true},
+      numbering:{config:[{reference:"vinetas",levels:[{level:0,format:LevelFormat.BULLET,text:"•",alignment:AlignmentType.LEFT,style:{paragraph:{indent:{left:420,hanging:240}}}}]}]},
       sections:[{properties:{page:{size:{width:11906,height:16838},margin:{top:1134,bottom:1134,left:1134,right:1134}}},
         headers:{default:new Header({children:[new Paragraph({alignment:AlignmentType.RIGHT,children:[new TextRun({text:($("elem").value||"Losa de transición")+" · Dreier, EPFL 4880",size:16,color:"5B6776",font:FONT})]})]})},
         footers:{default:new Footer({children:[new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:"Página ",size:16,color:"5B6776",font:FONT}),new TextRun({children:[PageNumber.CURRENT],size:16,color:"5B6776",font:FONT})]})]})},
@@ -865,9 +949,10 @@ function save(){ try{
 function load(o){ document.querySelectorAll("#f input, #f select").forEach(el=>{
   const k=el.id||el.name+":"+el.value; if (k in o){ if (el.type==="radio") el.checked=o[k]; else el.value=o[k]; } }); }
 try{ const o=JSON.parse(localStorage.getItem(KEY)||"null"); if (o) load(o); }catch(e){}
+$("tA").addEventListener("change", e=>{ const t=e.target; if(t.classList&&t.classList.contains("phi")){ PHI[t.dataset.k]=+t.value; savePhi(); calc(); } });
 $("f").addEventListener("input", ()=>{ calc(); save(); });
 $("f").addEventListener("change", ()=>{ calc(); save(); });
-$("reset").addEventListener("click", ()=>{ load(defaults); try{localStorage.removeItem(KEY);}catch(e){} calc(); });
+$("reset").addEventListener("click", ()=>{ Object.assign(PHI,PHI_DEF); savePhi(); load(defaults); try{localStorage.removeItem(KEY);}catch(e){} calc(); });
 window.matchMedia && matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", calc);
 calc();
 </script>
