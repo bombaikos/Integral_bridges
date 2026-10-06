@@ -73,6 +73,7 @@ td.ref{font-family:var(--mono); font-size:.75rem; color:var(--accent); white-spa
 .msgs li.info{background:var(--accent-soft); border-color:var(--accent)}
 svg text{fill:var(--fg); font-family:var(--body)}
 .chartwrap{width:100%; overflow-x:auto}
+.chartwrap svg{max-width:720px; display:block; margin:0 auto}
 .note{font-size:.85rem; color:var(--muted)}
 .eq{font-family:var(--mono); font-size:.8rem; background:var(--bg); border:1px solid var(--rule); border-radius:5px; padding:8px 10px; white-space:pre; overflow-x:auto}
 details{margin-top:4px}
@@ -602,10 +603,10 @@ function drawChart(set, ex, uimp, uEnv, marg){
   const css=getComputedStyle(document.documentElement);
   const c=n=>css.getPropertyValue(n).trim();
   let s="";
-  for (let x=0;x<=1.2001;x+=0.2){ s+=`<line x1="${sx(x)}" x2="${sx(x)}" y1="${sy(0)}" y2="${sy(100)}" stroke="${c('--rule')}"/><text x="${sx(x)}" y="${sy(0)+18}" text-anchor="middle" font-size="12">${fmt(x,1)}</text>`; }
-  for (let y=0;y<=100;y+=20){ s+=`<line x1="${sx(0)}" x2="${sx(1.2)}" y1="${sy(y)}" y2="${sy(y)}" stroke="${c('--rule')}"/><text x="${sx(0)-8}" y="${sy(y)+4}" text-anchor="end" font-size="12">${y}</text>`; }
-  s+=`<text x="${(sx(0)+sx(1.2))/2}" y="${H-8}" text-anchor="middle" font-size="13">e<tspan font-size="10" dy="3">extr,DT</tspan><tspan dy="-3"> [m]</tspan></text>`;
-  s+=`<text transform="translate(16 ${(sy(0)+sy(100))/2}) rotate(-90)" text-anchor="middle" font-size="13">u<tspan font-size="10" dy="3">imp,adm</tspan><tspan dy="-3"> [mm]</tspan></text>`;
+  for (let x=0;x<=1.2001;x+=0.2){ s+=`<line x1="${sx(x)}" x2="${sx(x)}" y1="${sy(0)}" y2="${sy(100)}" stroke="${c('--rule')}"/><text x="${sx(x)}" y="${sy(0)+18}" text-anchor="middle" font-size="10">${fmt(x,1)}</text>`; }
+  for (let y=0;y<=100;y+=20){ s+=`<line x1="${sx(0)}" x2="${sx(1.2)}" y1="${sy(y)}" y2="${sy(y)}" stroke="${c('--rule')}"/><text x="${sx(0)-8}" y="${sy(y)+4}" text-anchor="end" font-size="10">${y}</text>`; }
+  s+=`<text x="${(sx(0)+sx(1.2))/2}" y="${H-8}" text-anchor="middle" font-size="11">e<tspan font-size="8" dy="3">extr,DT</tspan><tspan dy="-3"> [m]</tspan></text>`;
+  s+=`<text transform="translate(16 ${(sy(0)+sy(100))/2}) rotate(-90)" text-anchor="middle" font-size="11">u<tspan font-size="8" dy="3">imp,adm</tspan><tspan dy="-3"> [mm]</tspan></text>`;
   const env=set.env;
   s+=`<polyline fill="none" stroke="${c('--fg')}" stroke-width="2" points="${env.map(p=>sx(p[0])+","+sy(p[1])).join(" ")}"/>`;
   s+=`<polyline fill="none" stroke="${c('--fg')}" stroke-width="1.5" stroke-dasharray="6 4" points="${env.map(p=>sx(p[0])+","+sy(p[1]*marg)).join(" ")}"/>`;
@@ -616,19 +617,19 @@ function drawChart(set, ex, uimp, uEnv, marg){
        : a===10 ? `<circle cx="${sx(e)}" cy="${sy(u)}" r="6" fill="none" stroke="${cols[a]}" stroke-width="2"><title>α=${a} %, L=${L} m: ${fmt(u)} mm</title></circle>`
        : `<circle cx="${sx(e)}" cy="${sy(u)}" r="4.5" fill="${cols[a]}"><title>α=${a} %, L=${L} m: ${fmt(u)} mm</title></circle>`;
   }
-  if (isFinite(uimp) && uimp<=100){ s+=`<line x1="${sx(0)}" x2="${sx(1.2)}" y1="${sy(uimp)}" y2="${sy(uimp)}" stroke="${c('--bad')}" stroke-dasharray="3 3"/><text x="${sx(0)+6}" y="${sy(uimp)-5}" font-size="11" style="fill:${c('--bad')}">u<tspan font-size="9" dy="2">imp</tspan><tspan dy="-2"> = ${fmt(uimp)} mm</tspan></text>`; }
+  if (isFinite(uimp) && uimp<=100){ s+=`<line x1="${sx(0)}" x2="${sx(1.2)}" y1="${sy(uimp)}" y2="${sy(uimp)}" stroke="${c('--bad')}" stroke-dasharray="3 3"/><text x="${sx(0)+6}" y="${sy(uimp)-5}" font-size="9.5" style="fill:${c('--bad')}">u<tspan font-size="8" dy="2">imp</tspan><tspan dy="-2"> = ${fmt(uimp)} mm</tspan></text>`; }
   if (isFinite(ex) && ex>=0 && ex<=1.2){
     s+=`<line x1="${sx(ex)}" x2="${sx(ex)}" y1="${sy(0)}" y2="${sy(100)}" stroke="${c('--accent')}" stroke-dasharray="3 3"/>`;
     if (uEnv!=null){ const y=sy(uEnv*marg), x=sx(ex); s+=`<path d="M${x} ${y-8} L${x+8} ${y} L${x} ${y+8} L${x-8} ${y} Z" fill="${c('--accent')}" stroke="${c('--card')}" stroke-width="1.5"/>`; }
   }
   // leyenda
   const lx=sx(0)+10, ly=sy(100)+14;
-  s+=`<rect x="${lx-6}" y="${ly-12}" width="214" height="92" rx="5" fill="${c('--card')}" stroke="${c('--rule')}"/>`;
-  s+=`<circle cx="${lx+6}" cy="${ly}" r="4" fill="none" stroke="${cols[5]}" stroke-width="2"/><text x="${lx+18}" y="${ly+4}" font-size="11">α = 5 %, L = 4–8 m</text>`;
-  s+=`<circle cx="${lx+6}" cy="${ly+16}" r="6" fill="none" stroke="${cols[10]}" stroke-width="2"/><text x="${lx+18}" y="${ly+20}" font-size="11">α = 10 %, L = 4–8 m</text>`;
-  s+=`<circle cx="${lx+6}" cy="${ly+32}" r="4.5" fill="${cols[15]}"/><text x="${lx+18}" y="${ly+36}" font-size="11">α = 15 %, L = 4–7 m</text>`;
-  s+=`<line x1="${lx}" x2="${lx+14}" y1="${ly+48}" y2="${ly+48}" stroke="${c('--fg')}" stroke-width="2"/><text x="${lx+18}" y="${ly+52}" font-size="11">envolvente inferior (χ = ${set.chi} ‰)</text>`;
-  s+=`<line x1="${lx}" x2="${lx+14}" y1="${ly+64}" y2="${ly+64}" stroke="${c('--fg')}" stroke-width="1.5" stroke-dasharray="6 4"/><text x="${lx+18}" y="${ly+68}" font-size="11">× factor de margen</text>`;
+  s+=`<rect x="${lx-6}" y="${ly-12}" width="180" height="82" rx="5" fill="${c('--card')}" stroke="${c('--rule')}"/>`;
+  s+=`<circle cx="${lx+6}" cy="${ly}" r="4" fill="none" stroke="${cols[5]}" stroke-width="2"/><text x="${lx+18}" y="${ly+4}" font-size="9.5">α = 5 %, L = 4–8 m</text>`;
+  s+=`<circle cx="${lx+6}" cy="${ly+14}" r="6" fill="none" stroke="${cols[10]}" stroke-width="2"/><text x="${lx+18}" y="${ly+18}" font-size="9.5">α = 10 %, L = 4–8 m</text>`;
+  s+=`<circle cx="${lx+6}" cy="${ly+28}" r="4.5" fill="${cols[15]}"/><text x="${lx+18}" y="${ly+32}" font-size="9.5">α = 15 %, L = 4–7 m</text>`;
+  s+=`<line x1="${lx}" x2="${lx+14}" y1="${ly+42}" y2="${ly+42}" stroke="${c('--fg')}" stroke-width="2"/><text x="${lx+18}" y="${ly+46}" font-size="9.5">envolvente inferior (χ = ${set.chi} ‰)</text>`;
+  s+=`<line x1="${lx}" x2="${lx+14}" y1="${ly+56}" y2="${ly+56}" stroke="${c('--fg')}" stroke-width="1.5" stroke-dasharray="6 4"/><text x="${lx+18}" y="${ly+60}" font-size="9.5">× factor de margen</text>`;
   s+=`<rect x="${sx(0)}" y="${sy(100)}" width="${sx(1.2)-sx(0)}" height="${sy(0)-sy(100)}" fill="none" stroke="${c('--muted')}"/>`;
   $("chart").innerHTML=s;
 }
