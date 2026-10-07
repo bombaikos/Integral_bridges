@@ -30,11 +30,14 @@
 [hidden]{display:none!important}
 body{margin:0; background:var(--bg); color:var(--fg); font:15px/1.5 var(--body); padding:20px 16px 60px}
 .wrap{max-width:1180px; margin:0 auto; display:flex; flex-direction:column; gap:18px}
-h1{font-size:1.6rem; margin:0}
+h1{font-size:1.1rem; margin:0; color:var(--muted); font-weight:600}
 h2{font-size:1.1rem; margin:0 0 10px; color:var(--accent)}
 h3{font-size:.95rem; margin:14px 0 6px}
 p{margin:0 0 8px}
-.lead{color:var(--muted); max-width:80ch}
+.idMain{display:block; font-size:1.45rem; font-weight:700; line-height:1.25; margin-top:2px}
+.idSub{display:block; font-size:.9rem; color:var(--muted); font-weight:500}
+details.more{margin-top:8px; border-top:1px solid var(--rule); padding-top:8px}
+details.more>summary{font-weight:600; font-size:.85rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted)}
 .grid{display:grid; grid-template-columns:minmax(300px,380px) 1fr; gap:18px; align-items:start}
 @media (max-width:860px){.grid{grid-template-columns:1fr}}
 .card{background:var(--card); border:1px solid var(--rule); border-radius:8px; padding:14px 16px; min-width:0}
@@ -93,9 +96,7 @@ button:disabled{opacity:.6; cursor:progress}
 <div class="wrap">
 <header>
   <h1>Losa de transición de puentes integrales</h1>
-  <p class="lead">Desplazamiento impuesto admisible a partir de la longitud e inclinación de la losa, esfuerzos de cálculo y armadura necesaria. Todo se basa en la tesis de D. Dreier, <em>Interaction sol-structure dans le domaine des ponts intégraux</em>, EPFL nº 4880 (2010). Las referencias «PDF p.» son páginas del archivo PDF (página impresa = PDF − 18).</p>
-  <p id="idLine" style="margin:0;font-weight:600"></p>
-  <div class="btnrow noprint"><button type="button" class="primary" id="btnDocx">Exportar a Word (.docx)</button><button type="button" onclick="window.print()">Imprimir / PDF</button><span id="expStatus" role="status"></span></div>
+  <p id="idLine" style="margin:0"></p>
 </header>
 
 <div class="grid">
@@ -135,6 +136,7 @@ button:disabled{opacity:.6; cursor:progress}
     <div class="row"><label>e<sub>0,DT</sub> [m]<small>enterramiento inicial (0.10 en la tesis)</small></label><input type="text" inputmode="decimal" id="e0" value="0.10" step="0.01" min="0"></div>
     <div class="row"><label>h<sub>DT</sub> [m]<small>espesor (0.30 en la tesis)</small></label><input type="text" inputmode="decimal" id="h" value="0.30" step="0.01" min="0.1"></div>
     <div class="row"><label>d longitudinal [m]<small>canto útil armadura inferior</small></label><input type="text" inputmode="decimal" id="d" value="0.25" step="0.005" min="0.05"></div>
+    <div class="row"><label>d armadura superior [m]<small>canto útil de la rótula (ρ = 0.3 %, tesis)</small></label><input type="text" inputmode="decimal" id="dh" value="0.25" step="0.005"></div>
     <div class="row"><label>d transversal [m]<small>2.ª capa</small></label><input type="text" inputmode="decimal" id="dt" value="0.23" step="0.005" min="0.05"></div>
   </fieldset>
 
@@ -145,43 +147,39 @@ button:disabled{opacity:.6; cursor:progress}
     </div>
     <div class="row"><label id="hmecLbl">h<sub>muro</sub> [m]<small>altura del mecanismo activo (PDF p. 101)</small></label><input type="text" inputmode="decimal" id="hmec" value="5" step="0.1" min="0"></div>
     <div class="row"><label>φ<sub>k</sub> del relleno [°]<small>grava compactada 37° (tabla 3.2)</small></label><input type="text" inputmode="decimal" id="phik" value="37" step="0.5" min="20" max="50"></div>
-    <div class="row"><label>γ<sub>M</sub> sobre tan φ [–]<small>1.2 según SIA 267 (PDF p. 91)</small></label><input type="text" inputmode="decimal" id="gphi" value="1.2" step="0.05" min="1"></div>
+    
     <div class="row"><label>γ<sub>relleno</sub> [kN/m³]</label><input type="text" inputmode="decimal" id="gs" value="19.4" step="0.1"></div>
     <div class="row"><label>q<sub>adm</sub> [kN/m²]<small>presión admisible bajo la zona apoyada</small></label><input type="text" inputmode="decimal" id="qadm" value="350" step="10"></div>
   </fieldset>
 
-  <fieldset><legend>Unión estribo–losa</legend>
-    <div class="seg">
-      <label><input type="radio" name="conn" value="hinge" checked> Rótula de hormigón (fig. 5.15)</label>
-      <label><input type="radio" name="conn" value="pin"> Articulada</label>
-    </div>
-    <div id="hingeIn">
-      <div class="row"><label>d armadura superior [m]<small>canto útil de la rótula (ρ = 0.3 %, tesis)</small></label><input type="text" inputmode="decimal" id="dh" value="0.25" step="0.005"></div>
-    </div>
-  </fieldset>
 
+
+
+  <details class="more"><summary>Datos adicionales</summary>
   <fieldset><legend>Cargas (SIA 261, modelo 1)</legend>
     <div class="row"><label>Q<sub>1k</sub> por eje [kN]</label><input type="text" inputmode="decimal" id="Q1k" value="300" step="10"></div>
     <div class="row"><label>α<sub>Q1</sub> [–]</label><input type="text" inputmode="decimal" id="aQ" value="0.9" step="0.05"></div>
     <div class="row"><label>γ<sub>Q</sub> (ELU) [–]</label><input type="text" inputmode="decimal" id="gQ" value="1.5" step="0.05"></div>
     <div class="row"><label>Factor para el giro [–]<small>0.75 en la ec. 5.15 (PDF p. 129)</small></label><input type="text" inputmode="decimal" id="psiQ" value="0.75" step="0.05"></div>
-    <div class="row"><label>B<sub>vía</sub> [m]<small>ancho de carril ficticio</small></label><input type="text" inputmode="decimal" id="B" value="3" step="0.1"></div>
+    
     <div class="row"><label>n<sub>d</sub> axil</label>
       <select id="nMode"><option value="max">máx(100; ec. 5.11–5.12)</option><option value="thesis">100 kN/m (tesis)</option></select></div>
   </fieldset>
-
   <fieldset><legend>Materiales (SIA 262)</legend>
     <div class="row"><label>f<sub>ck</sub> [MPa]<small>C30/37 por defecto</small></label><input type="text" inputmode="decimal" id="fck" value="30" step="5"></div>
     <div class="row"><label>γ<sub>c</sub> [–]</label><input type="text" inputmode="decimal" id="gc" value="1.5" step="0.05"></div>
     <div class="row"><label>f<sub>sk</sub> [MPa]<small>B500B</small></label><input type="text" inputmode="decimal" id="fsk" value="500" step="10"></div>
     <div class="row"><label>γ<sub>s</sub> [–]</label><input type="text" inputmode="decimal" id="gsS" value="1.15" step="0.05"></div>
-    <div class="row"><label>E<sub>s</sub> [MPa]</label><input type="text" inputmode="decimal" id="Es" value="205000" step="1000"></div>
-    <div class="row"><label>E<sub>c,0</sub> [MPa]<small>en blanco: 10 000·(f<sub>ck</sub>+8)<sup>1/3</sup></small></label><input type="text" inputmode="decimal" id="Ec" placeholder="auto" step="100"></div>
+    
+    
   </fieldset>
-
+  <fieldset><legend>Coeficientes</legend>
+    <div class="row"><label>γ<sub>M</sub> sobre tan φ [–]<small>1.2 según SIA 267 (PDF p. 91)</small></label><input type="text" inputmode="decimal" id="gphi" value="1.2" step="0.05" min="1"></div>
+  </fieldset>
   <fieldset><legend>Margen</legend>
     <div class="row"><label>Factor sobre u<sub>adm</sub> del ábaco<small>0.75 ≈ 30/40 y 40/55 de § 5.2.3 (PDF p. 110). 1 = sin margen</small></label><input type="text" inputmode="decimal" id="marg" value="0.75" step="0.05" min="0.1" max="1"></div>
   </fieldset>
+  </details>
   <div class="noprint" style="display:flex;gap:8px;margin-top:8px"><button type="button" id="reset">Valores por defecto</button></div>
 </form>
 
@@ -254,6 +252,10 @@ button:disabled{opacity:.6; cursor:progress}
         <li>No se cubre: cortante (la tesis remite a Fernández Ruiz et al. 2009), fisuración del aglomerado (ec. 4.5), dirección pasiva (no determinante, PDF p. 101) ni el muro del estribo.</li>
       </ul>
     
+  </section>
+  <section class="card noprint" id="exportar">
+    <h2>Exportar</h2>
+    <div class="btnrow"><button type="button" class="primary" id="btnDocx">Exportar a Word (.docx)</button><button type="button" onclick="window.print()">Imprimir / PDF</button><span id="expStatus" role="status"></span></div>
   </section>
   <footer>Herramienta de predimensionamiento. Comprueba siempre con la tesis y la normativa aplicable. La exportación a Word usa la librería docx (MIT, © Dolan), incluida en este archivo, y funciona sin conexión.</footer>
 </main>
@@ -338,18 +340,17 @@ function mrdSection(As, n, d, h, fcd, fsd){ const F=As*fsd, N=n*1000, a=(F-N)/(f
 
 function calc(){
   const road = radio("road"), set = FIG59[road];
-  const umode = radio("umode"), abut = radio("abut"), conn = radio("conn");
+  const umode = radio("umode"), abut = radio("abut"), conn = "hinge";
   $("ucalc").hidden = umode!=="calc"; $("udir").hidden = umode!=="dir";
-  $("hingeIn").style.display = conn==="hinge" ? "" : "none";
   $("hmecLbl").innerHTML = abut==="int"
     ? "h<sub>muro</sub> [m]<small>altura del muro del estribo (PDF p. 101–102)</small>"
     : "h<sub>tablero</sub> [m]<small>canto del extremo del tablero (PDF p. 101)</small>";
 
   const L=num("L"), al=num("alpha"), e0=num("e0"), h=num("h"), d=num("d"), dt=num("dt");
   const Wab=num("Wab"), hmec=num("hmec"), phik=num("phik"), gphi=num("gphi"), gs=num("gs");
-  const Q1k=num("Q1k"), aQ=num("aQ"), gQ=num("gQ"), psiQ=num("psiQ"), B=num("B");
-  const fck=num("fck"), gc=num("gc"), fsk=num("fsk"), gsS=num("gsS"), Es=num("Es");
-  const EcIn=num("Ec"); const Ec = isFinite(EcIn) && EcIn>0 ? EcIn : 10000*Math.cbrt(fck+8);
+  const Q1k=num("Q1k"), aQ=num("aQ"), gQ=num("gQ"), psiQ=num("psiQ"), B=3;   // B: ancho de carril ficticio (m), fijo
+  const fck=num("fck"), gc=num("gc"), fsk=num("fsk"), gsS=num("gsS"), Es=205000;   // E_s (MPa), fijo
+  const Ec = 10000*Math.cbrt(fck+8);   // E_c,0 (MPa)
   const marg=num("marg");
   const msgs=[];
 
@@ -521,7 +522,8 @@ function calc(){
 
   $("msgs").innerHTML = msgs.length ? msgs.map(([c,t])=>`<li class="${c}">${t}</li>`).join("") : `<li class="info">Sin avisos.</li>`;
 
-  $("idLine").textContent = `${$("proj").value || "—"} · ${$("elem").value || "—"} · L = ${fmt(Wab,1)} m · h = ${fmt(hmec,1)} m`;
+  { const esc=t=>String(t).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+    $("idLine").innerHTML = `<span class="idMain">${esc($("proj").value || "—")} · ${esc($("elem").value || "—")}</span><span class="idSub">L = ${fmt(Wab,1)} m · h = ${fmt(hmec,1)} m</span>`; }
   drawChart(set, eextr, uimp, uEnv, marg);
   drawElev({L,a,e0,h,hmec,Lv,phid,conn,Ldiag,eextr,Q1d});
   drawHinge({conn});
