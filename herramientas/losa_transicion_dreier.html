@@ -147,6 +147,7 @@ button:disabled{opacity:.6; cursor:progress}
     <div class="row"><label>φ<sub>k</sub> del relleno [°]<small>grava compactada 37° (tabla 3.2)</small></label><input type="text" inputmode="decimal" id="phik" value="37" step="0.5" min="20" max="50"></div>
     <div class="row"><label>γ<sub>M</sub> sobre tan φ [–]<small>1.2 según SIA 267 (PDF p. 91)</small></label><input type="text" inputmode="decimal" id="gphi" value="1.2" step="0.05" min="1"></div>
     <div class="row"><label>γ<sub>relleno</sub> [kN/m³]</label><input type="text" inputmode="decimal" id="gs" value="19.4" step="0.1"></div>
+    <div class="row"><label>q<sub>adm</sub> [kN/m²]<small>presión admisible bajo la zona apoyada</small></label><input type="text" inputmode="decimal" id="qadm" value="350" step="10"></div>
   </fieldset>
 
   <fieldset><legend>Unión estribo–losa</legend>
@@ -246,7 +247,7 @@ button:disabled{opacity:.6; cursor:progress}
         <li><strong>m⁻<sub>pl,d</sub> = −55 kNm/m.</strong> Valor de la tesis (PDF p. 127), usado en la ec. 5.14 para la armadura inferior. La armadura superior de la rótula se toma con ρ = A<sub>s</sub>/(b·d) = 0.3 % (solo la armadura traccionada, como en los ensayos DT1); de ella solo se da el M<sub>Rd</sub>.</li>
         <li><strong>Ábaco.</strong> Los cálculos de la fig. 5.9 son de deformación plana con h<sub>DT</sub> = 0.30 m, e<sub>0</sub> = 0.10 m, grava compactada y solo dirección activa. No incluyen ciclos térmicos ni compactación por tráfico pesado, de ahí el margen de § 5.2.3. La tesis da como lectura redondeada para la losa estándar 40 mm (autopista) y 55 mm (nacional), y L<sub>pf,adm</sub> = 50 y 70 m (PDF p. 106, 110).</li>
         <li><strong>Cortante.</strong> Comprobación aproximada: la tesis remite a Fernández Ruiz et al. 2009. Se coloca el tándem con el borde de la rueda más próxima a 2d del apoyo (posición pésima, donde el efecto arco ya no reduce la carga) y se reparte a 45° a lo largo de 2d a cada lado de las ruedas (2.40 + 4·d); no se descuenta la carga que va directa al apoyo ni se suman otras cargas.</li>
-        <li><strong>Presión sobre el relleno.</strong> La carga del tándem se reparte con 45° desde la superficie hasta el relleno y se promedia en toda la longitud apoyada L<sub>DT,extr</sub>; en realidad se concentra cerca del extremo del hueco. El límite de 250 kN/m² es un criterio propio y conservador porque la carga se concentra en el extremo. Para las acciones permanentes se usa 1.35 (criterio de esta herramienta).</li>
+        <li><strong>Franja de apoyo.</strong> La tesis usa L<sub>hueco</sub> como luz, lo que sitúa la reacción en el borde del hueco. Aquí se fija una presión admisible q<sub>adm</sub> (dato, 350 kN/m² por defecto, criterio propio), la reacción se reparte en una franja c = R / q<sub>adm</sub> y se lleva a su centro. Esta luz se usa en el cortante y en el momento por peso propio, no en la ec. 5.13-5.14 de la tesis. El peso de la losa y del relleno se suma con 1.35 (criterio de esta herramienta).</li>
         <li><strong>Armadura.</strong> La separación s se calcula para el diámetro elegido (Ø12, 16, 20 o 25) como la mayor, en múltiplos de 5 mm y no superior a 250 mm, que cubre A<sub>s</sub>. Las barras longitudinales y las de la rótula se reparten en el ancho del estribo; las transversales, a lo largo de L<sub>DT</sub>. Materiales: f<sub>cd</sub> y f<sub>sd</sub> según los datos de entrada.</li>
         <li><strong>Longitud apoyada.</strong> La tesis solo define L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>hueco</sub> y no fija un mínimo. Con L<sub>hueco</sub>/L<sub>DT</sub> &lt; 0.5 el relleno bajo el extremo no plastifica y el momento no depende de L<sub>DT</sub>; cerca de 1 plastifica (PDF p. 126). El límite 0.5 es una lectura nuestra de esa frase; el mínimo de la tesis es L<sub>DT</sub> &gt; L<sub>hueco</sub>. Caso base de la tesis: L<sub>DT</sub> = 6 m con L<sub>hueco</sub> = 2 m (0.33).</li>
         <li><strong>Giro por u<sub>imp</sub>.</strong> ≈ 1 ‰ para 50 mm (fig. 4.29, PDF p. 93); aquí se escala linealmente, como orientación.</li>
@@ -396,7 +397,19 @@ function calc(){
   let mlong, mEq;
   if (conn==="pin"){ mlong = kenv*Q1d*Math.max(Lv,0)/(2*B); mEq="ec. 5.13"; }
   else { mlong = kenv*(Q1d*Math.max(Lv-Ldiag,0) - mplUse*B)/(2*B); mEq="ec. 5.14"; if (mlong<0) mlong=0; }
-  const mreq = Math.max(mlong,100);
+  // acciones y reacción en el extremo del relleno: la franja de apoyo c = R / q_adm y la luz de cálculo L_s = L_hueco (− L_diag) + c/2
+  const GAMMA_G = 1.35, SP_AXLES = 1.20;                  // factor de las acciones permanentes; separación de ejes (m)
+  const AV = 2*d;                                         // m, distancia libre del borde de la rueda al apoyo (posición pésima, β = a_v / 2d = 1)
+  const W_SHEAR = 2.00 + 0.40 + 2*AV;                     // m, ancho de reparto del cortante: ruedas (2.00 + 0.40) y 45° a lo largo de a_v a cada lado
+  const reaction = (Ls, a) => { const r = x => x<Ls ? Q1d*(1 - x/Ls) : 0; return (r(a) + r(a+SP_AXLES))/W_SHEAR; };   // kN/m, tándem con el eje más próximo a una distancia a del apoyo
+  const qadm = num("qadm");
+  const gEd = GAMMA_G*(25*h + gs*eextr);                  // kN/m², peso de la losa y del relleno
+  const L0 = conn==="hinge" ? Math.max(Lv-Ldiag,0.01) : Math.max(Lv,0.01);
+  let cStrip = 0, Rb = NaN;
+  if (qadm>0){ for (let i=0;i<40;i++){ const Lq = L0 + cStrip/2; Rb = reaction(Lq, AV+0.20) + gEd*Lq/2; cStrip = Rb/qadm; } }
+  const Ls = L0 + (isFinite(cStrip) ? cStrip/2 : 0);      // luz de cálculo
+  const msw = gEd*Ls*Ls/8;                                // kNm/m, peso de la losa y del relleno
+  const mreq = Math.max(mlong + msw, 100);
   // axil
   const phiRad=rad(phik), aR = rad(45+phik/2), aA=Math.atan(a);
   const Geff = gs*(L/2*(e0+eextr) + eextr*eextr/(2*Math.tan(aR))) + 25*L*h;
@@ -462,7 +475,8 @@ function calc(){
     : ex(`m⁺<sub>long,d</sub> = 1.5 · [Q<sub>1,d</sub> · (L<sub>hueco</sub> − L<sub>diag</sub>) + m⁻<sub>pl,d</sub> · B<sub>vía</sub>] / (2 · B<sub>vía</sub>)`, `${f(kenv,2)} · [${f(Q1d,0)} · (${f(Lv,2)} − ${f(Ldiag,2)}) + (${f(-mplUse,0)}) · ${f(B,2)}] / (2 · ${f(B,2)}) = ${f(mlong,0)} kNm/m`);
   $("tF").innerHTML = hdr(["Esfuerzo","Valor"]) +
    row2(`m⁺<sub>long,d</sub> (${mEq})`, `${f(mlong,0)} kNm/m`, mExpr, `${mEq} · PDF p. 133`) +
-   row2(`m⁺<sub>pl,d</sub> requerido longitudinal`, `<strong>${f(mreq,0)} kNm/m</strong>`, ex(`m⁺<sub>pl,d</sub> ≥ máx(m⁺<sub>long,d</sub> ; 100)`, `máx(${f(mlong,0)} ; 100) = ${f(mreq,0)} kNm/m`), "§ 5.4.3 · PDF p. 133") +
+   row2(`m⁺ por peso de la losa y del relleno`, `${f(msw,0)} kNm/m`, ex(`m⁺<sub>g</sub> = 1.35 · (25 · h<sub>DT</sub> + γ<sub>relleno</sub> · e<sub>extr,DT</sub>) · L<sub>s</sub>² / 8`, `${f(gEd,1)} · ${f(Ls,2)}² / 8 = ${f(msw,0)} kNm/m`), "criterio de esta herramienta") +
+   row2(`m⁺<sub>pl,d</sub> requerido longitudinal`, `<strong>${f(mreq,0)} kNm/m</strong>`, ex(`m⁺<sub>pl,d</sub> ≥ máx(m⁺<sub>long,d</sub> + m⁺<sub>g</sub> ; 100)`, `máx(${f(mlong,0)} + ${f(msw,0)} ; 100) = ${f(mreq,0)} kNm/m`), "§ 5.4.3 · PDF p. 133") +
    row2(`m⁺<sub>pl,d</sub> requerido transversal (mínimo)`, `<strong>100 kNm/m</strong>`, ex(`m⁺<sub>pl,d,trans</sub> ≥ 100 kNm/m`, ""), "§ 5.4.3 · PDF p. 133") +
    row2(`n<sub>max</sub> estimado por rozamiento`, `${f(nEst,0)} kN/m`, ex(`n<sub>max</sub> = G<sub>ef</sub> · cos α · (tan δ + tan α), δ = 2φ<sub>k</sub>/3`, `G<sub>ef</sub> = ${f(Geff,0)} kN/m; α = ${f(deg(aA),2)}°; δ = ${f(deg(delta),1)}° → ${f(nEst,0)} kN/m`), "ec. 5.11–5.12 · PDF p. 132") +
    row2(`n<sub>d</sub> de tracción usado`, `<strong>${f(nd,0)} kN/m</strong>`, ex(`n<sub>d</sub> = ${$("nMode").value==="thesis"?"100 kN/m (tesis)":"máx(100 ; n<sub>max</sub>)"}`, $("nMode").value==="thesis"?"":`máx(100 ; ${f(nEst,0)}) = ${f(nd,0)} kN/m`), "§ 5.4.3 · PDF p. 133") +
@@ -493,26 +507,17 @@ function calc(){
   const CRDC = 0.18/gc, K1 = 0.15;
   const tauC = Math.max(CRDC*kV*Math.cbrt(100*rhoV*fck) + K1*sigCp, 0.035*Math.pow(kV,1.5)*Math.sqrt(fck) + K1*sigCp);   // MPa
   const VRd = Math.max(tauC,0)*1000*d;                    // kN/m
-  const GAMMA_G = 1.35, SP_AXLES = 1.20;                    // factor de las acciones permanentes; separación de ejes (m)
-  const AV = 2*d;                                         // m, distancia libre del borde de la rueda al apoyo (posición pésima, β = a_v / 2d = 1)
-  const W_SHEAR = 2.00 + 0.40 + 2*AV;                     // m, ancho de reparto del cortante: ruedas (2.00 + 0.40) y 45° a lo largo de a_v a cada lado
-  const reaction = (Ls, a) => { const r = x => x<Ls ? Q1d*(1 - x/Ls) : 0; return (r(a) + r(a+SP_AXLES))/W_SHEAR; };   // kN/m, tándem con el eje más próximo a una distancia a del apoyo
-  const Ls = conn==="hinge" ? Math.max(Lv-Ldiag,0.01) : Math.max(Lv,0.01);              // luz de cálculo del cortante
-  const VsdA = reaction(Ls, AV+0.20) + (conn==="hinge" ? mplUse/Ls : 0);                       // extremo del estribo: la rótula transmite m⁻pl,d, que suma m⁻pl,d/Ls a la reacción
-  const VsdB = reaction(Ls, AV+0.20);                                                          // extremo del relleno (apoyo simple)
-  const P_LIM = 250;                                      // kN/m², límite de la presión sobre el relleno (criterio propio)
-  const bPres = 2.00 + 0.40 + 2*(eextr + h);                                             // m, reparto a 45° desde la superficie hasta el relleno
-  const pEd = Lext>0 ? 2*Q1d/(Lext*bPres) + GAMMA_G*(gs*eextr + 25*h) : NaN;            // kN/m²
+  const VsdA = reaction(Ls, AV+0.20) + gEd*Ls/2 + (conn==="hinge" ? mplUse/Ls : 0);     // extremo del estribo: la rótula transmite m⁻pl,d, que suma m⁻pl,d/Ls a la reacción
+  const VsdB = reaction(Ls, AV+0.20) + gEd*Ls/2;                                      // extremo del relleno (apoyo simple)
   const shearTag = (V)=> V<=VRd ? '<span class="tag ok">cumple</span>' : `<span class="tag bad">comprobar necesidad de cercos con V<sub>Sd</sub> = ${fmt(V,0)} kN/m</span>`;
   const shearCell = V => V<=VRd ? `${fmt(V,0)} kN/m ${shearTag(V)}` : shearTag(V);
   $("tC").innerHTML = hdr(["Magnitud","Valor"]) +
    row2(`V<sub>Rd,c</sub> sin armadura de cortante (EC2 6.2.2)`, `${fmt(VRd,0)} kN/m`) +
    row2(`Ancho de reparto del cortante = 2.40 + 4 · d`, `${fmt(W_SHEAR,2)} m`) +
-   row2(`V<sub>Sd</sub> en el extremo del estribo (luz ${fmt(Ls,2)} m)`, shearCell(VsdA)) +
-   row2(`V<sub>Sd</sub> en el extremo del relleno`, shearCell(VsdB)) +
-   row2(`Ancho de reparto de la carga sobre el relleno`, Lext>0 ? `${fmt(bPres,2)} m` : "—") +
-   row2(`Presión sobre el relleno p<sub>Ed</sub>`, Lext>0 ? `${fmt(pEd,0)} kN/m²` : "—") +
-   row2(`Presión límite sobre el relleno (criterio propio)`, `${P_LIM} kN/m² ${Lext>0 ? (pEd<=P_LIM?'<span class="tag ok">cumple</span>':'<span class="tag bad">no cumple</span>') : ""}`);
+   row2(`Franja de apoyo c = R / q<sub>adm</sub>`, qadm>0 ? `${fmt(cStrip,2)} m ${Lext>0 ? (cStrip<=Lext?'<span class="tag ok">cabe en L<sub>DT,extr</sub></span>':'<span class="tag bad">supera L<sub>DT,extr</sub></span>') : ""}` : "—") +
+   row2(`Luz de cálculo L<sub>s</sub> = ${conn==="hinge"?"L<sub>hueco</sub> − L<sub>diag</sub>":"L<sub>hueco</sub>"} + c / 2`, `${fmt(Ls,2)} m`) +
+   row2(`V<sub>Sd</sub> en el extremo del estribo`, shearCell(VsdA)) +
+   row2(`V<sub>Sd</sub> en el extremo del relleno`, shearCell(VsdB));
 
   $("msgs").innerHTML = msgs.length ? msgs.map(([c,t])=>`<li class="${c}">${t}</li>`).join("") : `<li class="info">Sin avisos.</li>`;
 
@@ -764,10 +769,9 @@ const EXPRESIONES = [
  ["M<sub>Rd</sub> = (A<sub>s</sub> · f<sub>sd</sub> − n) · (d − a/2) + n · (d − h/2), a = (A<sub>s</sub> · f<sub>sd</sub> − n) / f<sub>cd</sub>, con A<sub>s</sub> = (π · Ø² / 4) · 1000 / s","SIA 262 (estándar)","no está en la tesis"],
  ["M<sub>Sd</sub>: longitudinal = máx(m<sup>+</sup><sub>long,d</sub> ; 100) con n<sub>d</sub>; transversal = 100; rótula: sin M<sub>Sd</sub> (−55 kNm/m solo se usa para m<sup>+</sup><sub>long,d</sub>)","§ 5.4.3 y p. 127","PDF p. 127, 133"],
  ["V<sub>Rd,c</sub> = [C<sub>Rd,c</sub> · k · (100 · ρ<sub>l</sub> · f<sub>ck</sub>)<sup>1/3</sup> + k<sub>1</sub> · σ<sub>cp</sub>] · b · d ≥ (0.035 · k<sup>3/2</sup> · f<sub>ck</sub><sup>1/2</sup> + k<sub>1</sub> · σ<sub>cp</sub>) · b · d; C<sub>Rd,c</sub> = 0.18/γ<sub>c</sub>, k = 1 + √(200/d) ≤ 2 (d en mm), ρ<sub>l</sub> = A<sub>sl</sub>/(b · d) ≤ 0.02 con la armadura inferior longitudinal elegida, k<sub>1</sub> = 0.15, σ<sub>cp</sub> = −n<sub>d</sub>/h (tracción), b = 1 m","EN 1992-1-1, 6.2.2","comprobación aproximada de cortante"],
- ["V<sub>Sd</sub> = [Q<sub>1,d</sub> · (1 − a/L<sub>s</sub>) + Q<sub>1,d</sub> · (1 − (a + 1.20)/L<sub>s</sub>)] / (2.40 + 4 · d), con a = 2 · d + 0.20 (el borde de la rueda a 2d del apoyo, sin reducción por efecto arco, β = 1) y L<sub>s</sub> = L<sub>hueco</sub> (articulada) o L<sub>hueco</sub> − L<sub>diag</sub> (rótula); en el extremo del estribo, + |m<sup>−</sup><sub>pl,d</sub>| / L<sub>s</sub> si hay rótula","estática de viga biapoyada","no está en la tesis"],
- ["p<sub>Ed</sub> ≤ 250 kN/m² (límite de la presión sobre el relleno)","criterio de esta herramienta","no está en la tesis"],
- ["p<sub>Ed</sub> = 2 · Q<sub>1,d</sub> / (L<sub>DT,extr</sub> · b) + 1.35 · (γ<sub>relleno</sub> · e<sub>extr,DT</sub> + 25 · h<sub>DT</sub>), b = 2.00 + 0.40 + 2 · (e<sub>extr,DT</sub> + h<sub>DT</sub>)","criterio de esta herramienta","no está en la tesis"],
- ["f<sub>cd</sub> = η<sub>fc</sub> · f<sub>ck</sub> / γ<sub>c</sub>; f<sub>sd</sub> = f<sub>sk</sub> / γ<sub>s</sub>; E<sub>c,0</sub> = 10 000 · (f<sub>ck</sub> + 8)<sup>1/3</sup>","SIA 262 (estándar)","no está en la tesis"]
+ ["V<sub>Sd</sub> = [Q<sub>1,d</sub> · (1 − a/L<sub>s</sub>) + Q<sub>1,d</sub> · (1 − (a + 1.20)/L<sub>s</sub>)] / (2.40 + 4 · d), con a = 2 · d + 0.20 (el borde de la rueda a 2d del apoyo, sin reducción por efecto arco, β = 1) más 1.35 · (25 · h<sub>DT</sub> + γ<sub>relleno</sub> · e<sub>extr,DT</sub>) · L<sub>s</sub> / 2 por el peso de la losa y del relleno, con L<sub>s</sub> = L<sub>hueco</sub> (articulada) o L<sub>hueco</sub> − L<sub>diag</sub> (rótula) más c / 2; en el extremo del estribo, + |m<sup>−</sup><sub>pl,d</sub>| / L<sub>s</sub> si hay rótula","estática de viga biapoyada","no está en la tesis"],
+ ["c = R / q<sub>adm</sub>, con R = reacción en el extremo del relleno por metro de ancho (tándem repartido en 2.40 + 4 · d, más 1.35 · (25 · h<sub>DT</sub> + γ<sub>relleno</sub> · e<sub>extr,DT</sub>) · L<sub>s</sub> / 2); L<sub>s</sub> = L<sub>hueco</sub> (− L<sub>diag</sub>) + c / 2 (iterado, la reacción se lleva al centro de la franja); debe cumplirse c ≤ L<sub>DT,extr</sub>","criterio de esta herramienta","no está en la tesis"],
+  ["f<sub>cd</sub> = η<sub>fc</sub> · f<sub>ck</sub> / γ<sub>c</sub>; f<sub>sd</sub> = f<sub>sk</sub> / γ<sub>s</sub>; E<sub>c,0</sub> = 10 000 · (f<sub>ck</sub> + 8)<sup>1/3</sup>","SIA 262 (estándar)","no está en la tesis"]
 ];
 (function renderAnejos(){
   $("tNot").innerHTML = `<tr><th>Símbolo</th><th>Significado</th><th>Unidad</th><th>Origen</th></tr>` +
