@@ -135,9 +135,9 @@ button:disabled{opacity:.6; cursor:progress}
     <div class="row"><label>α<sub>DT</sub> [%]<small>pendiente; 5–20 % (PDF p. 105)</small></label><input type="text" inputmode="decimal" id="alpha" value="10" step="0.5" min="0"></div>
     <div class="row"><label>e<sub>0,DT</sub> [m]<small>enterramiento inicial (0.10 en la tesis)</small></label><input type="text" inputmode="decimal" id="e0" value="0.10" step="0.01" min="0"></div>
     <div class="row"><label>h<sub>DT</sub> [m]<small>espesor (0.30 en la tesis)</small></label><input type="text" inputmode="decimal" id="h" value="0.30" step="0.01" min="0.1"></div>
-    <div class="row"><label>d longitudinal [m]<small>canto útil armadura inferior</small></label><input type="text" inputmode="decimal" id="d" value="0.25" step="0.005" min="0.05"></div>
-    <div class="row"><label>d armadura superior [m]<small>canto útil de la rótula (ρ = 0.3 %, tesis)</small></label><input type="text" inputmode="decimal" id="dh" value="0.25" step="0.005"></div>
-    <div class="row"><label>d transversal [m]<small>2.ª capa</small></label><input type="text" inputmode="decimal" id="dt" value="0.23" step="0.005" min="0.05"></div>
+    
+    
+    
   </fieldset>
 
   <fieldset><legend>Estribo y relleno</legend>
@@ -246,6 +246,7 @@ button:disabled{opacity:.6; cursor:progress}
         <li><strong>Ábaco.</strong> Los cálculos de la fig. 5.9 son de deformación plana con h<sub>DT</sub> = 0.30 m, e<sub>0</sub> = 0.10 m, grava compactada y solo dirección activa. No incluyen ciclos térmicos ni compactación por tráfico pesado, de ahí el margen de § 5.2.3. La tesis da como lectura redondeada para la losa estándar 40 mm (autopista) y 55 mm (nacional), y L<sub>pf,adm</sub> = 50 y 70 m (PDF p. 106, 110).</li>
         <li><strong>Cortante.</strong> Comprobación aproximada: la tesis remite a Fernández Ruiz et al. 2009. Se coloca el tándem con el borde de la rueda más próxima a 2d del apoyo (posición pésima, donde el efecto arco ya no reduce la carga) y se reparte a 45° a lo largo de 2d a cada lado de las ruedas (2.40 + 4·d); no se descuenta la carga que va directa al apoyo ni se suman otras cargas.</li>
         <li><strong>Franja de apoyo.</strong> La tesis usa L<sub>hueco</sub> como luz, lo que sitúa la reacción en el borde del hueco. Aquí se fija una presión admisible q<sub>adm</sub> (dato, 350 kN/m² por defecto, criterio propio), la reacción se reparte en una franja c = R / q<sub>adm</sub> y se lleva a su centro. Esta luz se usa en el cortante y en el momento por peso propio, no en la ec. 5.13-5.14 de la tesis. El peso de la losa y del relleno se suma con 1.35 (criterio de esta herramienta).</li>
+        <li><strong>Cantos útiles.</strong> Fijos: d = h<sub>DT</sub> − 5 cm (armadura longitudinal inferior y superior de la rótula) y d<sub>t</sub> = h<sub>DT</sub> − 7 cm (armadura transversal).</li>
         <li><strong>Armadura.</strong> La separación s se calcula para el diámetro elegido (Ø12, 16, 20 o 25) como la mayor, en múltiplos de 5 mm y no superior a 250 mm, que cubre A<sub>s</sub>. Las barras longitudinales y las de la rótula se reparten en el ancho del estribo; las transversales, a lo largo de L<sub>DT</sub>. Materiales: f<sub>cd</sub> y f<sub>sd</sub> según los datos de entrada.</li>
         <li><strong>Longitud apoyada.</strong> La tesis solo define L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>hueco</sub> y no fija un mínimo. Con L<sub>hueco</sub>/L<sub>DT</sub> &lt; 0.5 el relleno bajo el extremo no plastifica y el momento no depende de L<sub>DT</sub>; cerca de 1 plastifica (PDF p. 126). El límite 0.5 es una lectura nuestra de esa frase; el mínimo de la tesis es L<sub>DT</sub> &gt; L<sub>hueco</sub>. Caso base de la tesis: L<sub>DT</sub> = 6 m con L<sub>hueco</sub> = 2 m (0.33).</li>
         <li><strong>Giro por u<sub>imp</sub>.</strong> ≈ 1 ‰ para 50 mm (fig. 4.29, PDF p. 93); aquí se escala linealmente, como orientación.</li>
@@ -346,7 +347,7 @@ function calc(){
     ? "h<sub>muro</sub> [m]<small>altura del muro del estribo (PDF p. 101–102)</small>"
     : "h<sub>tablero</sub> [m]<small>canto del extremo del tablero (PDF p. 101)</small>";
 
-  const L=num("L"), al=num("alpha"), e0=num("e0"), h=num("h"), d=num("d"), dt=num("dt");
+  const L=num("L"), al=num("alpha"), e0=num("e0"), h=num("h"), d=h-0.05, dt=h-0.07;   // cantos útiles fijos: h − 5 cm (armadura longitudinal) y h − 7 cm (transversal)
   const Wab=num("Wab"), hmec=num("hmec"), phik=num("phik"), gphi=num("gphi"), gs=num("gs");
   const Q1k=num("Q1k"), aQ=num("aQ"), gQ=num("gQ"), psiQ=num("psiQ"), B=3;   // B: ancho de carril ficticio (m), fijo
   const fck=num("fck"), gc=num("gc"), fsk=num("fsk"), gsS=num("gsS"), Es=205000;   // E_s (MPa), fijo
@@ -393,7 +394,7 @@ function calc(){
   const fcd = Math.min(1,Math.cbrt(30/fck))*fck/gc, fsd = fsk/gsS;
   const etafc = Math.min(1,Math.cbrt(30/fck));
   // rótula ec. 5.6 (valores de cálculo)
-  const dh=num("dh"), Ldiag=LDIAG;
+  const dh=h-0.05, Ldiag=LDIAG;   // d de la armadura superior de la rótula: h − 5 cm
   const mplUse = 55;                                     // m⁻pl,d de la tesis (kNm/m), PDF p. 127
   let mlong, mEq;
   if (conn==="pin"){ mlong = kenv*Q1d*Math.max(Lv,0)/(2*B); mEq="ec. 5.13"; }
