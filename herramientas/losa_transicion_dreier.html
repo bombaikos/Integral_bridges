@@ -161,7 +161,6 @@ button:disabled{opacity:.6; cursor:progress}
     <div class="row"><label>Q<sub>1k</sub> por eje [kN]</label><input type="text" inputmode="decimal" id="Q1k" value="300" step="10"></div>
     <div class="row"><label>α<sub>Q1</sub> [–]</label><input type="text" inputmode="decimal" id="aQ" value="0.9" step="0.05"></div>
     <div class="row"><label>γ<sub>Q</sub> (ELU) [–]</label><input type="text" inputmode="decimal" id="gQ" value="1.5" step="0.05"></div>
-    <div class="row"><label>Factor para el giro [–]<small>0.75 en la ec. 5.15 (PDF p. 129)</small></label><input type="text" inputmode="decimal" id="psiQ" value="0.75" step="0.05"></div>
     
     <div class="row"><label>n<sub>d</sub> axil</label>
       <select id="nMode"><option value="max">máx(100; ec. 5.11–5.12)</option><option value="thesis">100 kN/m (tesis)</option></select></div>
@@ -353,7 +352,7 @@ function calc(){
 
   const L=num("L"), al=num("alpha"), e0=num("e0"), h=num("h"), d=h-0.05, dt=h-0.07;   // cantos útiles fijos: h − 5 cm (armadura longitudinal) y h − 7 cm (transversal)
   const hmec=num("hmec"), phik=num("phik"), gphi=num("gphi"), gs=num("gs");
-  const Q1k=num("Q1k"), aQ=num("aQ"), gQ=num("gQ"), psiQ=num("psiQ"), B=3;   // B: ancho de carril ficticio (m), fijo
+  const Q1k=num("Q1k"), aQ=num("aQ"), gQ=num("gQ"), psiQ=0.75, B=3;   // B: ancho de carril ficticio (m), fijo
   const fck=num("fck"), gc=num("gc"), fsk=num("fsk"), gsS=num("gsS"), Es=205000;   // E_s (MPa), fijo
   const Ec = 10000*Math.cbrt(fck+8);   // E_c,0 (MPa)
   const marg=num("marg");
@@ -636,7 +635,7 @@ function drawHinge(o){
 function drawPlan(o){
   const svg=$("plan"); if(!isFinite(o.L)||o.L<=0){svg.innerHTML="";return;}
   const W=640, xl=-1.0, xr=o.L+0.6, wy=6.5;                // y desde el borde de la losa; carriles 1 y 2 de 3 m (fig. 4.25(a))
-  const sc=Math.min((W-130)/(xr-xl), 200/(wy+1.6));
+  const sc=Math.min((W-170)/(xr-xl), 262/(wy+1.6));
   const X=x=>20+(x-xl)*sc, Y=y=>40+y*sc;
   const fg=col('--fg'), ac=col('--accent'), ok=col('--ok'), wa=col('--warn'), bad=col('--bad'), mu=col('--muted');
   let s=defs();
@@ -668,7 +667,7 @@ function drawPlan(o){
   s+=vd2(3.25,5.25,xc,"2.00 m",ac);
   s+=vd2(2.25,3.25,xc+1.0,"1.00 m",fg);
   s+=dimH(X(xc-0.6),X(xc+0.6),Y(0)-8,`1.20 m`,bad);
-  s+=dimH(X(0),X(o.Lv),Y(wy)+26,`L<tspan font-size="8" dy="2">hueco</tspan><tspan dy="-2"> = ${fmt(o.Lv,2)} m (luz de cálculo)</tspan>`,wa,"start");
+  s+=dimH(X(0),X(o.Lv),Y(wy)+26,`L<tspan font-size="8" dy="2">hueco</tspan><tspan dy="-2"> = ${fmt(o.Lv,2)} m</tspan>`,wa,"start");
   const wd=o.Q1d/2;
   $("planNote").innerHTML=`Tándems del modelo 1 en los carriles 1 y 2, con la disposición de la fig. 4.25(a) de la tesis. Carril 1: <strong>${fmt(o.Q1k/2,0)} kN</strong> por rueda (Q<sub>1k</sub>/2, característico); en ELU, γ<sub>Q</sub>·α<sub>Q1</sub>·Q<sub>1k</sub>/2 = ${fmt(o.gQ,2)}·${fmt(o.aQ,2)}·${fmt(o.Q1k,0)}/2 = <strong>${fmt(wd,1)} kN</strong> (${fmt(o.Q1d,0)} kN por eje). Carril 2: <strong>${fmt(Q2k/2,0)} kN</strong> por rueda (Q<sub>2k</sub> = ${fmt(Q2k,0)} kN por eje). Ruedas de 0.40 × 0.40 m, 1.20 m entre ejes y 2.00 m entre ruedas; 1.00 m entre las ruedas interiores de los dos carriles. El carril 3 y el resto del ancho no se cargan. No se aplica ninguna carga uniforme. La ec. 5.13-5.14 solo usa Q<sub>1,d</sub>.`;
   const H=Y(wy)+38; svg.setAttribute("viewBox",`0 0 640 ${H}`);
