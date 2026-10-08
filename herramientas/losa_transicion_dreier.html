@@ -386,7 +386,7 @@ function calc(){
   const ratio = Lv/L;
   const Lrec = Math.max(2*Lv, Lreq!=null ? Lreq : 0);
   if (Lext<=0) msgs.push(["bad",`La losa (${fmt(L,2)} m) no salva el hueco L<sub>hueco</sub> = ${fmt(Lv,2)} m: aumente L<sub>DT</sub> (PDF p. 101).`]);
-  else if (ratio>0.5) msgs.push(["warn",`L<sub>hueco</sub>/L<sub>DT</sub> = ${fmt(ratio,2)} > 0.5: el extremo apoyado se acerca a su capacidad portante y el momento empieza a depender de L<sub>DT</sub> (PDF p. 126). Criterio deducido: L<sub>DT</sub> ≥ 2·L<sub>hueco</sub> = ${fmt(2*Lv,2)} m.`]);
+  else if (ratio>0.5) msgs.push(["warn",`L<sub>hueco</sub>/L<sub>DT</sub> = ${fmt(ratio,2)} > 0.5: el extremo apoyado se acerca a su capacidad portante y el momento empieza a depender de L<sub>DT</sub> (PDF p. 126). Equivale a L<sub>DT</sub> ≥ ${fmt(2*Lv,2)} m.`]);
 
   /* ---- 3. esfuerzos ---- */
   const Q1d = gQ*aQ*Q1k;
@@ -468,7 +468,6 @@ function calc(){
    row2(`L<sub>DT,min</sub>`, `${f(Lv,2)} m ${ok(L>Lv)}`, ex(`L<sub>DT</sub> > L<sub>hueco</sub>`, `${f(L,2)} > ${f(Lv,2)}`), "§ 5.2.1 · PDF p. 101") +
    row2(`Longitud apoyada L<sub>DT,extr</sub>`, `${f(Lext,2)} m`, ex(`L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>hueco</sub>`, `${f(L,2)} − ${f(Lv,2)} = ${f(Lext,2)} m`), "§ 5.4 · PDF p. 125") +
    row2(`L<sub>hueco</sub> / L<sub>DT</sub>`, `${f(ratio,2)} ${ratio<=0.5?'<span class="tag ok">≤ 0.5</span>':'<span class="tag warn">> 0.5</span>'}`, ex(`L<sub>hueco</sub> / L<sub>DT</sub> ≤ 0.5 (el relleno no plastifica)`, `${f(Lv,2)} / ${f(L,2)} = ${f(ratio,2)}`), "fig. 5.29 · PDF p. 126–127") +
-   row2(`L<sub>DT</sub> ≥ 2·L<sub>hueco</sub> <span class="tag warn">criterio deducido</span>`, `${f(2*Lv,2)} m ${L>=2*Lv?'<span class="tag ok">cumple</span>':'<span class="tag warn">no cumple</span>'}`, ex(`2 · L<sub>hueco</sub> (apoyo ≥ hueco)`, `2 · ${f(Lv,2)} = ${f(2*Lv,2)} m`), "de fig. 5.29, no exigido") +
    row2(`L<sub>DT</sub> recomendada`, `<strong>${f(Lrec,2)} m</strong>`, ex(`máx(2 · L<sub>hueco</sub> ; L<sub>DT</sub> por planeidad)`, `máx(${f(2*Lv,2)} ; ${Lreq!=null?f(Lreq,2):"—"}) = ${f(Lrec,2)} m`), "§ 5.2 + fig. 5.29") +
    "";
 
@@ -756,7 +755,7 @@ const EXPRESIONES = [
  ["L<sub>DT</sub> > L<sub>hueco</sub> (longitud mínima)","§ 5.2.1","PDF p. 101"],
  ["L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>hueco</sub>","§ 5.4","PDF p. 125"],
  ["L<sub>hueco</sub> / L<sub>DT</sub> ≤ 0.5 (el relleno bajo el extremo no plastifica; lectura nuestra)","fig. 5.29","PDF p. 126"],
- ["L<sub>DT</sub> ≥ 2 · L<sub>hueco</sub> (criterio deducido, no exigido por la tesis); L<sub>DT,rec</sub> = máx(2 · L<sub>hueco</sub> ; L<sub>DT,nec</sub>)","fig. 5.29","PDF p. 126–127"],
+ ["L<sub>DT,rec</sub> = máx(2 · L<sub>hueco</sub> ; L<sub>DT,nec</sub>) (el 2 · L<sub>hueco</sub> equivale a L<sub>hueco</sub> / L<sub>DT</sub> ≤ 0.5)","fig. 5.29","PDF p. 126–127"],
  ["Q<sub>1,d</sub> = γ<sub>Q</sub> · α<sub>Q1</sub> · Q<sub>1k</sub> = 1.5 · 0.9 · 300 = 405 kN","§ 5.4.1","PDF p. 126"],
  ["m<sup>+</sup><sub>long,d</sub> = 1.5 · Q<sub>1,d</sub> · L<sub>hueco</sub> / (2 · B<sub>vía</sub>) (unión articulada)","ec. 5.13","PDF p. 133"],
  ["m<sup>+</sup><sub>long,d</sub> = 1.5 · [Q<sub>1,d</sub> · (L<sub>hueco</sub> − L<sub>diag</sub>) + m<sup>−</sup><sub>pl,d</sub> · B<sub>vía</sub>] / (2 · B<sub>vía</sub>) (rótula)","ec. 5.14","PDF p. 133"],
