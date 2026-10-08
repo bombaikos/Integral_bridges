@@ -106,7 +106,7 @@ button:disabled{opacity:.6; cursor:progress}
   <fieldset><legend>Identificación</legend>
     <div class="row wide"><label for="proj">Proyecto</label><input type="text" id="proj" value="Obra de emergencia en la M305 PPK 0+800"></div>
     <div class="row wide"><label for="elem">Elemento</label><input type="text" id="elem" value="Estribo 1"></div>
-    <div class="row"><label>L<sub>estribo</sub> [m]<small>ancho del estribo (L = 13 m); da el nº de barras</small></label><input type="text" inputmode="decimal" id="Wab" value="13" step="0.5" min="1"></div>
+    
   </fieldset>
   <fieldset><legend>Red viaria</legend>
     <div class="seg">
@@ -348,7 +348,7 @@ function calc(){
     : "h<sub>tablero</sub> [m]<small>canto del extremo del tablero (PDF p. 101)</small>";
 
   const L=num("L"), al=num("alpha"), e0=num("e0"), h=num("h"), d=h-0.05, dt=h-0.07;   // cantos útiles fijos: h − 5 cm (armadura longitudinal) y h − 7 cm (transversal)
-  const Wab=num("Wab"), hmec=num("hmec"), phik=num("phik"), gphi=num("gphi"), gs=num("gs");
+  const hmec=num("hmec"), phik=num("phik"), gphi=num("gphi"), gs=num("gs");
   const Q1k=num("Q1k"), aQ=num("aQ"), gQ=num("gQ"), psiQ=num("psiQ"), B=3;   // B: ancho de carril ficticio (m), fijo
   const fck=num("fck"), gc=num("gc"), fsk=num("fsk"), gsS=num("gsS"), Es=205000;   // E_s (MPa), fijo
   const Ec = 10000*Math.cbrt(fck+8);   // E_c,0 (MPa)
@@ -523,7 +523,7 @@ function calc(){
   $("msgs").innerHTML = msgs.length ? msgs.map(([c,t])=>`<li class="${c}">${t}</li>`).join("") : `<li class="info">Sin avisos.</li>`;
 
   { const esc=t=>String(t).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
-    $("idLine").innerHTML = `<span class="idMain">${esc($("proj").value || "—")} · ${esc($("elem").value || "—")}</span><span class="idSub">L = ${fmt(Wab,1)} m · h = ${fmt(hmec,1)} m</span>`; }
+    $("idLine").innerHTML = `<span class="idMain">${esc($("proj").value || "—")} · ${esc($("elem").value || "—")}</span>`; }
   drawChart(set, eextr, uimp, uEnv, marg);
   drawElev({L,a,e0,h,hmec,Lv,phid,conn,Ldiag,eextr,Q1d});
   drawHinge({conn});
@@ -843,7 +843,7 @@ async function exportDocx(btn){
     const children=[];
     children.push(new Paragraph({heading:HeadingLevel.TITLE,children:[new TextRun("Losa de transición de puentes integrales")]}));
     children.push(new Paragraph({children:[new TextRun({text:"Proyecto: ",bold:true,font:FONT}),new TextRun({text:$("proj").value||"—",font:FONT})]}));
-    children.push(new Paragraph({children:[new TextRun({text:"Elemento: ",bold:true,font:FONT}),new TextRun({text:$("elem").value||"—",font:FONT}),new TextRun({text:"   ·   L = "+fmt(num("Wab"),1)+" m   ·   h = "+fmt(num("hmec"),1)+" m",font:FONT})]}));
+    children.push(new Paragraph({children:[new TextRun({text:"Elemento: ",bold:true,font:FONT}),new TextRun({text:$("elem").value||"—",font:FONT})]}));
     children.push(new Paragraph({spacing:{after:160},children:[new TextRun({text:"Predimensionamiento según D. Dreier, tesis EPFL nº 4880 (2010). Fecha: "+new Date().toLocaleDateString("es-ES")+". Generado por la herramienta; no sustituye a la comprobación con la tesis y la normativa.",font:FONT,italics:true,color:"5B6776",size:20})]}));
     children.push(new Paragraph({children:[new PageBreak()]}));
     children.push(new TableOfContents("Índice",{hyperlink:true,headingStyleRange:"1-2"}));   // Word lo actualiza al abrir
