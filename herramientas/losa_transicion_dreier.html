@@ -415,7 +415,7 @@ function calc(){
   // axil
   const phiRad=rad(phik), aR = rad(45+phik/2), aA=Math.atan(a);
   const Geff = gs*(L/2*(e0+eextr) + eextr*eextr/(2*Math.tan(aR))) + 25*L*h;
-  const delta = 2/3*phiRad;
+  const delta = phiRad;                                   // δ = φ_k: criterio de esta herramienta, del lado de la seguridad (la tesis usa 2φ/3)
   const nEst = Geff*Math.cos(aA)*(Math.tan(delta)+Math.tan(aA));
   const nd = $("nMode").value==="thesis" ? 100 : Math.max(100,nEst);
   if (nEst>100) msgs.push(["warn",`El axil estimado con ec. 5.11–5.12 (${fmt(nEst,0)} kN/m) supera los 100 kN/m que fija la tesis para el caso extremo L = 8 m, α = 15 % (PDF p. 132).`]);
@@ -480,7 +480,7 @@ function calc(){
    row2(`m⁺ por peso de la losa y del relleno`, `${f(msw,0)} kNm/m`, ex(`m⁺<sub>g</sub> = 1.35 · (25 · h<sub>DT</sub> + γ<sub>relleno</sub> · e<sub>extr,DT</sub>) · L<sub>s</sub>² / 8`, `${f(gEd,1)} · ${f(Ls,2)}² / 8 = ${f(msw,0)} kNm/m`), "criterio de esta herramienta") +
    row2(`m⁺<sub>pl,d</sub> requerido longitudinal`, `<strong>${f(mreq,0)} kNm/m</strong>`, ex(`m⁺<sub>pl,d</sub> ≥ máx(m⁺<sub>long,d</sub> + m⁺<sub>g</sub> ; 100)`, `máx(${f(mlong,0)} + ${f(msw,0)} ; 100) = ${f(mreq,0)} kNm/m`), "§ 5.4.3 · PDF p. 133") +
    row2(`m⁺<sub>pl,d</sub> requerido transversal (mínimo)`, `<strong>100 kNm/m</strong>`, ex(`m⁺<sub>pl,d,trans</sub> ≥ 100 kNm/m`, ""), "§ 5.4.3 · PDF p. 133") +
-   row2(`n<sub>max</sub> estimado por rozamiento`, `${f(nEst,0)} kN/m`, ex(`n<sub>max</sub> = G<sub>ef</sub> · cos α · (tan δ + tan α), δ = 2φ<sub>k</sub>/3`, `G<sub>ef</sub> = ${f(Geff,0)} kN/m; α = ${f(deg(aA),2)}°; δ = ${f(deg(delta),1)}° → ${f(nEst,0)} kN/m`), "ec. 5.11–5.12 · PDF p. 132") +
+   row2(`n<sub>max</sub> estimado por rozamiento`, `${f(nEst,0)} kN/m`, ex(`n<sub>max</sub> = G<sub>ef</sub> · cos α · (tan δ + tan α), δ = φ<sub>k</sub>`, `G<sub>ef</sub> = ${f(Geff,0)} kN/m; α = ${f(deg(aA),2)}°; δ = ${f(deg(delta),1)}° → ${f(nEst,0)} kN/m`), "ec. 5.11–5.12 · PDF p. 132") +
    row2(`n<sub>d</sub> de tracción usado`, `<strong>${f(nd,0)} kN/m</strong>`, ex(`n<sub>d</sub> = ${$("nMode").value==="thesis"?"100 kN/m (tesis)":"máx(100 ; n<sub>max</sub>)"}`, $("nMode").value==="thesis"?"":`máx(100 ; ${f(nEst,0)}) = ${f(nd,0)} kN/m`), "§ 5.4.3 · PDF p. 133") +
    (conn==="pin" ? row2(`Δα<sub>DT</sub> al paso del vehículo`, `${f(dAlpha,1)} ‰ ${dAlpha<=ROT_LIMIT?'<span class="tag ok">≤ 4 ‰</span>':'<span class="tag warn">> 4 ‰</span>'}`, ex(`Δα<sub>DT</sub> = 0.5 · 3 · Q · L<sub>hueco</sub>² / (B<sub>vía</sub> · h<sub>DT</sub>³ · E<sub>fis</sub>)`, `0,5 · 3 · ${f(Q1s,0)} kN · ${f(Lv,2)}² / (${f(B,2)} · ${f(h,2)}³ · ${f(Efis,0)} MPa) = ${f(dAlpha,1)} ‰`), "ec. 5.15 · PDF p. 134") : "");
 
@@ -733,7 +733,7 @@ const NOTACION = [
  ["L<sub>diag</sub>","Posición de la rótula respecto al estribo (0.62 m)","m","tesis"],
  ["n<sub>d</sub>, n<sub>max</sub>","Axil de tracción de cálculo en la losa y su máximo por rozamiento con el relleno","kN/m","tesis"],
  ["G<sub>ef</sub>","Peso efectivo sobre la interfaz losa–relleno (ec. 5.11)","kN/m","tesis"],
- ["δ","Ángulo de rozamiento de la interfaz = 2φ<sub>k</sub>/3","°","tesis"],
+ ["δ","Ángulo de rozamiento de la interfaz = φ<sub>k</sub> (la tesis usa 2φ/3)","°","aquí"],
  ["ρ","Cuantía geométrica de armadura = A<sub>s</sub>/(b·d)","–","tesis"],
  ["b, d","Ancho de cálculo (1 m) y canto útil","m","–"],
  ["f<sub>ck</sub>, f<sub>cd</sub>, η<sub>fc</sub>, γ<sub>c</sub>","Resistencia característica y de cálculo del hormigón, factor de fragilidad (30/f<sub>ck</sub>)<sup>1/3</sup> ≤ 1 y coeficiente parcial","MPa, –","SIA 262"],
@@ -763,7 +763,7 @@ const EXPRESIONES = [
  ["m<sup>+</sup><sub>pl,d,long</sub> requerido = máx(m<sup>+</sup><sub>long,d</sub> ; 100 kNm/m); transversal = 100 kNm/m","§ 5.4.3","PDF p. 133"],
  ["n<sub>d</sub> = máx(100 kN/m ; n<sub>max</sub>), o 100 kN/m si se elige el valor de la tesis","§ 5.4.3","PDF p. 133"],
  ["G<sub>ef</sub> = γ<sub>r</sub> · [L<sub>DT</sub>/2 · (e<sub>0,DT</sub> + e<sub>extr,DT</sub>) + e<sub>extr,DT</sub>² / (2·tan(45° + φ/2))] + γ<sub>c</sub> · L<sub>DT</sub> · h<sub>DT</sub>","ec. 5.11","PDF p. 132"],
- ["δ<sub>ef</sub> = atan[n<sub>max</sub> / (G<sub>ef</sub> · cos α<sub>DT</sub>) − tan α<sub>DT</sub>] ⇒ n<sub>max</sub> = G<sub>ef</sub> · cos α · (tan δ + tan α), δ = 2φ/3","ec. 5.12 (despejada)","PDF p. 132–133"],
+ ["δ<sub>ef</sub> = atan[n<sub>max</sub> / (G<sub>ef</sub> · cos α<sub>DT</sub>) − tan α<sub>DT</sub>] ⇒ n<sub>max</sub> = G<sub>ef</sub> · cos α · (tan δ + tan α), δ = φ<sub>k</sub> (la tesis usa 2φ/3; criterio de esta herramienta, del lado de la seguridad)","ec. 5.12 (despejada)","PDF p. 132–133"],
  ["E<sub>fis</sub> = ρ · d³ · E<sub>s</sub> · (1 − x<sub>0</sub>/d) · (1 − x<sub>0</sub>/(3d)) / (h³/12); x<sub>0</sub> = d · ρ · n<sub>0</sub> · (√(1 + 2/(ρ·n<sub>0</sub>)) − 1); n<sub>0</sub> = E<sub>s</sub>/E<sub>c,0</sub>","ec. 4.12","PDF p. 90–91"],
  ["Δα<sub>DT</sub> = 0.5 · 3 · Q<sub>1,d</sub> · L<sub>hueco</sub>² / (B<sub>vía</sub> · h<sub>DT</sub>³ · E<sub>fis</sub>) (con L² corregido)","ec. 5.15","PDF p. 134"],
  ["M<sub>s</sub> = m − n · (d − h/2); a = d − √(d² − 2·M<sub>s</sub>/f<sub>cd</sub>); A<sub>s</sub> = (f<sub>cd</sub> · a + n) / f<sub>sd</sub>","SIA 262 (estándar)","no está en la tesis"],
