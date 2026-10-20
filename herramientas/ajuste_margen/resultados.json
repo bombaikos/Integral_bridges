@@ -1,0 +1,66 @@
+{
+ "autopista (chi=20)": {
+  "poly2": {
+   "coef": [
+    57.723,
+    -46.197,
+    34.24
+   ],
+   "R2": 0.9904,
+   "errmax_mm": 1.82,
+   "errmax_pct": 4.9
+  },
+  "poly3": {
+   "coef": [
+    64.533,
+    -81.344,
+    44.52,
+    16.817
+   ],
+   "R2": 0.998,
+   "errmax_mm": 0.86,
+   "errmax_pct": 3.3
+  },
+  "potencial": {
+   "coef": [
+    45.958,
+    0.739
+   ],
+   "R2": 0.8215,
+   "errmax_mm": 7.84,
+   "errmax_pct": 22.6
+  }
+ },
+ "carretera nacional (chi=28)": {
+  "poly2": {
+   "coef": [
+    52.48,
+    -34.449,
+    41.066
+   ],
+   "R2": 0.9967,
+   "errmax_mm": 0.88,
+   "errmax_pct": 1.8
+  },
+  "poly3": {
+   "coef": [
+    46.078,
+    -36.777,
+    18.439,
+    31.719
+   ],
+   "R2": 0.9991,
+   "errmax_mm": 0.38,
+   "errmax_pct": 1.0
+  },
+  "potencial": {
+   "coef": [
+    54.541,
+    0.485
+   ],
+   "R2": 0.8221,
+   "errmax_mm": 5.01,
+   "errmax_pct": 13.7
+  }
+ }
+}
