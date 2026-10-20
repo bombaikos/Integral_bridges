@@ -29,6 +29,16 @@
    "R2": 0.8215,
    "errmax_mm": 7.84,
    "errmax_pct": 22.6
+  },
+  "potencial_c": {
+   "coef": [
+    24.92,
+    19.837,
+    3.758
+   ],
+   "R2": 0.9974,
+   "errmax_mm": 0.81,
+   "errmax_pct": 3.1
   }
  },
  "carretera nacional (chi=28)": {
@@ -61,6 +71,16 @@
    "R2": 0.8221,
    "errmax_mm": 5.01,
    "errmax_pct": 13.7
+  },
+  "potencial_c": {
+   "coef": [
+    34.854,
+    24.559,
+    3.295
+   ],
+   "R2": 0.9989,
+   "errmax_mm": 0.41,
+   "errmax_pct": 1.0
   }
  }
 }
