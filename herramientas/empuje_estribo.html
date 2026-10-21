@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Empuje sobre estribo</title>
+<style>
+:root{--bg:#fff;--fg:#1d2330;--mut:#5b6475;--card:#f4f6fa;--line:#d5dae3;--ac:#1f5fbf;--warn:#a15c00}
+@media (prefers-color-scheme:dark){:root{--bg:#14171e;--fg:#e6e9ef;--mut:#9aa3b5;--card:#1d222c;--line:#333a48;--ac:#6ea8ff;--warn:#e0a24a}}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,sans-serif}
+main{max-width:900px;margin:0 auto;padding:16px}
+h1{font-size:1.3rem;margin:.2em 0}h2{font-size:1rem;margin:1.2em 0 .4em}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+label{display:block;font-size:.85rem;color:var(--mut)}
+input,select{width:100%;box-sizing:border-box;padding:6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);font:inherit}
+.card{background:var(--card);border-radius:8px;padding:10px 12px;margin:8px 0}
+table{border-collapse:collapse;width:100%}td,th{padding:4px 8px;border-bottom:1px solid var(--line);text-align:right}th:first-child,td:first-child{text-align:left}
+.w{color:var(--warn);font-size:.85rem}.m{color:var(--mut);font-size:.85rem}
+svg{width:100%;height:auto}
+</style></head><body><main>
+<h1>Empuje de tierras sobre el estribo (BA 42/96 según Dreier)</h1>
+<p class="m">Tesis EPFL 4880, §5.1.1, ec. 4.2, 4.3, 5.1, 5.2. Separador decimal: punto.</p>
+<div class="g card">
+<label>Tipo de estribo<select id="tipo"><option value="int">Integral (ec. 5.2)</option><option value="semi">Semi-integral (ec. 5.1)</option></select></label>
+<label>Relleno<select id="rel"><option value="37,19.4">Grava compactada φ=37° γ=19.4</option><option value="34,19.4">Gravier lâche φ=34° γ=19.4</option><option value="42,18">Balasto φ=42° γ=18.0</option><option value="37,20.5">Grava muy compactada φ=37° γ=20.5</option><option value="x">Valores propios</option></select></label>
+<label>φ [°]<input id="phi" type="number" step="0.5" value="37"></label>
+<label>γ [kN/m³]<input id="gam" type="number" step="0.1" value="19.4"></label>
+<label>h muro (o canto tablero si semi) [m]<input id="h" type="number" step="0.1" value="3"></label>
+<label>L_pf, distancia al punto fijo [m]<input id="L" type="number" step="1" value="30"></label>
+<label>ΔT [°C]<input id="dT" type="number" step="1" value="20"></label>
+<label>αT [1/°C]<input id="aT" type="number" step="1e-6" value="0.00001"></label>
+<label>u_imp,Q de cargas viales [mm] (0 = BA 42/96)<input id="uq" type="number" step="0.5" value="0"></label>
+<label>δ muro/φ (rozamiento muro-relleno)<select id="dr"><option value="0">0 (Rankine)</option><option value="0.5">1/2</option><option value="0.6667" selected>2/3 (como Dreier)</option><option value="1">1</option></select></label>
+<label>Kp propio (vacío = calculado)<input id="kp" type="number" step="0.1" placeholder="calculado"></label>
+</div>
+<div class="card" id="res"></div>
+<div class="g" style="grid-template-columns:repeat(auto-fit,minmax(340px,1fr));align-items:start"><svg id="fig" viewBox="0 0 640 340"></svg><div id="tab"></div></div>
+<p class="w" id="av"></p>
+<p class="m">Hipótesis: en el estribo integral K es constante hasta h/2, baja linealmente hasta K0 en z≈0.75·h y es K0 hasta el pie (forma leída del dibujo de la fig. 5.2b; el texto solo dice «progresivamente»). Kp se calcula con la solución analítica de Lancellotta (2002), cota inferior de espiral logarítmica, algo conservadora respecto a las tablas de Caquot–Kérisel que cita la tesis; con δ=0 coincide con Rankine. Rankine subestima Kp con muro rugoso. La tesis desaconseja usar muelles o elementos finitos para el empuje: esto es un cálculo normativo de orden de magnitud, no sustituye al diseño con ductilidad.</p>
+<script>
+const $=i=>document.getElementById(i),f=(x,n=2)=>x.toFixed(n);
+$("rel").onchange=()=>{const v=$("rel").value;if(v!="x"){const[a,b]=v.split(",");$("phi").value=a;$("gam").value=b}calc()};
+document.querySelectorAll("input,select").forEach(e=>e.addEventListener("input",calc));
+function calc(){
+ const phi=+$("phi").value*Math.PI/180,g=+$("gam").value,h=+$("h").value,L=+$("L").value,dT=+$("dT").value,aT=+$("aT").value,uq=+$("uq").value/1000;
+ const s=Math.sin(phi),K0=1-s,Ka=(1-s)/(1+s),dl=phi*(+$("dr").value),KpR=(1+s)/(1-s),KpL=(Math.cos(dl)+Math.sqrt(Math.max(s*s-Math.sin(dl)**2,0)))/(1-s)*Math.exp(Math.asin(Math.min(Math.sin(dl)/s,1))*Math.tan(phi)+dl*Math.tan(phi)),Kp=$("kp").value?+$("kp").value:KpL;
+ const uT=aT*dT*L,uref=uq>0?Math.max(uT,uq+0.6*uT):uT,C=$("tipo").value=="int"?20:40;
+ const Kh=Math.min(K0+Math.pow(C*uref/h,0.4)*Kp,Kp);
+ // perfiles σh(z) pasivo y activo, reposo
+ const N=100,z=[...Array(N+1)].map((_,i)=>h*i/N);
+ const Kz=z.map(x=>$("tipo").value=="int"&&x>h/2?Kh+(K0-Kh)*Math.min((x-h/2)/(h/4),1):Kh);
+ const sp=z.map((x,i)=>Kz[i]*g*x),sa=z.map(x=>Ka*g*x),s0=z.map(x=>K0*g*x);
+ const E=a=>a.reduce((t,v,i)=>i?t+(v+a[i-1])/2*h/N:0,0),Ep=E(sp),Ea=E(sa),E0=E(s0);
+ const zc=a=>a.reduce((t,v,i)=>i?t+(v*z[i]+a[i-1]*z[i-1])/2*h/N:0,0)/E(a);
+ $("res").innerHTML=`<table><tr><th></th><th>K</th><th>σh en pie [kN/m²]</th><th>E [kN/m]</th><th>z_E [m]</th></tr>
+ <tr><td>Activo (Ka)</td><td>${f(Ka,3)}</td><td>${f(sa[N],0)}</td><td>${f(Ea,0)}</td><td>${f(zc(sa),2)}</td></tr>
+ <tr><td>Reposo (K0)</td><td>${f(K0,3)}</td><td>${f(s0[N],0)}</td><td>${f(E0,0)}</td><td>${f(zc(s0),2)}</td></tr>
+ <tr><td>Pasivo BA 42/96, cabeza</td><td>${f(Kh,3)}</td><td>${f(sp[N],0)}</td><td>${f(Ep,0)}</td><td>${f(zc(sp),2)}</td></tr></table>
+ <p class="m">u_imp,ref = ${f(uref*1000,1)} mm (u_imp,ΔT = ${f(uT*1000,1)} mm) · u/h = ${f(uref/h*1000,2)}‰ · Kp = ${f(Kp,2)}${$("kp").value?" (propio)":" (Lancellotta, Rankine = "+f(KpR,2)+")"} · z medido desde la cabeza del muro.</p>`;
+ $("av").textContent=Kh>=Kp?"K alcanza Kp: el relleno plastifica, el empuje queda limitado por Kp.":"";
+ const W=640,H=340,x0=80,y0=30,pw=470,ph=245,mx=Math.max(...sp,...sa,...s0)*1.15||1;
+ const X=v=>x0+v/mx*pw,Y=v=>y0+v/h*ph,path=a=>a.map((v,i)=>(i?"L":"M")+X(v)+" "+Y(z[i])).join(""),r0=v=>v.toFixed(0);
+ const lab=(v,zz,col,dy,anc)=>`<circle cx="${X(v)}" cy="${Y(zz)}" r="3.5" fill="${col}"/><text x="${X(v)+(anc=="end"?-8:8)}" y="${Y(zz)+dy}" fill="${col}" text-anchor="${anc||"start"}" font-weight="600">${r0(v)}</text>`;
+ const im=N/2;
+ $("fig").innerHTML=`<g stroke="var(--line)"><line x1="${x0}" y1="${y0}" x2="${x0}" y2="${y0+ph}"/><line x1="${x0}" y1="${y0}" x2="${x0+pw}" y2="${y0}"/></g>
+ <path d="${path(sa)}" fill="none" stroke="#2a9d6f" stroke-width="2"/><path d="${path(s0)}" fill="none" stroke="#888" stroke-width="2" stroke-dasharray="5 4"/><path d="${path(sp)}" fill="none" stroke="var(--ac)" stroke-width="2.5"/>
+ <g fill="var(--fg)" font-size="17"><text x="${x0}" y="${y0-12}">σh [kN/m²]</text><text x="${x0+pw}" y="${y0-12}" text-anchor="end">${r0(mx)}</text><text x="${x0-8}" y="${y0+4}" text-anchor="end">0</text><text x="${x0-8}" y="${Y(h/2)+4}" text-anchor="end">${f(h/2,2)}</text><text x="${x0-8}" y="${y0+ph+4}" text-anchor="end">${f(h,2)} m</text>
+ ${lab(sa[N],h,"#2a9d6f",16,"end")}${lab(s0[N],h,"#888",-8,"end")}${lab(sp[N],h,"var(--ac)",16)}${lab(sp[im],h/2,"var(--ac)",4)}${lab(sa[im],h/2,"#2a9d6f",16,"end")}
+ <text x="${x0+10}" y="${H-8}" fill="#2a9d6f">— Activo</text><text x="${x0+110}" y="${H-8}" fill="#888">-- Reposo</text><text x="${x0+220}" y="${H-8}" fill="var(--ac)">— Pasivo (BA 42/96)</text></g>`;
+ let tb="<table><tr><th>z [m]</th><th>q activo</th><th>q reposo</th><th>q pasivo</th></tr>";
+ for(let i=0;i<=N;i+=10)tb+=`<tr><td>${f(z[i],2)}</td><td>${r0(sa[i])}</td><td>${r0(s0[i])}</td><td>${r0(sp[i])}</td></tr>`;
+ $("tab").innerHTML=tb+"</table><p class='m'>q = σh en kN/m² (presión por m² de muro); z desde la cabeza. Resultantes E en kN/m (por metro de ancho de muro) en la tabla de arriba.</p>";
+}
+calc();
+</script></main></body></html>
