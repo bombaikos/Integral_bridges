@@ -46,6 +46,6 @@ Con `u_imp,ΔT = αT · ΔT · L_pf` (αT ≈ 10⁻⁵ 1/°C; ΔT = ±20 °C par
 Dos casos a largo plazo: **activo** (u_imp máximo) y **pasivo** (empuje alto y gran cortante en cabeza). Se busca ductilidad en cabeza y pie del muro más que resistencia.
 
 ## 7. Interpretaciones propias (a confirmar)
-- Entre z = h/2 y z = h, el texto dice «progresivamente»: se ha supuesto variación **lineal** de K hasta K0 en el pie.
+- Por debajo de h/2 el texto dice «progresivamente». Según el dibujo de la fig. 5.2(b), K baja linealmente de h/2 a ≈ 0.75·h (medido sobre la figura, ±0.03·h) y vale K0 hasta el pie; la calculadora usa eso.
 - La tesis define `u_imp = αT (Tmax − Tmin) L_pf`: la calculadora toma ΔT como dato de entrada, sin decidir si es la amplitud total o la semiamplitud.
 - Kp: la calculadora usa Lancellotta con δ = 2/3·φ (el valor de interfaz del modelo de Dreier) y deja introducir un Kp propio (p. ej. de Caquot–Kérisel).

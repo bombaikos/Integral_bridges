@@ -33,7 +33,7 @@ svg{width:100%;height:auto}
 <div class="card" id="res"></div>
 <div class="g" style="grid-template-columns:repeat(auto-fit,minmax(340px,1fr));align-items:start"><svg id="fig" viewBox="0 0 640 340"></svg><div id="tab"></div></div>
 <p class="w" id="av"></p>
-<p class="m">Hipótesis: en el estribo integral K varía linealmente de K(h/2) a K0 entre z=h/2 y z=h (la tesis dice «progresivamente»). Kp se calcula con la solución analítica de Lancellotta (2002), cota inferior de espiral logarítmica, algo conservadora respecto a las tablas de Caquot–Kérisel que cita la tesis; con δ=0 coincide con Rankine. Rankine subestima Kp con muro rugoso. La tesis desaconseja usar muelles o elementos finitos para el empuje: esto es un cálculo normativo de orden de magnitud, no sustituye al diseño con ductilidad.</p>
+<p class="m">Hipótesis: en el estribo integral K es constante hasta h/2, baja linealmente hasta K0 en z≈0.75·h y es K0 hasta el pie (forma leída del dibujo de la fig. 5.2b; el texto solo dice «progresivamente»). Kp se calcula con la solución analítica de Lancellotta (2002), cota inferior de espiral logarítmica, algo conservadora respecto a las tablas de Caquot–Kérisel que cita la tesis; con δ=0 coincide con Rankine. Rankine subestima Kp con muro rugoso. La tesis desaconseja usar muelles o elementos finitos para el empuje: esto es un cálculo normativo de orden de magnitud, no sustituye al diseño con ductilidad.</p>
 <script>
 const $=i=>document.getElementById(i),f=(x,n=2)=>x.toFixed(n);
 $("rel").onchange=()=>{const v=$("rel").value;if(v!="x"){const[a,b]=v.split(",");$("phi").value=a;$("gam").value=b}calc()};
@@ -45,7 +45,7 @@ function calc(){
  const Kh=Math.min(K0+Math.pow(C*uref/h,0.4)*Kp,Kp);
  // perfiles σh(z) pasivo y activo, reposo
  const N=100,z=[...Array(N+1)].map((_,i)=>h*i/N);
- const Kz=z.map(x=>$("tipo").value=="int"&&x>h/2?Kh+(K0-Kh)*(x-h/2)/(h/2):Kh);
+ const Kz=z.map(x=>$("tipo").value=="int"&&x>h/2?Kh+(K0-Kh)*Math.min((x-h/2)/(h/4),1):Kh);
  const sp=z.map((x,i)=>Kz[i]*g*x),sa=z.map(x=>Ka*g*x),s0=z.map(x=>K0*g*x);
  const E=a=>a.reduce((t,v,i)=>i?t+(v+a[i-1])/2*h/N:0,0),Ep=E(sp),Ea=E(sa),E0=E(s0);
  const zc=a=>a.reduce((t,v,i)=>i?t+(v*z[i]+a[i-1]*z[i-1])/2*h/N:0,0)/E(a);
