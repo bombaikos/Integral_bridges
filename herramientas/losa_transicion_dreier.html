@@ -179,6 +179,12 @@ button:disabled{opacity:.6; cursor:progress}
   <fieldset><legend>Coeficientes</legend>
     <div class="row"><label>γ<sub>M</sub> sobre tan φ [–]<small>1.2 según SIA 267 (PDF p. 91)</small></label><input type="text" inputmode="decimal" id="gphi" value="1.2" step="0.05" min="1"></div>
   </fieldset>
+  <fieldset><legend>Empuje sobre el muro (BA 42/96)</legend>
+    <div class="row"><label>δ muro–relleno / φ<small>para K<sub>p</sub> (Lancellotta); 2/3 es el valor de la interfaz de la tesis</small></label>
+      <select id="dr"><option value="0">0 (Rankine)</option><option value="0.5">1/2</option><option value="0.6667" selected>2/3</option><option value="1">1</option></select></div>
+    <div class="row"><label>K<sub>p</sub> propio [–]<small>vacío = calculado (p. ej. de las tablas de Caquot–Kérisel)</small></label><input type="text" inputmode="decimal" id="kpo" value=""></div>
+    <div class="row"><label>u<sub>imp,Q</sub> [mm]<small>desplazamiento por cargas viales; 0 = solo temperatura (BA 42/96)</small></label><input type="text" inputmode="decimal" id="uq" value="0" step="0.5" min="0"></div>
+  </fieldset>
   <fieldset><legend>Margen</legend>
     <div class="row"><label>Factor sobre u<sub>adm</sub> del ábaco<small>0.75 ≈ 30/40 y 40/55 de § 5.2.3 (PDF p. 110). 1 = sin margen</small></label><input type="text" inputmode="decimal" id="marg" value="0.75" step="0.05" min="0.1" max="1"></div>
   </fieldset>
@@ -219,12 +225,21 @@ button:disabled{opacity:.6; cursor:progress}
   </section>
 
   <section class="card">
-    <h2>5 · Comprobaciones aproximadas</h2>
+    <h2>5 · Empuje de tierras sobre el muro del estribo</h2>
+    <div class="kpis" id="kEmp"></div>
+    <div class="chartwrap"><svg id="empChart" viewBox="0 0 640 330" width="100%" role="img" aria-label="Ley de empujes σh frente a la profundidad z"></svg></div>
+    <p class="note" id="empNote"></p>
+    <div class="tw"><table id="tEmp"></table></div>
+    <div class="tw"><table id="tZq"></table></div>
+  </section>
+
+  <section class="card">
+    <h2>6 · Comprobaciones aproximadas</h2>
     <div class="tw"><table id="tC"></table></div>
   </section>
 
   <section class="card">
-    <h2>6 · Avisos</h2>
+    <h2>7 · Avisos</h2>
     <ul class="msgs" id="msgs"></ul>
   </section>
 
@@ -256,7 +271,8 @@ button:disabled{opacity:.6; cursor:progress}
         <li><strong>Armadura.</strong> La separación s se calcula para el diámetro elegido (Ø12, 16, 20 o 25) como la mayor, en múltiplos de 5 mm y no superior a 250 mm, que cubre A<sub>s</sub>. Las barras longitudinales y las de la rótula se reparten en el ancho del estribo; las transversales, a lo largo de L<sub>DT</sub>. Materiales: f<sub>cd</sub> y f<sub>sd</sub> según los datos de entrada.</li>
         <li><strong>Longitud apoyada.</strong> La tesis solo define L<sub>DT,extr</sub> = L<sub>DT</sub> − L<sub>hueco</sub> y no fija un mínimo. Con L<sub>hueco</sub>/L<sub>DT</sub> &lt; 0.5 el relleno bajo el extremo no plastifica y el momento no depende de L<sub>DT</sub>; cerca de 1 plastifica (PDF p. 126). El límite 0.5 es una lectura nuestra de esa frase; el mínimo de la tesis es L<sub>DT</sub> &gt; L<sub>hueco</sub>. Caso base de la tesis: L<sub>DT</sub> = 6 m con L<sub>hueco</sub> = 2 m (0.33).</li>
         <li><strong>Giro por u<sub>imp</sub>.</strong> ≈ 1 ‰ para 50 mm (fig. 4.29, PDF p. 93); aquí se escala linealmente, como orientación.</li>
-        <li>No se cubre: cortante (la tesis remite a Fernández Ruiz et al. 2009), fisuración del aglomerado (ec. 4.5), dirección pasiva (no determinante, PDF p. 101) ni el muro del estribo.</li>
+        <li><strong>Empuje sobre el muro.</strong> Valores característicos, sin mayorar; la tesis no dice cómo mayorarlos. Se comprueban la ley pasiva (BA 42/96) y la activa (K<sub>a</sub>). K<sub>p</sub> se calcula con la solución de Lancellotta, algo por debajo de las tablas de Caquot–Kérisel que cita la tesis (unos 5–10 %); el usuario puede introducir su propio valor. Por debajo de h/2 el texto solo dice «progresivamente»: se une σ<sub>h</sub>(h/2) con σ<sub>h</sub> = K<sub>0</sub>·γ·h en el pie por una recta. La tesis desaconseja muelles o elementos finitos para el empuje del relleno: el diagrama se aplica como carga sobre el muro. u<sub>imp,ΔT</sub> usa ε<sub>ΔT</sub> y d<sub>pf</sub> de los datos de la losa.</li>
+        <li>No se cubre: cortante (la tesis remite a Fernández Ruiz et al. 2009), fisuración del aglomerado (ec. 4.5), dirección pasiva (no determinante, PDF p. 101) ni la comprobación estructural del muro del estribo (solo se da su empuje, sección 5).</li>
       </ul>
     
   </details>
@@ -527,6 +543,7 @@ function calc(){
    row2(`V<sub>Sd</sub> en el extremo del estribo`, shearCell(VsdA)) +
    row2(`V<sub>Sd</sub> en el extremo del relleno`, shearCell(VsdB));
 
+  calcEmpuje({abut, umode, uimp, k, dpf, eT:num("eT"), hw:hmec, phik, gs}, msgs);
   $("msgs").innerHTML = msgs.length ? msgs.map(([c,t])=>`<li class="${c}">${t}</li>`).join("") : `<li class="info">Sin avisos.</li>`;
 
   { const esc=t=>String(t).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
@@ -535,6 +552,71 @@ function calc(){
   drawElev({L,a,e0,h,hmec,Lv,phid,conn,Ldiag,eextr,Q1d});
   drawHinge({conn});
   drawPlan({L,Lv,B,Q1d,conn,Ldiag,Q1k,aQ,gQ});
+}
+
+
+/* ---------- 5. empuje de tierras sobre el muro del estribo (tesis § 5.1.1, BA 42/96) ---------- */
+function calcEmpuje(o, msgs){
+  const {abut, umode, uimp, k, dpf, eT, hw, phik, gs} = o;
+  const dr = parseFloat($("dr").value), kpo = num("kpo"), uq = isFinite(num("uq")) ? num("uq") : 0;
+  const ok = hw>0 && phik>0 && phik<60 && gs>0 && isFinite(uimp);
+  if (!ok){ ["kEmp","tEmp","tZq","empChart"].forEach(i=>$(i).innerHTML=""); $("empNote").textContent="Faltan datos: h, φ y γ del relleno."; return; }
+  const f=(v,d=2)=>fmt(v,d), hdr=c=>`<tr>${c.map(t=>`<th>${t}</th>`).join("")}</tr>`, row2=(a,b)=>`<tr><td>${a}</td><td class="n">${b}</td></tr>`;
+  const fp=rad(phik), sn=Math.sin(fp), dl=fp*(isFinite(dr)?dr:0);
+  const K0=1-sn, Ka=(1-sn)/(1+sn), KpR=(1+sn)/(1-sn);
+  const KpL=(Math.cos(dl)+Math.sqrt(Math.max(sn*sn-Math.sin(dl)**2,0)))/(1-sn)*Math.exp((Math.asin(Math.min(Math.sin(dl)/sn,1))+dl)*Math.tan(fp));
+  const Kp = kpo>0 ? kpo : KpL;
+  const uT = umode==="calc" ? k*dpf*eT : uimp;            // mm (m · ‰)
+  const uRef = uq>0 ? Math.max(uT, uq+0.6*uT) : uT;        // mm
+  const C = abut==="int" ? 20 : 40;
+  const Kraw = K0 + Math.pow(C*uRef/1000/hw, 0.4)*Kp, Kh = Math.min(Kraw, Kp);
+  // σh(z) pasivo: semi-integral K constante; integral K constante hasta h/2 y de ahí recta hasta K0·γ·h en el pie (fig. 5.2b)
+  const sMid = Kh*gs*hw/2, sFoot = K0*gs*hw;
+  const sPas = x => abut!=="int" || x<=hw/2 ? Kh*gs*x : sMid+(sFoot-sMid)*(x-hw/2)/(hw/2);
+  const N=200, zs=[...Array(N+1)].map((_,i)=>hw*i/N);
+  const sp=zs.map(sPas), sa=zs.map(x=>Ka*gs*x), s0=zs.map(x=>K0*gs*x);
+  const E=a=>a.reduce((t,v,i)=>i?t+(v+a[i-1])/2*hw/N:0,0);
+  const zE=a=>a.reduce((t,v,i)=>i?t+(v*zs[i]+a[i-1]*zs[i-1])/2*hw/N:0,0)/E(a);
+  const at=(a,x)=>{ const i=Math.round(x/hw*N); return a[i]; };
+  const r0=v=>v.toFixed(0);
+  if (Kraw>=Kp) msgs.push(["info","El empuje pasivo alcanza K<sub>p</sub>: el relleno plastifica y el empuje queda limitado por K<sub>p</sub>."]);
+  if (kpo>0) msgs.push(["info","Se usa el K<sub>p</sub> introducido; el campo δ/φ no interviene."]);
+  if (umode==="dir") msgs.push(["info","Con u<sub>imp</sub> introducido a mano, el empuje usa ese valor como u<sub>imp,ΔT</sub> (no se separa la parte térmica)."]);
+
+  const kp=(cls,kk,v,ss)=>`<div class="kpi ${cls}"><div class="k">${kk}</div><div class="v">${v}</div><div class="s">${ss}</div></div>`;
+  $("kEmp").innerHTML =
+    kp("", "u<sub>imp,ref</sub>", f(uRef,1)+" mm", `u/h = ${f(uRef/hw,2)} ‰`) +
+    kp("", "K en cabeza", f(Kh,2), `K<sub>0</sub> = ${f(K0,2)} · K<sub>a</sub> = ${f(Ka,2)} · K<sub>p</sub> = ${f(Kp,2)}`) +
+    kp("", "E pasivo", r0(E(sp))+" kN/m", `activo ${r0(E(sa))} · reposo ${r0(E(s0))} kN/m`);
+
+  $("tEmp").innerHTML = hdr(["Ley","K en cabeza","σ<sub>h</sub> en el pie [kN/m²]","E [kN/m]","z<sub>E</sub> desde la cabeza [m]"]) +
+    `<tr><td>Activa (K<sub>a</sub>)</td><td class="n">${f(Ka,3)}</td><td class="n">${r0(sa[N])}</td><td class="n">${r0(E(sa))}</td><td class="n">${f(zE(sa),2)}</td></tr>` +
+    `<tr><td>En reposo (K<sub>0</sub>)</td><td class="n">${f(K0,3)}</td><td class="n">${r0(s0[N])}</td><td class="n">${r0(E(s0))}</td><td class="n">${f(zE(s0),2)}</td></tr>` +
+    `<tr><td><strong>Pasiva (BA 42/96)</strong></td><td class="n">${f(Kh,3)}</td><td class="n">${r0(sp[N])}</td><td class="n"><strong>${r0(E(sp))}</strong></td><td class="n">${f(zE(sp),2)}</td></tr>`;
+
+  const ZN=10; let tz = hdr(["z [m]","q activo [kN/m²]","q reposo [kN/m²]","q pasivo [kN/m²]"]);
+  for (let i=0;i<=ZN;i++){ const x=hw*i/ZN; tz += `<tr><td class="n">${f(x,2)}</td><td class="n">${r0(at(sa,x))}</td><td class="n">${r0(at(s0,x))}</td><td class="n">${r0(at(sp,x))}</td></tr>`; }
+  $("tZq").innerHTML = tz;
+
+  $("empNote").innerHTML = `Empujes característicos (sin mayorar) sobre el muro de h<sub>muro</sub> = ${f(hw,2)} m, por metro de ancho de muro. u<sub>imp,ΔT</sub> = ${f(uT,1)} mm; φ<sub>k</sub> = ${f(phik,1)}°; K<sub>p</sub> = ${f(Kp,2)} (${kpo>0?"propio":"Lancellotta con δ = "+f(dr,2)+"·φ; Rankine daría "+f(KpR,2)}). ` +
+    (abut==="int" ? `K constante hasta h/2 (σ<sub>h</sub> = K·γ·z); de h/2 al pie, σ<sub>h</sub> varía en recta hasta K<sub>0</sub>·γ·h (fig. 5.2b, PDF p. 96).` : `Semi-integral: K constante en la altura del tablero.`) +
+    ` En la fase activa se usa K<sub>a</sub> en toda la altura. Presión q = σ<sub>h</sub> en kN/m².`;
+
+  // figura
+  const svg=$("empChart"), W=640, H=330, x0=70, y0=34, pw=480, ph=240, mx=Math.max(...sp,...sa,...s0)*1.18||1;
+  const X=v=>x0+v/mx*pw, Y=x=>y0+x/hw*ph, path=a=>a.map((v,i)=>(i?"L":"M")+X(v).toFixed(1)+" "+Y(zs[i]).toFixed(1)).join("");
+  const fg=col('--fg'), mu=col('--muted'), ac=col('--accent'), okc=col('--ok'), rule=col('--rule');
+  const dot=(v,x,c,dx,dy,anc)=>`<circle cx="${X(v)}" cy="${Y(x)}" r="3.5" fill="${c}"/><text x="${X(v)+dx}" y="${Y(x)+dy}" text-anchor="${anc}" font-size="13" font-weight="600" style="fill:${c}">${r0(v)}</text>`;
+  const zAx = [0, hw/2, hw];
+  let g=`<g stroke="${rule}"><line x1="${x0}" y1="${y0}" x2="${x0}" y2="${y0+ph}"/><line x1="${x0}" y1="${y0}" x2="${x0+pw}" y2="${y0}"/>${zAx.map(x=>`<line x1="${x0-4}" y1="${Y(x)}" x2="${x0}" y2="${Y(x)}"/>`).join("")}</g>`;
+  g+=`<path d="${path(sa)}" fill="none" stroke="${okc}" stroke-width="2"/><path d="${path(s0)}" fill="none" stroke="${mu}" stroke-width="2" stroke-dasharray="5 4"/><path d="${path(sp)}" fill="none" stroke="${ac}" stroke-width="2.6"/>`;
+  g+=`<g font-size="12" style="fill:${fg}"><text x="${x0}" y="${y0-14}">σh [kN/m²]</text><text x="${x0+pw}" y="${y0-14}" text-anchor="end">${r0(mx)}</text>` +
+     zAx.map(x=>`<text x="${x0-8}" y="${Y(x)+4}" text-anchor="end">${f(x,2)}</text>`).join("") + `<text x="${x0-8}" y="${y0-14}" text-anchor="end">z [m]</text></g>`;
+  g+=dot(sp[N/2],hw/2,ac,8,4,"start") + dot(sp[N],hw,ac,8,15,"start");
+  g+=dot(sa[N/2],hw/2,okc,-8,4,"end") + dot(sa[N],hw,okc,-8,15,"end");
+  if (Math.abs(s0[N]-sp[N])>0.5) g+=dot(s0[N],hw,mu,-8,-6,"end");
+  g+=`<g font-size="12"><text x="${x0}" y="${H-8}" style="fill:${okc}">— Activa</text><text x="${x0+90}" y="${H-8}" style="fill:${mu}">-- Reposo</text><text x="${x0+190}" y="${H-8}" style="fill:${ac}">— Pasiva (BA 42/96)</text></g>`;
+  svg.innerHTML=g;
 }
 
 /* ---------- figuras: alzado y planta ---------- */
@@ -756,6 +838,10 @@ const NOTACION = [
  ["E<sub>s</sub>, E<sub>c,0</sub>","Módulos del acero y del hormigón","MPa","SIA 262"],
  ["E<sub>fis</sub>","Rigidez de la losa fisurada","MPa","tesis (E<sub>fissuré</sub>)"],
  ["n<sub>0</sub>, x<sub>0</sub>","Relación de módulos E<sub>s</sub>/E<sub>c,0</sub> y profundidad de la fibra neutra fisurada","–, m","tesis"],
+ ["K<sub>0</sub>, K<sub>a</sub>, K<sub>p</sub>","Coeficientes de empuje de tierras en reposo, activo y pasivo","–","tesis"],
+ ["K<sub>BA</sub>","Coeficiente de empuje pasivo en cabeza según BA 42/96 (ec. 5.1 o 5.2)","–","tesis"],
+ ["u<sub>imp,ΔT</sub>, u<sub>imp,ref</sub>","Desplazamiento térmico del tablero y desplazamiento de referencia para el empuje","mm","tesis"],
+ ["σ<sub>h</sub> (q), E, z<sub>E</sub>","Presión horizontal del relleno sobre el muro, su resultante por metro de ancho y su profundidad desde la cabeza","kN/m², kN/m, m","tesis / aquí"],
  ["Δα<sub>DT</sub>","Giro entre estribo y losa (límite OFROU 4 ‰ en autopistas y nacionales)","‰","tesis"],
  ["M<sub>s</sub>, a, x","Momento referido a la armadura, altura del bloque de compresiones (0.85·x) y profundidad de la fibra neutra","kNm/m, m","aquí"]
 ];
@@ -789,7 +875,13 @@ const EXPRESIONES = [
  ["V<sub>Rd,c</sub> = [C<sub>Rd,c</sub> · k · (100 · ρ<sub>l</sub> · f<sub>ck</sub>)<sup>1/3</sup> + k<sub>1</sub> · σ<sub>cp</sub>] · b · d ≥ (0.035 · k<sup>3/2</sup> · f<sub>ck</sub><sup>1/2</sup> + k<sub>1</sub> · σ<sub>cp</sub>) · b · d; C<sub>Rd,c</sub> = 0.18/γ<sub>c</sub>, k = 1 + √(200/d) ≤ 2 (d en mm), ρ<sub>l</sub> = A<sub>sl</sub>/(b · d) ≤ 0.02 con la armadura inferior longitudinal elegida, k<sub>1</sub> = 0.15, σ<sub>cp</sub> = −n<sub>d</sub>/h (tracción), b = 1 m","EN 1992-1-1, 6.2.2","comprobación aproximada de cortante"],
  ["V<sub>Sd</sub> = [Q<sub>1,d</sub> · (1 − a/L<sub>s</sub>) + Q<sub>1,d</sub> · (1 − (a + 1.20)/L<sub>s</sub>)] / (2.40 + 4 · d), con a = 2 · d + 0.20 (el borde de la rueda a 2d del apoyo, sin reducción por efecto arco, β = 1) más 1.35 · (25 · h<sub>DT</sub> + γ<sub>relleno</sub> · e<sub>extr,DT</sub>) · L<sub>s</sub> / 2 por el peso de la losa y del relleno, con L<sub>s</sub> = L<sub>hueco</sub> (articulada) o L<sub>hueco</sub> − L<sub>diag</sub> (rótula) más c / 2; en el extremo del estribo, + |m<sup>−</sup><sub>pl,d</sub>| / L<sub>s</sub> si hay rótula","estática de viga biapoyada","no está en la tesis"],
  ["c = R / q<sub>adm</sub>, con R = reacción en el extremo del relleno por metro de ancho (tándem repartido en 2.40 + 4 · d, más 1.35 · (25 · h<sub>DT</sub> + γ<sub>relleno</sub> · e<sub>extr,DT</sub>) · L<sub>s</sub> / 2); L<sub>s</sub> = L<sub>hueco</sub> (− L<sub>diag</sub>) + c / 2 (iterado, la reacción se lleva al centro de la franja); debe cumplirse c ≤ L<sub>DT,extr</sub>","criterio de esta herramienta","no está en la tesis"],
-  ["f<sub>cd</sub> = η<sub>fc</sub> · f<sub>ck</sub> / γ<sub>c</sub>; f<sub>sd</sub> = f<sub>sk</sub> / γ<sub>s</sub>; E<sub>c,0</sub> = 10 000 · (f<sub>ck</sub> + 8)<sup>1/3</sup>","SIA 262 (estándar)","no está en la tesis"]
+  ["K<sub>0</sub> = 1 − sen φ<sub>k</sub>; K<sub>a</sub> = (1 − sen φ<sub>k</sub>) / (1 + sen φ<sub>k</sub>)","ec. 4.2 y 4.3","PDF p. 68–69"],
+ ["K<sub>p</sub> = [cos δ + √(sen²φ − sen²δ)] / (1 − sen φ) · exp[(asen(sen δ / sen φ) + δ) · tan φ] (δ = 0 da Rankine)","Lancellotta (2002), cota inferior de espiral logarítmica","no está en la tesis (esta remite a Caquot–Kérisel)"],
+ ["u<sub>imp,ΔT</sub> = k<sub>tablero</sub> · d<sub>pf</sub> · ε<sub>ΔT</sub>; u<sub>imp,ref</sub> = u<sub>imp,ΔT</sub>, o máx(u<sub>imp,ΔT</sub> ; u<sub>imp,Q</sub> + 0.6 · u<sub>imp,ΔT</sub>) si se da u<sub>imp,Q</sub> (OFROU)","§ 5.1.1","PDF p. 96–97"],
+ ["K<sub>BA</sub> = K<sub>0</sub> + (C · u<sub>imp,ref</sub> / h)<sup>0.4</sup> · K<sub>p</sub> ≤ K<sub>p</sub>; C = 20 (integral, hasta h/2) o 40 (semi-integral, h = canto del tablero)","ec. 5.1 y 5.2","PDF p. 96"],
+ ["Integral: σ<sub>h</sub> = K<sub>BA</sub> · γ<sub>r</sub> · z hasta h/2 y recta de σ<sub>h</sub>(h/2) a K<sub>0</sub> · γ<sub>r</sub> · h en el pie. Fase activa: K<sub>a</sub> en toda la altura","fig. 5.2(b); recta indicada por el usuario","PDF p. 96–97"],
+ ["E = ∫ σ<sub>h</sub> dz y z<sub>E</sub> = ∫ σ<sub>h</sub> · z dz / E (integración numérica)","estática","–"],
+ ["f<sub>cd</sub> = η<sub>fc</sub> · f<sub>ck</sub> / γ<sub>c</sub>; f<sub>sd</sub> = f<sub>sk</sub> / γ<sub>s</sub>; E<sub>c,0</sub> = 10 000 · (f<sub>ck</sub> + 8)<sup>1/3</sup>","SIA 262 (estándar)","no está en la tesis"]
 ];
 (function renderAnejos(){
   $("tNot").innerHTML = `<tr><th>Símbolo</th><th>Significado</th><th>Unidad</th><th>Origen</th></tr>` +

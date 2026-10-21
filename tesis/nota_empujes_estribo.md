@@ -14,7 +14,7 @@ El muro del estribo recibe a la vez el desplazamiento impuesto `u_imp` del table
 
 Rankine (δ = 0) da `Kp = (1 + sen φ)/(1 − sen φ)`, que **subestima** el Kp real con muro rugoso. Para φ = 37° (grava compactada, tabla 3.2): K0 = 0.398, Ka = 0.249, Kp Rankine = 4.02.
 
-Las tablas de Caquot–Kérisel están en su libro de 1973 (no disponible aquí). La calculadora usa en su lugar la solución analítica de Lancellotta (2002), que se obtiene de una espiral logarítmica y coincide con Rankine para δ = 0: `Kp = (cos δ + √(sen²φ − sen²δ))/(1 − sen φ) · exp(2θ tan φ)`, con `θ = ½[asen(sen δ/sen φ) + δ]`. Es una cota inferior, algo por debajo de Caquot–Kérisel. Valores obtenidos (muro vertical, terreno horizontal):
+Las tablas de Caquot–Kérisel están en su libro de 1973 (no disponible aquí). La herramienta usa en su lugar la solución analítica de Lancellotta (2002), que se obtiene de una espiral logarítmica y coincide con Rankine para δ = 0: `Kp = (cos δ + √(sen²φ − sen²δ))/(1 − sen φ) · exp(2θ tan φ)`, con `θ = ½[asen(sen δ/sen φ) + δ]`. Es una cota inferior, algo por debajo de Caquot–Kérisel. Valores obtenidos (muro vertical, terreno horizontal):
 
 | φ | δ = 0 | δ = φ/2 | δ = 2φ/3 | δ = φ |
 |---|---|---|---|---|
@@ -33,7 +33,7 @@ Contraste con fuentes en línea (sin verificar con el libro original): para φ =
 Con `u_imp,ΔT = αT · ΔT · L_pf` (αT ≈ 10⁻⁵ 1/°C; ΔT = ±20 °C para hormigón según SIA 261, tabla 2.1):
 
 - Estribo semi-integral (ec. 5.1), constante en toda la altura: `K = K0 + (40 · u_imp,ref / h)^0.4 · Kp ≤ Kp`
-- Estribo integral (ec. 5.2), hasta z = h/2: `K = K0 + (20 · u_imp,ref / h)^0.4 · Kp ≤ Kp`. Por debajo de h/2 el coeficiente se reduce progresivamente hasta el empuje al reposo, por compactación parcial y por la forma de la deformada.
+- Estribo integral (ec. 5.2), hasta z = h/2: `K = K0 + (20 · u_imp,ref / h)^0.4 · Kp ≤ Kp`. Por debajo de h/2 el empuje se reduce progresivamente hasta el empuje al reposo, por compactación parcial y por la forma de la deformada.
 - `h` es la altura del muro en el integral y la altura del tablero en el semi-integral.
 - Referencia de u_imp: BA 42/96 usa `u_imp,ΔT`. La norma suiza (OFROU 2010) usa `max(u_imp,ΔT ; u_imp,Q + 0.6·u_imp,ΔT)`.
 - Dirección activa: se propone usar `Ka` en toda la altura.
@@ -46,6 +46,6 @@ Con `u_imp,ΔT = αT · ΔT · L_pf` (αT ≈ 10⁻⁵ 1/°C; ΔT = ±20 °C par
 Dos casos a largo plazo: **activo** (u_imp máximo) y **pasivo** (empuje alto y gran cortante en cabeza). Se busca ductilidad en cabeza y pie del muro más que resistencia.
 
 ## 7. Interpretaciones propias (a confirmar)
-- Por debajo de h/2 el texto dice «progresivamente». Según el dibujo de la fig. 5.2(b), K baja linealmente de h/2 a ≈ 0.75·h (medido sobre la figura, ±0.03·h) y vale K0 hasta el pie; la calculadora usa eso.
-- La tesis define `u_imp = αT (Tmax − Tmin) L_pf`: la calculadora toma ΔT como dato de entrada, sin decidir si es la amplitud total o la semiamplitud.
-- Kp: la calculadora usa Lancellotta con δ = 2/3·φ (el valor de interfaz del modelo de Dreier) y deja introducir un Kp propio (p. ej. de Caquot–Kérisel).
+- Por debajo de h/2 el texto dice «progresivamente» y la figura 5.2(b) lo dibuja sin cotas. Criterio acordado: σh = K·γ·z hasta h/2 y, de ahí al pie, una **recta** hasta K0·γ·h.
+- La tesis define `u_imp = αT (Tmax − Tmin) L_pf`: en la herramienta de la losa (sección 5) se usa u_imp,ΔT = k·d_pf·ε_ΔT con la deformación térmica ε_ΔT de los datos de la losa (0.2 ‰ en la tesis, ΔT = ±20 °C), sin decidir si es la amplitud total o la semiamplitud.
+- Kp: la herramienta usa Lancellotta con δ = 2/3·φ (el valor de interfaz del modelo de Dreier) y deja introducir un Kp propio (p. ej. de Caquot–Kérisel).
