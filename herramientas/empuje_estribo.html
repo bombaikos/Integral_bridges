@@ -13,7 +13,7 @@ input,select{width:100%;box-sizing:border-box;padding:6px;border:1px solid var(-
 .card{background:var(--card);border-radius:8px;padding:10px 12px;margin:8px 0}
 table{border-collapse:collapse;width:100%}td,th{padding:4px 8px;border-bottom:1px solid var(--line);text-align:right}th:first-child,td:first-child{text-align:left}
 .w{color:var(--warn);font-size:.85rem}.m{color:var(--mut);font-size:.85rem}
-svg{width:100%;height:auto;max-height:380px}
+svg{width:100%;height:auto}
 </style></head><body><main>
 <h1>Empuje de tierras sobre el estribo (BA 42/96 según Dreier)</h1>
 <p class="m">Tesis EPFL 4880, §5.1.1, ec. 4.2, 4.3, 5.1, 5.2. Separador decimal: punto.</p>
@@ -31,7 +31,7 @@ svg{width:100%;height:auto;max-height:380px}
 <label>Kp propio (vacío = calculado)<input id="kp" type="number" step="0.1" placeholder="calculado"></label>
 </div>
 <div class="card" id="res"></div>
-<svg id="fig" viewBox="0 0 640 340"></svg>
+<div class="g" style="grid-template-columns:repeat(auto-fit,minmax(340px,1fr));align-items:start"><svg id="fig" viewBox="0 0 640 340"></svg><div id="tab"></div></div>
 <p class="w" id="av"></p>
 <p class="m">Hipótesis: en el estribo integral K varía linealmente de K(h/2) a K0 entre z=h/2 y z=h (la tesis dice «progresivamente»). Kp se calcula con la solución analítica de Lancellotta (2002), cota inferior de espiral logarítmica, algo conservadora respecto a las tablas de Caquot–Kérisel que cita la tesis; con δ=0 coincide con Rankine. Rankine subestima Kp con muro rugoso. La tesis desaconseja usar muelles o elementos finitos para el empuje: esto es un cálculo normativo de orden de magnitud, no sustituye al diseño con ductilidad.</p>
 <script>
@@ -49,18 +49,24 @@ function calc(){
  const sp=z.map((x,i)=>Kz[i]*g*x),sa=z.map(x=>Ka*g*x),s0=z.map(x=>K0*g*x);
  const E=a=>a.reduce((t,v,i)=>i?t+(v+a[i-1])/2*h/N:0,0),Ep=E(sp),Ea=E(sa),E0=E(s0);
  const zc=a=>a.reduce((t,v,i)=>i?t+(v*z[i]+a[i-1]*z[i-1])/2*h/N:0,0)/E(a);
- $("res").innerHTML=`<table><tr><th></th><th>K</th><th>σh en pie [kPa]</th><th>E [kN/m]</th><th>z_E [m]</th></tr>
- <tr><td>Activo (Ka)</td><td>${f(Ka,3)}</td><td>${f(sa[N],1)}</td><td>${f(Ea,1)}</td><td>${f(zc(sa),2)}</td></tr>
- <tr><td>Reposo (K0)</td><td>${f(K0,3)}</td><td>${f(s0[N],1)}</td><td>${f(E0,1)}</td><td>${f(zc(s0),2)}</td></tr>
- <tr><td>Pasivo BA 42/96, cabeza</td><td>${f(Kh,3)}</td><td>${f(sp[N],1)}</td><td>${f(Ep,1)}</td><td>${f(zc(sp),2)}</td></tr></table>
+ $("res").innerHTML=`<table><tr><th></th><th>K</th><th>σh en pie [kN/m²]</th><th>E [kN/m]</th><th>z_E [m]</th></tr>
+ <tr><td>Activo (Ka)</td><td>${f(Ka,3)}</td><td>${f(sa[N],0)}</td><td>${f(Ea,0)}</td><td>${f(zc(sa),2)}</td></tr>
+ <tr><td>Reposo (K0)</td><td>${f(K0,3)}</td><td>${f(s0[N],0)}</td><td>${f(E0,0)}</td><td>${f(zc(s0),2)}</td></tr>
+ <tr><td>Pasivo BA 42/96, cabeza</td><td>${f(Kh,3)}</td><td>${f(sp[N],0)}</td><td>${f(Ep,0)}</td><td>${f(zc(sp),2)}</td></tr></table>
  <p class="m">u_imp,ref = ${f(uref*1000,1)} mm (u_imp,ΔT = ${f(uT*1000,1)} mm) · u/h = ${f(uref/h*1000,2)}‰ · Kp = ${f(Kp,2)}${$("kp").value?" (propio)":" (Lancellotta, Rankine = "+f(KpR,2)+")"} · z medido desde la cabeza del muro.</p>`;
  $("av").textContent=Kh>=Kp?"K alcanza Kp: el relleno plastifica, el empuje queda limitado por Kp.":"";
- const W=640,H=340,x0=70,y0=20,pw=520,ph=270,mx=Math.max(...sp,...sa,...s0)*1.1||1;
- const X=v=>x0+v/mx*pw,Y=v=>y0+v/h*ph,path=a=>a.map((v,i)=>(i?"L":"M")+X(v)+" "+Y(z[i])).join("");
- $("fig").innerHTML=`<g stroke="var(--line)"><line x1="${x0}" y1="${y0}" x2="${x0}" y2="${y0+ph}"/><line x1="${x0}" y1="${y0+ph}" x2="${x0+pw}" y2="${y0+ph}"/></g>
+ const W=640,H=340,x0=80,y0=30,pw=470,ph=245,mx=Math.max(...sp,...sa,...s0)*1.15||1;
+ const X=v=>x0+v/mx*pw,Y=v=>y0+v/h*ph,path=a=>a.map((v,i)=>(i?"L":"M")+X(v)+" "+Y(z[i])).join(""),r0=v=>v.toFixed(0);
+ const lab=(v,zz,col,dy,anc)=>`<circle cx="${X(v)}" cy="${Y(zz)}" r="3.5" fill="${col}"/><text x="${X(v)+(anc=="end"?-8:8)}" y="${Y(zz)+dy}" fill="${col}" text-anchor="${anc||"start"}" font-weight="600">${r0(v)}</text>`;
+ const im=N/2;
+ $("fig").innerHTML=`<g stroke="var(--line)"><line x1="${x0}" y1="${y0}" x2="${x0}" y2="${y0+ph}"/><line x1="${x0}" y1="${y0}" x2="${x0+pw}" y2="${y0}"/></g>
  <path d="${path(sa)}" fill="none" stroke="#2a9d6f" stroke-width="2"/><path d="${path(s0)}" fill="none" stroke="#888" stroke-width="2" stroke-dasharray="5 4"/><path d="${path(sp)}" fill="none" stroke="var(--ac)" stroke-width="2.5"/>
- <g fill="var(--fg)" font-size="12"><text x="${x0}" y="${H-28}">0</text><text x="${x0+pw-60}" y="${H-28}">${f(mx,0)} kPa</text><text x="4" y="${y0+8}">z=0</text><text x="4" y="${y0+ph}">z=${f(h,1)}</text>
+ <g fill="var(--fg)" font-size="17"><text x="${x0}" y="${y0-12}">σh [kN/m²]</text><text x="${x0+pw}" y="${y0-12}" text-anchor="end">${r0(mx)}</text><text x="${x0-8}" y="${y0+4}" text-anchor="end">0</text><text x="${x0-8}" y="${Y(h/2)+4}" text-anchor="end">${f(h/2,2)}</text><text x="${x0-8}" y="${y0+ph+4}" text-anchor="end">${f(h,2)} m</text>
+ ${lab(sa[N],h,"#2a9d6f",16,"end")}${lab(s0[N],h,"#888",-8,"end")}${lab(sp[N],h,"var(--ac)",16)}${lab(sp[im],h/2,"var(--ac)",4)}${lab(sa[im],h/2,"#2a9d6f",16,"end")}
  <text x="${x0+10}" y="${H-8}" fill="#2a9d6f">— Activo</text><text x="${x0+110}" y="${H-8}" fill="#888">-- Reposo</text><text x="${x0+220}" y="${H-8}" fill="var(--ac)">— Pasivo (BA 42/96)</text></g>`;
+ let tb="<table><tr><th>z [m]</th><th>q activo</th><th>q reposo</th><th>q pasivo</th></tr>";
+ for(let i=0;i<=N;i+=10)tb+=`<tr><td>${f(z[i],2)}</td><td>${r0(sa[i])}</td><td>${r0(s0[i])}</td><td>${r0(sp[i])}</td></tr>`;
+ $("tab").innerHTML=tb+"</table><p class='m'>q = σh en kN/m² (presión por m² de muro); z desde la cabeza. Resultantes E en kN/m (por metro de ancho de muro) en la tabla de arriba.</p>";
 }
 calc();
 </script></main></body></html>
