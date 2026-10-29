@@ -1,6 +1,6 @@
 {
   "archivo": "/home/claude/Integral_bridges/herramientas/losa_transicion_dreier_v2.html",
-  "fecha": "2026-10-29T12:52:30.317Z",
+  "fecha": "2026-10-29T15:36:33.385Z",
   "puntos": {
     "tokens_light": {
       "faltan": [],
@@ -35,8 +35,8 @@
       ],
       "fuera": [],
       "tam": {
-        "12": 1199,
-        "14": 759,
+        "12": 1191,
+        "14": 761,
         "16": 23,
         "28": 11
       }
@@ -169,8 +169,8 @@
       ],
       "fuera": [],
       "tam": {
-        "12": 1199,
-        "14": 759,
+        "12": 1191,
+        "14": 761,
         "16": 23,
         "28": 11
       }

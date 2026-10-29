@@ -14,7 +14,7 @@ Resultados medidos en Chromium (ver `v2/`). «Mano» = no medible, revisado por 
 | Campos de 26 px | cumple | 26 px |
 | Sin botón Calcular | cumple | |
 | Tablas > 4 filas con Copiar | cumple | |
-| Series por trazo, no color | **no cumple** (falso positivo) | muelles del alzado |
+| Series por trazo, no color | **no cumple** | gráfica del ábaco con colores, como la original (decisión de Pepiño); y muelles del alzado (falso positivo) |
 | Sin errores de JavaScript | cumple | |
 | Separador decimal punto, U+202F antes de unidad | cumple | test_decimales OK |
 | Sin scroll de página en PC | cumple | 0 px, 3 resoluciones |

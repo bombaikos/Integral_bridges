@@ -229,6 +229,11 @@ dialog p,dialog li{margin:4px 0}
 .encabezado-p{display:none;margin-bottom:12px}
 
 .nota-d summary{cursor:pointer;font-size:var(--t-xs);color:var(--tinta-2);min-height:24px;display:flex;align-items:center;list-style:none}.nota-d summary::before{content:"▸ ";margin-right:4px}.nota-d[open] summary::before{content:"▾ "}.nota-d summary::-webkit-details-marker{display:none}
+
+/* colores de la gráfica del ábaco (figura 5.9), como en la versión original */
+:root{--gr-1:#1d5a8c;--gr-2:#c0661a;--gr-3:#2b8a5a;--gr-ok:#1f7a45;--bad-gr:#a3271b}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--gr-1:#7fb2e0;--gr-2:#f0a463;--gr-3:#6fcf97;--gr-ok:#6fcf97;--bad-gr:#f08a7e}}
+:root[data-theme="dark"]{--gr-1:#7fb2e0;--gr-2:#f0a463;--gr-3:#6fcf97;--gr-ok:#6fcf97;--bad-gr:#f08a7e}
 </style>
 </head>
 <body>
@@ -761,35 +766,42 @@ function drawPlan(o){ SID="plan-";
 /* ---------- Ábaco de la fig. 5.9: series por trazo y rótulo junto a cada una, sin leyenda ni rejilla vertical (guía 5.3) ---------- */
 function drawChart(R){
   const {set, eextr:ex, uimp, uEnv, marg} = R;
-  const svg=$("chart"), W=640,H=380, m={l:56,r:64,t:16,b:48};
+  const svg=$("chart"), W=640,H=380, m={l:56,r:16,t:16,b:48};
   const envx=set.env.map(p=>p[0]), X0=Math.min(...envx), X1=Math.max(...envx), Y0=0, Y1=100;
   const sx=x=>m.l+(x-X0)/(X1-X0)*(W-m.l-m.r), sy=y=>H-m.b-(y-Y0)/(Y1-Y0)*(H-m.t-m.b);
-  const ink=col('--fg'), rule=col('--rule'), acc=col('--accent');
+  const ink=col('--fg'), rule=col('--rule'), acc=col('--accent'), okc=col('--gr-ok'), card=col('--card');
+  const cols={5:col('--gr-1'),10:col('--gr-2'),15:col('--gr-3')};
   let s="";
+  for (let k=Math.ceil(X0*10-1e-9); k/10<=X1+1e-9; k++){ const x=k/10; s+=`<line x1="${sx(x)}" x2="${sx(x)}" y1="${sy(0)}" y2="${sy(100)}" stroke="${rule}"/><text x="${sx(x)}" y="${sy(0)+18}" text-anchor="middle">${F(x,'m')}</text>`; }
+  for (let y=5;y<=100;y+=10) s+=`<line x1="${sx(X0)}" x2="${sx(X1)}" y1="${sy(y)}" y2="${sy(y)}" stroke="${rule}" stroke-width=".5" opacity=".6"/>`;
   for (let y=0;y<=100;y+=10) s+=`<line x1="${sx(X0)}" x2="${sx(X1)}" y1="${sy(y)}" y2="${sy(y)}" stroke="${rule}"/><text x="${sx(X0)-8}" y="${sy(y)+4}" text-anchor="end">${y}</text>`;
-  for (let k=Math.ceil(X0*10-1e-9); k/10<=X1+1e-9; k++){ const x=k/10; s+=`<line x1="${sx(x)}" x2="${sx(x)}" y1="${sy(0)}" y2="${sy(0)+4}" stroke="${ink}"/><text x="${sx(x)}" y="${sy(0)+20}" text-anchor="middle">${F(x,'m')}</text>`; }
   s+=`<text x="${(sx(X0)+sx(X1))/2}" y="${H-6}" text-anchor="middle">e<tspan dy="0.3em">extr,DT</tspan><tspan dy="-0.3em"> [m]</tspan></text>`;
   s+=`<text transform="translate(14 ${(sy(0)+sy(100))/2}) rotate(-90)" text-anchor="middle">u<tspan dy="0.3em">imp,adm</tspan><tspan dy="-0.3em"> [mm]</tspan></text>`;
   const env=set.env, pe=p=>sx(p[0])+","+sy(p[1]), pm=p=>sx(p[0])+","+sy(p[1]*marg);
-  s+=`<polygon fill="${col('--acento-suave')}" stroke="none" points="${sx(env[0][0])},${sy(0)} ${env.map(pm).join(" ")} ${sx(env[env.length-1][0])},${sy(0)}"/>`;
-  s+=`<polyline fill="none" stroke="${ink}" stroke-width="2.4" points="${env.map(pe).join(" ")}"/>`;                        // 1 · continua
-  s+=`<polyline fill="none" stroke="${ink}" stroke-width="2" stroke-dasharray="9 5" points="${env.map(pm).join(" ")}"/>`;     // 2 · discontinua larga
-  // puntos de elementos finitos: una forma por pendiente (no son una curva) y su rótulo junto al último punto
-  const forma={5:(x,y,t)=>`<circle cx="${x}" cy="${y}" r="4" fill="none" stroke="${ink}" stroke-width="1.6"><title>${t}</title></circle>`,
-               10:(x,y,t)=>`<rect x="${x-5}" y="${y-5}" width="10" height="10" fill="none" stroke="${ink}" stroke-width="1.6"><title>${t}</title></rect>`,
-               15:(x,y,t)=>`<path d="M${x} ${y-6} l6 6 l-6 6 l-6 -6 z" fill="${ink}"><title>${t}</title></path>`};
-  for (const a of [5,10,15]){ const pts=set.pts[a];
-    for (const [Lq,u] of pts){ const e=0.1+a/100*Lq; s+=forma[a](sx(e),sy(u),`α=${a} %, L=${Lq} m: ${F(u,'desp')} mm`); }
-    const [Ll,ul]=pts[pts.length-1], el=0.1+a/100*Ll; s+=`<text x="${sx(el)+9}" y="${sy(ul)+4}">α = ${a} %</text>`; }
-  // la losa del usuario
-  if (isFinite(uimp) && uimp<=100){ s+=`<line x1="${sx(X0)}" x2="${sx(X1)}" y1="${sy(uimp)}" y2="${sy(uimp)}" stroke="${ink}" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round"/><text x="${sx(X0)+6}" y="${sy(uimp)+16}">u<tspan dy="0.3em">imp</tspan><tspan dy="-0.3em"> = ${F(uimp,'desp')} mm</tspan></text>`; }
-  if (isFinite(ex) && ex>=X0 && ex<=X1){
-    s+=`<line x1="${sx(ex)}" x2="${sx(ex)}" y1="${sy(0)}" y2="${sy(100)}" stroke="${ink}" stroke-width="2" stroke-dasharray="12 4 2 4"/>`;
-    if (isFinite(uimp) && uimp<=100){ const y=sy(uimp), x=sx(ex); s+=`<path d="M${x} ${y-8} L${x+8} ${y} L${x} ${y+8} L${x-8} ${y} Z" fill="${acc}" stroke="${col('--card')}" stroke-width="1.5"><title>Su losa</title></path><text x="${x+11}" y="${y-8}" font-weight="650">su losa</text>`; }
+  s+=`<polygon fill="${okc}" fill-opacity=".16" stroke="none" points="${sx(env[0][0])},${sy(0)} ${env.map(pm).join(" ")} ${sx(env[env.length-1][0])},${sy(0)}"/>`;
+  s+=`<polyline fill="none" stroke="${ink}" stroke-width="2" points="${env.map(pe).join(" ")}"/>`;
+  s+=`<polyline fill="none" stroke="${ink}" stroke-width="1.5" stroke-dasharray="6 4" points="${env.map(pm).join(" ")}"/>`;
+  for (const a of [5,10,15]) for (const [Lq,u] of set.pts[a]){
+    const e=0.1+a/100*Lq, x=sx(e), y=sy(u), t=`α=${a} %, L=${Lq} m: ${F(u,'desp')} mm`;
+    s+= a===5 ? `<circle cx="${x}" cy="${y}" r="4" fill="none" stroke="${cols[a]}" stroke-width="2"><title>${t}</title></circle>`
+       : a===10 ? `<circle cx="${x}" cy="${y}" r="6" fill="none" stroke="${cols[a]}" stroke-width="2"><title>${t}</title></circle>`
+       : `<circle cx="${x}" cy="${y}" r="4.5" fill="${cols[a]}"><title>${t}</title></circle>`;
   }
-  s+=`<text x="${sx(env[env.length-1][0])-6}" y="${sy(env[env.length-1][1])-8}" text-anchor="end">envolvente (χ = ${F(set.chi,'def')} ‰)</text>`;
-  s+=`<text x="${sx(env[env.length-1][0])-6}" y="${sy(env[env.length-1][1]*marg)+16}" text-anchor="end">× margen · región admisible</text>`;
-  s+=`<rect x="${sx(X0)}" y="${sy(100)}" width="${sx(X1)-sx(X0)}" height="${sy(0)-sy(100)}" fill="none" stroke="${rule}"/>`;
+  if (isFinite(uimp) && uimp<=100){ s+=`<line x1="${sx(X0)}" x2="${sx(X1)}" y1="${sy(uimp)}" y2="${sy(uimp)}" stroke="${col('--bad-gr')}" stroke-dasharray="3 3"/><text x="${sx(X0)+6}" y="${sy(uimp)-5}" style="fill:${col('--bad-gr')}">u<tspan dy="0.3em">imp</tspan><tspan dy="-0.3em"> = ${F(uimp,'desp')} mm</tspan></text>`; }
+  if (isFinite(ex) && ex>=X0 && ex<=X1){
+    s+=`<line x1="${sx(ex)}" x2="${sx(ex)}" y1="${sy(0)}" y2="${sy(100)}" stroke="${acc}" stroke-dasharray="3 3"/>`;
+    if (isFinite(uimp) && uimp<=100){ const y=sy(uimp), x=sx(ex); s+=`<path d="M${x} ${y-8} L${x+8} ${y} L${x} ${y+8} L${x-8} ${y} Z" fill="${acc}" stroke="${card}" stroke-width="1.5"><title>Su losa</title></path>`; }
+  }
+  // leyenda
+  const lx=sx(X0)+10, ly=sy(100)+14, dy=17;
+  s+=`<rect x="${lx-6}" y="${ly-14}" width="236" height="${dy*6+8}" rx="5" fill="${card}" stroke="${rule}"/>`;
+  s+=`<circle cx="${lx+6}" cy="${ly}" r="4" fill="none" stroke="${cols[5]}" stroke-width="2"/><text x="${lx+18}" y="${ly+4}">α = 5 %, L = 4–8.00 m</text>`;
+  s+=`<circle cx="${lx+6}" cy="${ly+dy}" r="6" fill="none" stroke="${cols[10]}" stroke-width="2"/><text x="${lx+18}" y="${ly+dy+4}">α = 10 %, L = 4–8.00 m</text>`;
+  s+=`<circle cx="${lx+6}" cy="${ly+2*dy}" r="4.5" fill="${cols[15]}"/><text x="${lx+18}" y="${ly+2*dy+4}">α = 15 %, L = 4–7.00 m</text>`;
+  s+=`<line x1="${lx}" x2="${lx+14}" y1="${ly+3*dy}" y2="${ly+3*dy}" stroke="${ink}" stroke-width="2"/><text x="${lx+18}" y="${ly+3*dy+4}">envolvente inferior (χ = ${F(set.chi,'def')} ‰)</text>`;
+  s+=`<line x1="${lx}" x2="${lx+14}" y1="${ly+4*dy}" y2="${ly+4*dy}" stroke="${ink}" stroke-width="1.5" stroke-dasharray="6 4"/><text x="${lx+18}" y="${ly+4*dy+4}">× factor de margen</text>`;
+  s+=`<rect x="${lx}" y="${ly+5*dy-5}" width="14" height="10" fill="${okc}" fill-opacity=".3"/><text x="${lx+18}" y="${ly+5*dy+4}">región admisible</text>`;
+  s+=`<rect x="${sx(X0)}" y="${sy(100)}" width="${sx(X1)-sx(X0)}" height="${sy(0)-sy(100)}" fill="none" stroke="${col('--muted')}"/>`;
   svg.innerHTML=s;
   svg.__inv=(vx,vy)=>({x:X0+(vx-m.l)/(W-m.l-m.r)*(X1-X0), y:Y0+(H-m.b-vy)/(H-m.t-m.b)*(Y1-Y0), fx:v=>F(v,'m')+" m", fy:v=>F(v,'desp')+" mm"});
 }
@@ -973,8 +985,8 @@ function col(n){ return getComputedStyle(document.documentElement).getPropertyVa
 /* ---------- campos de datos ---------- */
 const OPC_DR = [["0","0 (Rankine)"],["0.5","1/2"],["0.6667","2/3"],["1","1"]];
 const GRUPOS = [
- { tab:0, t:"Red viaria", c:[
-   {radio:"road", op:[["auto","Autopista (χ<sub>adm</sub> = 20.00 ‰)"],["nat","Carretera nacional (χ<sub>adm</sub> = 28.00 ‰)"]]} ]},
+ { tab:0, t:"Pendiente admisible en la carretera", c:[
+   {tipo:"sel", id:"road", et:"Tipo de vía", v:"auto", ancho:true, op:[["auto","Autopista · 20&#x202F;‰"],["nat","Carretera nacional · 28&#x202F;‰"]]} ]},
  { tab:0, t:"Desplazamiento impuesto", c:[
    {radio:"umode", op:[["calc","Calcular de d<sub>pf</sub> y ε"],["dir","Introducir u<sub>imp</sub>"]]},
    {id:"dpf", et:"d<sub>pf</sub>", u:"m", v:"35", paso:1, ayuda:"Distancia del punto fijo al estribo (L/2 si es simétrico).", modo:"calc"},
@@ -1013,7 +1025,7 @@ const GRUPOS = [
    {id:"kpo", et:"K<sub>p</sub> propio", u:"-", v:"", opcional:true, ayuda:"Vacío = calculado (p. ej. de las tablas de Caquot–Kérisel)."},
    {id:"uq", et:"u<sub>imp,Q</sub>", u:"mm", v:"0", paso:.5, opcional:true, ayuda:"Desplazamiento por cargas viales; 0 = solo temperatura (BA 42/96)."} ]},
 ];
-const TABS_DATOS = [["Estructura","Red viaria, desplazamiento impuesto y margen"],["Losa y estribo","Geometría de la losa, estribo y relleno, coeficientes"],["Cargas y empuje","Cargas, materiales y empuje sobre el muro"]];
+const TABS_DATOS = [["Estructura","Pendiente admisible, desplazamiento impuesto y margen"],["Losa y estribo","Geometría de la losa, estribo y relleno, coeficientes"],["Cargas y empuje","Cargas, materiales y empuje sobre el muro"]];
 const CAMPOS = [{id:"proj", v:"Obra de emergencia en la M305 PPK 0+800"},{id:"elem", v:"Estribo 1"}, ...GRUPOS.flatMap(g=>g.c).filter(c=>c.id)];   // proj y elem viven en Archivo › Datos de proyecto
 const NUMERICOS = CAMPOS.filter(c=>c.u);
 const CAMPOS_TEXTO = new Set(["proj","elem"]);
@@ -1071,7 +1083,7 @@ const radio = n => document.querySelector(`input[name=${n}]:checked`).value;
 let PHI = {...PHI_DEF};
 function activos(){ const um = radio("umode"); return id => !( (um==="dir" && ["dpf","k","esh","ecr","eT"].includes(id)) || (um==="calc" && id==="uimp") ); }
 function leer(){
-  const I = {road:radio("road"), umode:radio("umode"), abut:radio("abut"), nMode:$("nMode").value, dr:$("dr").value, PHI:{...PHI}}, malos = [], act = activos();
+  const I = {road:$("road").value, umode:radio("umode"), abut:radio("abut"), nMode:$("nMode").value, dr:$("dr").value, PHI:{...PHI}}, malos = [], act = activos();
   for (const c of NUMERICOS){
     const v = parseNum($(c.id).value); I[c.id] = v;
     if (!isFinite(v) && !c.opcional && act(c.id)) malos.push(c);

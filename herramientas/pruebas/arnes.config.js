@@ -54,6 +54,7 @@ const cfg = {
     };
     // Solo se marca el radio elegido (marcarlo desmarca el otro del grupo; desmarcar uno suelto deja el grupo vacío).
     for (const [a, b] of [['road_auto', 'road_nat'], ['umode_calc', 'umode_dir'], ['abut_int', 'abut_semi']]) { if (o[a]) delete o[b]; else { delete o[a]; o[b] = true; } }
+    o.road = o.road_auto ? 'auto' : 'nat';   // la v2 usa un desplegable (id road); la original, dos radios
     return o;
   },
 };

@@ -1,4 +1,6 @@
 Formateos fuera de la función de formato para revisar a mano (2):
-  línea 385: let s = v.toLocaleString("en-US",{minimumFractionDigits:d, maximumFractionDigits:d, useGrouping:false});
-  línea 1179: const dec = (String(c.paso).split(".")[1]||"").length; t.value = String(+(v+d).toFixed(Math.max(dec,(String(t.
-OK: 30 casos, todos los números con la precisión de su magnitud
+  línea 390: let s = v.toLocaleString("en-US",{minimumFractionDigits:d, maximumFractionDigits:d, useGrouping:false});
+  línea 1191: const dec = (String(c.paso).split(".")[1]||"").length; t.value = String(+(v+d).toFixed(Math.max(dec,(String(t.
+FALLA: 2 incumplimientos distintos
+texto «20 ‰»
+texto «28 ‰»

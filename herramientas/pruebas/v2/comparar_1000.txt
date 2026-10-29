@@ -1,3 +1,4 @@
+Aviso: campos de la anterior que no existen en la nueva: road_auto, road_nat
 Casos 1000 · campos variados 35
   ✓ motor y veredictos iguales en 1000
   ✓ memoria igual sin cifras en 1000 · idéntica también con cifras en 0
