@@ -1,0 +1,184 @@
+{
+  "1920x1080": {
+    "Datos › Estructura": {
+      "pagina": 0,
+      "paneles": {},
+      "falla": false
+    },
+    "Datos › Losa y estribo": {
+      "pagina": 0,
+      "paneles": {},
+      "falla": false
+    },
+    "Datos › Cargas y empuje": {
+      "pagina": 0,
+      "paneles": {},
+      "falla": false
+    },
+    "Resultados › Resumen": {
+      "pagina": 0,
+      "paneles": {},
+      "falla": false
+    },
+    "Resultados › Desplazamiento": {
+      "pagina": 0,
+      "paneles": {},
+      "falla": false
+    },
+    "Resultados › Hueco": {
+      "pagina": 0,
+      "paneles": {},
+      "falla": false
+    },
+    "Resultados › Esfuerzos": {
+      "pagina": 0,
+      "paneles": {},
+      "falla": false
+    },
+    "Resultados › Armadura y cortante": {
+      "pagina": 0,
+      "paneles": {},
+      "falla": false
+    },
+    "Resultados › Empuje": {
+      "pagina": 0,
+      "paneles": {},
+      "falla": false
+    },
+    "Resultados › Anejos": {
+      "pagina": 0,
+      "paneles": {},
+      "falla": false
+    }
+  },
+  "1536x730": {
+    "Datos › Estructura": {
+      "pagina": 0,
+      "paneles": {},
+      "falla": false
+    },
+    "Datos › Losa y estribo": {
+      "pagina": 0,
+      "paneles": {},
+      "falla": false
+    },
+    "Datos › Cargas y empuje": {
+      "pagina": 0,
+      "paneles": {},
+      "falla": false
+    },
+    "Resultados › Resumen": {
+      "pagina": 0,
+      "paneles": {},
+      "falla": false
+    },
+    "Resultados › Desplazamiento": {
+      "pagina": 0,
+      "paneles": {
+        "#paneles": 20
+      },
+      "falla": false
+    },
+    "Resultados › Hueco": {
+      "pagina": 0,
+      "paneles": {
+        "#paneles": 4
+      },
+      "falla": false
+    },
+    "Resultados › Esfuerzos": {
+      "pagina": 0,
+      "paneles": {},
+      "falla": false
+    },
+    "Resultados › Armadura y cortante": {
+      "pagina": 0,
+      "paneles": {
+        "#paneles": 151
+      },
+      "falla": false
+    },
+    "Resultados › Empuje": {
+      "pagina": 0,
+      "paneles": {
+        "#paneles": 187
+      },
+      "falla": false
+    },
+    "Resultados › Anejos": {
+      "pagina": 0,
+      "paneles": {},
+      "falla": false
+    }
+  },
+  "1366x657": {
+    "Datos › Estructura": {
+      "pagina": 0,
+      "paneles": {
+        "#paneles": 49
+      },
+      "falla": false
+    },
+    "Datos › Losa y estribo": {
+      "pagina": 0,
+      "paneles": {
+        "#paneles": 49
+      },
+      "falla": false
+    },
+    "Datos › Cargas y empuje": {
+      "pagina": 0,
+      "paneles": {
+        "#paneles": 49
+      },
+      "falla": false
+    },
+    "Resultados › Resumen": {
+      "pagina": 0,
+      "paneles": {
+        "#paneles": 49
+      },
+      "falla": false
+    },
+    "Resultados › Desplazamiento": {
+      "pagina": 0,
+      "paneles": {
+        "#paneles": 323
+      },
+      "falla": false
+    },
+    "Resultados › Hueco": {
+      "pagina": 0,
+      "paneles": {
+        "#paneles": 245
+      },
+      "falla": false
+    },
+    "Resultados › Esfuerzos": {
+      "pagina": 0,
+      "paneles": {
+        "#paneles": 244
+      },
+      "falla": false
+    },
+    "Resultados › Armadura y cortante": {
+      "pagina": 0,
+      "paneles": {
+        "#paneles": 447
+      },
+      "falla": false
+    },
+    "Resultados › Empuje": {
+      "pagina": 0,
+      "paneles": {
+        "#paneles": 612
+      },
+      "falla": false
+    },
+    "Resultados › Anejos": {
+      "pagina": 0,
+      "paneles": {},
+      "falla": false
+    }
+  }
+}

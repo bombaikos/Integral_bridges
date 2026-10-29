@@ -1,0 +1,11 @@
+
+1920x1080
+  ✗ (sin pestañas)                             página  4693 px
+
+1536x730
+  ✗ (sin pestañas)                             página  5043 px
+
+1366x657
+  ✗ (sin pestañas)                             página  5116 px
+
+FALLA: hay scroll de página, scroll a 1920 × 1080 o errores de JavaScript

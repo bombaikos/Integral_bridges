@@ -1,0 +1,249 @@
+{
+  "archivo": "losa_transicion_dreier.html",
+  "fecha": "2026-10-29T12:50:01.743Z",
+  "fuente": {
+    "formateos_sueltos": {
+      "toFixed": 3,
+      "toPrecision": 0,
+      "toLocaleString": 1
+    },
+    "tabla_precisiones": false,
+    "boton_calcular": false,
+    "localStorage": 5,
+    "fuentes_web": false,
+    "backdrop_filter": false,
+    "colores_sueltos": 58
+  },
+  "pantalla": {
+    "alto_pagina": 5773,
+    "ventana": 730,
+    "pantallas": 7.9,
+    "apartados": [
+      {
+        "id": "",
+        "titulo": "1 · Desplazamiento admisible (estado límite de servicio)",
+        "alto": 1147,
+        "y": 126,
+        "figuras": 2,
+        "tablas": 1,
+        "plegables": 0
+      },
+      {
+        "id": "",
+        "titulo": "2 · Hueco detrás del estribo y longitud mínima",
+        "alto": 917,
+        "y": 1291,
+        "figuras": 1,
+        "tablas": 1,
+        "plegables": 0
+      },
+      {
+        "id": "",
+        "titulo": "3 · Esfuerzos de cálculo (ELU, por metro de ancho)",
+        "alto": 757,
+        "y": 2226,
+        "figuras": 1,
+        "tablas": 1,
+        "plegables": 0
+      },
+      {
+        "id": "",
+        "titulo": "4 · Armadura necesaria",
+        "alto": 628,
+        "y": 3001,
+        "figuras": 1,
+        "tablas": 1,
+        "plegables": 0
+      },
+      {
+        "id": "",
+        "titulo": "5 · Empuje de tierras sobre el muro del estribo",
+        "alto": 1176,
+        "y": 3647,
+        "figuras": 1,
+        "tablas": 2,
+        "plegables": 0
+      },
+      {
+        "id": "",
+        "titulo": "6 · Comprobaciones aproximadas",
+        "alto": 313,
+        "y": 4841,
+        "figuras": 0,
+        "tablas": 1,
+        "plegables": 0
+      },
+      {
+        "id": "",
+        "titulo": "7 · Avisos",
+        "alto": 131,
+        "y": 5172,
+        "figuras": 0,
+        "tablas": 0,
+        "plegables": 0
+      },
+      {
+        "id": "anejoA",
+        "titulo": "Anejo A · Notación",
+        "alto": 60,
+        "y": 5321,
+        "figuras": 0,
+        "tablas": 1,
+        "plegables": 1
+      },
+      {
+        "id": "anejoB",
+        "titulo": "Anejo B · Expresiones utilizadas",
+        "alto": 60,
+        "y": 5399,
+        "figuras": 0,
+        "tablas": 1,
+        "plegables": 1
+      },
+      {
+        "id": "anejoC",
+        "titulo": "Anejo C · Notas de interpretación",
+        "alto": 60,
+        "y": 5477,
+        "figuras": 0,
+        "tablas": 0,
+        "plegables": 1
+      },
+      {
+        "id": "exportar",
+        "titulo": "Exportar",
+        "alto": 101,
+        "y": 5556,
+        "figuras": 0,
+        "tablas": 0,
+        "plegables": 0
+      }
+    ],
+    "veredicto_y": 5625,
+    "veredicto_en_primera_pantalla": false,
+    "notacion": {},
+    "tablas": [
+      {
+        "donde": "tU",
+        "filas": 6,
+        "entrada": false,
+        "copiar": false,
+        "pegar": false
+      },
+      {
+        "donde": "tV",
+        "filas": 6,
+        "entrada": false,
+        "copiar": false,
+        "pegar": false
+      },
+      {
+        "donde": "tF",
+        "filas": 6,
+        "entrada": false,
+        "copiar": false,
+        "pegar": false
+      },
+      {
+        "donde": "tZq",
+        "filas": 11,
+        "entrada": false,
+        "copiar": false,
+        "pegar": false
+      },
+      {
+        "donde": "tC",
+        "filas": 6,
+        "entrada": false,
+        "copiar": false,
+        "pegar": false
+      },
+      {
+        "donde": "tNot",
+        "filas": 40,
+        "entrada": false,
+        "copiar": false,
+        "pegar": false
+      },
+      {
+        "donde": "tExp",
+        "filas": 36,
+        "entrada": false,
+        "copiar": false,
+        "pegar": false
+      }
+    ],
+    "graficas": [
+      {
+        "id": "chart",
+        "ancho": 720,
+        "colores": 4,
+        "leyenda": false
+      },
+      {
+        "id": "elev",
+        "ancho": 720,
+        "colores": 4,
+        "leyenda": false
+      },
+      {
+        "id": "plan",
+        "ancho": 720,
+        "colores": 4,
+        "leyenda": false
+      },
+      {
+        "id": "hinge",
+        "ancho": 720,
+        "colores": 5,
+        "leyenda": false
+      },
+      {
+        "id": "empChart",
+        "ancho": 720,
+        "colores": 4,
+        "leyenda": false
+      }
+    ],
+    "texto": {
+      "min": 8,
+      "tam": {
+        "8": 12,
+        "10": 29,
+        "11": 36,
+        "12": 88,
+        "13": 4,
+        "15": 26,
+        "16.8": 1,
+        "23.2": 7,
+        "17.6": 12,
+        "13.6": 21,
+        "14.4": 34,
+        "12.48": 12,
+        "10.4": 7,
+        "9.5": 8,
+        "11.3333": 18,
+        "14.08": 422,
+        "11.7333": 323,
+        "11.52": 8,
+        "9.6": 2,
+        "12.5": 44,
+        "12.8": 1
+      }
+    },
+    "guia": {
+      "menu_archivo": false,
+      "menu_ayuda": false,
+      "abrir": false,
+      "guardar": false,
+      "pantalla_completa": false,
+      "tema_oscuro": true
+    },
+    "errores_js": []
+  },
+  "compactar": {
+    "más de 3 alturas de ventana": true,
+    "más de 4 apartados": true,
+    "veredicto fuera de la primera pantalla": true
+  }
+}

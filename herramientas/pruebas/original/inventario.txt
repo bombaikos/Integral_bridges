@@ -1,0 +1,21 @@
+Página: 5773 px = 7.9 alturas de ventana (1536 × 730)
+Veredicto: a 5625 px
+Apartados (11):
+   1147 px  1 · Desplazamiento admisible (estado límite de servicio) · 2 fig. · 1 tab.
+    917 px  2 · Hueco detrás del estribo y longitud mínima · 1 fig. · 1 tab.
+    757 px  3 · Esfuerzos de cálculo (ELU, por metro de ancho) · 1 fig. · 1 tab.
+    628 px  4 · Armadura necesaria · 1 fig. · 1 tab.
+   1176 px  5 · Empuje de tierras sobre el muro del estribo · 1 fig. · 2 tab.
+    313 px  6 · Comprobaciones aproximadas · 1 tab.
+    131 px  7 · Avisos
+     60 px  Anejo A · Notación · 1 tab. · 1 pleg.
+     60 px  Anejo B · Expresiones utilizadas · 1 tab. · 1 pleg.
+     60 px  Anejo C · Notas de interpretación · 1 pleg.
+    101 px  Exportar
+Compactar: más de 3 alturas de ventana; más de 4 apartados; veredicto fuera de la primera pantalla
+Formateos sueltos en el código: {"toFixed":3,"toPrecision":0,"toLocaleString":1} · sin tabla de precisiones
+Notación a revisar: {}
+Tablas de más de 4 filas: 7 (7 sin Copiar)
+Gráficas con más de un color de trazo: 5 de 5
+Texto: mínimo 8 px · tamaños {"8":12,"10":29,"11":36,"12":88,"13":4,"15":26,"16.8":1,"23.2":7,"17.6":12,"13.6":21,"14.4":34,"12.48":12,"10.4":7,"9.5":8,"11.3333":18,"14.08":422,"11.7333":323,"11.52":8,"9.6":2,"12.5":44,"12.8":1}
+Elementos de la guía: {"menu_archivo":false,"menu_ayuda":false,"abrir":false,"guardar":false,"pantalla_completa":false,"tema_oscuro":true} · botón Calcular: false
