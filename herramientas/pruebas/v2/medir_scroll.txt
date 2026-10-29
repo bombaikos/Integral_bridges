@@ -1,0 +1,38 @@
+
+1920x1080
+  ✓ Datos › Estructura                         página     0 px
+  ✓ Datos › Losa y estribo                     página     0 px
+  ✓ Datos › Cargas y empuje                    página     0 px
+  ✓ Resultados › Resumen                       página     0 px
+  ✓ Resultados › Desplazamiento                página     0 px
+  ✓ Resultados › Hueco                         página     0 px
+  ✓ Resultados › Esfuerzos                     página     0 px
+  ✓ Resultados › Armadura y cortante           página     0 px
+  ✓ Resultados › Empuje                        página     0 px
+  ✓ Resultados › Anejos                        página     0 px
+
+1536x730
+  ✓ Datos › Estructura                         página     0 px
+  ✓ Datos › Losa y estribo                     página     0 px
+  ✓ Datos › Cargas y empuje                    página     0 px
+  ✓ Resultados › Resumen                       página     0 px
+  ✓ Resultados › Desplazamiento                página     0 px · paneles: #paneles 20
+  ✓ Resultados › Hueco                         página     0 px · paneles: #paneles 4
+  ✓ Resultados › Esfuerzos                     página     0 px
+  ✓ Resultados › Armadura y cortante           página     0 px · paneles: #paneles 151
+  ✓ Resultados › Empuje                        página     0 px · paneles: #paneles 187
+  ✓ Resultados › Anejos                        página     0 px
+
+1366x657
+  ✓ Datos › Estructura                         página     0 px · paneles: #paneles 49
+  ✓ Datos › Losa y estribo                     página     0 px · paneles: #paneles 49
+  ✓ Datos › Cargas y empuje                    página     0 px · paneles: #paneles 49
+  ✓ Resultados › Resumen                       página     0 px · paneles: #paneles 49
+  ✓ Resultados › Desplazamiento                página     0 px · paneles: #paneles 323
+  ✓ Resultados › Hueco                         página     0 px · paneles: #paneles 245
+  ✓ Resultados › Esfuerzos                     página     0 px · paneles: #paneles 244
+  ✓ Resultados › Armadura y cortante           página     0 px · paneles: #paneles 447
+  ✓ Resultados › Empuje                        página     0 px · paneles: #paneles 612
+  ✓ Resultados › Anejos                        página     0 px
+
+OK

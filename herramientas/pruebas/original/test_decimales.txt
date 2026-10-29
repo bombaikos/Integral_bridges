@@ -1,0 +1,44 @@
+Formateos fuera de F para revisar a mano (2):
+  línea 315: const fmt = (v, dec=1) => v!=null && isFinite(v) ? v.toLocaleString("en-US",{minimumFractionDigits:dec, maximu
+  línea 581: const r0=v=>v.toFixed(0);
+FALLA: 95 incumplimientos distintos
+texto «35.0 m»
+texto «8 m»
+texto «7 m»
+texto «20 ‰»
+texto «45°»
+texto «5.0 m»
+texto «202.5 kN»
+texto «1 m»
+texto «28 ‰»
+texto «3 m»
+texto «4 ‰»
+texto «−1 m»
+texto «40°»
+texto «32°»
+texto «5 ‰»
+texto «70 m»
+texto «6 m»
+texto «2 m»
+texto «1 ‰»
+texto «37.7 m»
+texto «3.8 m»
+texto «75.4 kN»
+texto «26.7 m»
+texto «6.3 m»
+texto «148.4 kN»
+texto «37.1 m»
+texto «4.0 m»
+texto «156.1 kN»
+texto «47.1 m»
+texto «4.1 m»
+texto «146.4 kN»
+texto «33.6 m»
+texto «3.4 m»
+texto «339.4 kN»
+texto «47.4 m»
+texto «6.6 m»
+texto «80.5 kN»
+texto «39.0 m»
+texto «225.8 kN»
+texto «38.0 m»

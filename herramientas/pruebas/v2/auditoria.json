@@ -1,0 +1,194 @@
+{
+  "archivo": "/home/claude/Integral_bridges/herramientas/losa_transicion_dreier_v2.html",
+  "fecha": "2026-10-29T15:36:33.385Z",
+  "puntos": {
+    "tokens_light": {
+      "faltan": [],
+      "distintos": []
+    },
+    "texto_light": {
+      "min": 11.999960108901515,
+      "pequenos": [],
+      "contraste": [
+        "inicio: button «Estructura» 3.47:1",
+        "inicio: button «Resumen» 3.47:1",
+        "Datos › Estructura: button «Estructura» 3.47:1",
+        "Datos › Estructura: button «Resumen» 3.47:1",
+        "Datos › Losa y estribo: button «Losa y estribo» 3.47:1",
+        "Datos › Losa y estribo: button «Resumen» 3.47:1",
+        "Datos › Cargas y empuje: button «Cargas y empuje» 3.47:1",
+        "Datos › Cargas y empuje: button «Resumen» 3.47:1",
+        "Resultados › Resumen: button «Cargas y empuje» 3.47:1",
+        "Resultados › Resumen: button «Resumen» 3.47:1",
+        "Resultados › Desplazamiento: button «Cargas y empuje» 3.47:1",
+        "Resultados › Desplazamiento: button «Desplazamiento» 3.47:1",
+        "Resultados › Hueco: button «Cargas y empuje» 3.47:1",
+        "Resultados › Hueco: button «Hueco» 3.47:1",
+        "Resultados › Esfuerzos: button «Cargas y empuje» 3.47:1",
+        "Resultados › Esfuerzos: button «Esfuerzos» 3.47:1",
+        "Resultados › Armadura y cortante: button «Cargas y empuje» 3.47:1",
+        "Resultados › Armadura y cortante: button «Armadura y cortante» 3.47:1",
+        "Resultados › Empuje: button «Cargas y empuje» 3.47:1",
+        "Resultados › Empuje: button «Empuje» 3.47:1",
+        "Resultados › Anejos: button «Cargas y empuje» 3.47:1",
+        "Resultados › Anejos: button «Anejos» 3.47:1"
+      ],
+      "fuera": [],
+      "tam": {
+        "12": 1191,
+        "14": 761,
+        "16": 23,
+        "28": 11
+      }
+    },
+    "estructura": {
+      "barra_px": 52,
+      "archivo": true,
+      "ayuda": true,
+      "abrir": true,
+      "guardar": true,
+      "pantalla_completa": true,
+      "campo_px": 26,
+      "boton_calcular": false
+    },
+    "tablas": [
+      {
+        "donde": "tRes",
+        "filas": 10,
+        "datos": false,
+        "copiar": true,
+        "pegar": false
+      },
+      {
+        "donde": "tU",
+        "filas": 6,
+        "datos": false,
+        "copiar": true,
+        "pegar": false
+      },
+      {
+        "donde": "tV",
+        "filas": 6,
+        "datos": false,
+        "copiar": true,
+        "pegar": false
+      },
+      {
+        "donde": "tF",
+        "filas": 6,
+        "datos": false,
+        "copiar": true,
+        "pegar": false
+      },
+      {
+        "donde": "tC",
+        "filas": 6,
+        "datos": false,
+        "copiar": true,
+        "pegar": false
+      },
+      {
+        "donde": "tZq",
+        "filas": 11,
+        "datos": false,
+        "copiar": true,
+        "pegar": false
+      },
+      {
+        "donde": "tNot",
+        "filas": 40,
+        "datos": false,
+        "copiar": true,
+        "pegar": false
+      },
+      {
+        "donde": "tExp",
+        "filas": 36,
+        "datos": false,
+        "copiar": true,
+        "pegar": false
+      }
+    ],
+    "graficas": [
+      {
+        "id": "chart",
+        "series": 2,
+        "colores": 1,
+        "trazos": 2
+      },
+      {
+        "id": "elev",
+        "series": 7,
+        "colores": 1,
+        "trazos": 1
+      },
+      {
+        "id": "hinge",
+        "series": 2,
+        "colores": 2,
+        "trazos": 2
+      },
+      {
+        "id": "empChart",
+        "series": 3,
+        "colores": 1,
+        "trazos": 3
+      }
+    ],
+    "errores_js_light": [],
+    "tokens_dark": {
+      "faltan": [],
+      "distintos": []
+    },
+    "texto_dark": {
+      "min": 11.999960108901515,
+      "pequenos": [],
+      "contraste": [
+        "inicio: button «Estructura» 3.47:1",
+        "inicio: button «Resumen» 3.47:1",
+        "Datos › Estructura: button «Estructura» 3.47:1",
+        "Datos › Estructura: button «Resumen» 3.47:1",
+        "Datos › Losa y estribo: button «Losa y estribo» 3.47:1",
+        "Datos › Losa y estribo: button «Resumen» 3.47:1",
+        "Datos › Cargas y empuje: button «Cargas y empuje» 3.47:1",
+        "Datos › Cargas y empuje: button «Resumen» 3.47:1",
+        "Resultados › Resumen: button «Cargas y empuje» 3.47:1",
+        "Resultados › Resumen: button «Resumen» 3.47:1",
+        "Resultados › Desplazamiento: button «Cargas y empuje» 3.47:1",
+        "Resultados › Desplazamiento: button «Desplazamiento» 3.47:1",
+        "Resultados › Hueco: button «Cargas y empuje» 3.47:1",
+        "Resultados › Hueco: button «Hueco» 3.47:1",
+        "Resultados › Esfuerzos: button «Cargas y empuje» 3.47:1",
+        "Resultados › Esfuerzos: button «Esfuerzos» 3.47:1",
+        "Resultados › Armadura y cortante: button «Cargas y empuje» 3.47:1",
+        "Resultados › Armadura y cortante: button «Armadura y cortante» 3.47:1",
+        "Resultados › Empuje: button «Cargas y empuje» 3.47:1",
+        "Resultados › Empuje: button «Empuje» 3.47:1",
+        "Resultados › Anejos: button «Cargas y empuje» 3.47:1",
+        "Resultados › Anejos: button «Anejos» 3.47:1"
+      ],
+      "fuera": [],
+      "tam": {
+        "12": 1191,
+        "14": 761,
+        "16": 23,
+        "28": 11
+      }
+    },
+    "errores_js_dark": []
+  },
+  "lista": {
+    "Tokens copiados tal cual (salvo --acento y --banda)": "cumple",
+    "Texto ≥ 12 px, también en figuras": "cumple",
+    "Escala 12/14/16 (28 solo veredicto)": "cumple",
+    "Contraste AA del texto pequeño (claro y oscuro)": "no cumple",
+    "Barra de 52 px con Archivo, Ayuda y pantalla completa": "cumple",
+    "Abrir y Guardar": "cumple",
+    "Campos de 26 px (24 en pantallas bajas)": "cumple",
+    "Sin botón Calcular": "cumple",
+    "Tablas > 4 filas: Copiar (resultados) / Copiar y Pegar (datos)": "cumple",
+    "Series de gráfica por trazo, no por color": "no cumple",
+    "Sin errores de JavaScript": "cumple",
+    "Idioma es/en, ayuda, «¿se puede quitar algo?»": "revisar a mano"
+  }
+}

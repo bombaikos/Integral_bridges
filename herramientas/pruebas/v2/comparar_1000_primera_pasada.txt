@@ -1,0 +1,6 @@
+Casos 1000 · campos variados 35
+  ✓ motor y veredictos iguales en 1000
+  ✗ memoria igual sin cifras en 998 · idéntica también con cifras en 0
+{"caso":226,"dif":["memoria: «…m] M Rd [kNm/m] Inferior longitudinal # Ø# Ø# Ø# Ø# no cabe: use mayor diámetro …» ≠ «…m] M Rd [kNm/m] Inferior longitudinal # # Ø# Ø# Ø# Ø# no cabe: use mayor diámetr…»"]}
+{"caso":238,"dif":["memoria: «…m] M Rd [kNm/m] Inferior longitudinal # Ø# Ø# Ø# Ø# no cabe: use mayor diámetro …» ≠ «…m] M Rd [kNm/m] Inferior longitudinal # # Ø# Ø# Ø# Ø# no cabe: use mayor diámetr…»"]}
+FALLA

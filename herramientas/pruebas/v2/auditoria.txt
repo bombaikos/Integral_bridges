@@ -1,0 +1,15 @@
+✓ Tokens copiados tal cual (salvo --acento y --banda): cumple
+✓ Texto ≥ 12 px, también en figuras: cumple
+✓ Escala 12/14/16 (28 solo veredicto): cumple
+✗ Contraste AA del texto pequeño (claro y oscuro): no cumple
+✓ Barra de 52 px con Archivo, Ayuda y pantalla completa: cumple
+✓ Abrir y Guardar: cumple
+✓ Campos de 26 px (24 en pantallas bajas): cumple
+✓ Sin botón Calcular: cumple
+✓ Tablas > 4 filas: Copiar (resultados) / Copiar y Pegar (datos): cumple
+✗ Series de gráfica por trazo, no por color: no cumple
+✓ Sin errores de JavaScript: cumple
+· Idioma es/en, ayuda, «¿se puede quitar algo?»: revisar a mano
+  contraste claro (22): inicio: button «Estructura» 3.47:1 | inicio: button «Resumen» 3.47:1 | Datos › Estructura: button «Estructura» 3.47:1 | Datos › Estructura: button «Resumen» 3.47:1 | Datos › Losa y estribo: button «Losa y estribo» 3.47:1 | Datos › Losa y estribo: button «Resumen» 3.47:1
+  contraste oscuro (22): inicio: button «Estructura» 3.47:1 | inicio: button «Resumen» 3.47:1 | Datos › Estructura: button «Estructura» 3.47:1 | Datos › Estructura: button «Resumen» 3.47:1 | Datos › Losa y estribo: button «Losa y estribo» 3.47:1 | Datos › Losa y estribo: button «Resumen» 3.47:1
+  medidas: {"barra_px":52,"archivo":true,"ayuda":true,"abrir":true,"guardar":true,"pantalla_completa":true,"campo_px":26,"boton_calcular":false}

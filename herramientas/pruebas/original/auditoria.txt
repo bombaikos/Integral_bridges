@@ -1,0 +1,20 @@
+✗ Tokens copiados tal cual (salvo --acento y --banda): no cumple
+✗ Texto ≥ 12 px, también en figuras: no cumple
+✗ Escala 12/14/16 (28 solo veredicto): no cumple
+✗ Contraste AA del texto pequeño (claro y oscuro): no cumple
+✗ Barra de 52 px con Archivo, Ayuda y pantalla completa: no cumple
+✗ Abrir y Guardar: no cumple
+✗ Campos de 26 px (24 en pantallas bajas): no cumple
+✓ Sin botón Calcular: cumple
+✗ Tablas > 4 filas: Copiar (resultados) / Copiar y Pegar (datos): no cumple
+✗ Series de gráfica por trazo, no por color: no cumple
+✓ Sin errores de JavaScript: cumple
+· Idioma es/en, ayuda, «¿se puede quitar algo?»: revisar a mano
+  tokens que faltan (47): --suelo | --hoja | --hundido | --campo | --campo-borde | --nota
+  tokens distintos (claro) (1): --ok: #1f7a45 (guía oklch(46% 0.11 152))
+  tokens distintos (oscuro) (1): --ok: #6fcf97 (guía oklch(76% 0.13 152))
+  texto < 12 px (145): inicio: sub «T» 10.0 px | inicio: sub «p» 10.0 px | inicio: sub «imp» 10.4 px | inicio: sub «imp,adm» 10.4 px | inicio: sub «extr,DT» 10.4 px | inicio: sub «extr,DT» 11.3 px
+  fuera de escala (96): inicio: h1 «Losa de transición en » 16.8 px | inicio: span.idMain «Obra de emergencia en » 23.2 px | inicio: h2 «Datos» 17.6 px | inicio: sub «T» 10.0 px | inicio: sub «p» 10.0 px | inicio: button «Valores por defecto» 15.0 px
+  contraste oscuro (1): inicio: button.primary «Exportar a Word (.docx» 2.25:1
+  tablas sin Copiar/Pegar (7): tU (6 filas) | tV (6 filas) | tF (6 filas) | tZq (11 filas) | tC (6 filas) | tNot (40 filas)
+  medidas: {"barra_px":88,"archivo":false,"ayuda":false,"abrir":false,"guardar":false,"pantalla_completa":false,"campo_px":35,"boton_calcular":false}
