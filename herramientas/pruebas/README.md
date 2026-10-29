@@ -33,3 +33,8 @@ Tres pestañas de datos y siete de resultados; Memoria renumerada (Avisos pasa a
 ## Figura y tabla de armadura (2026-10-29)
 - Punto 4: rótulo «armadura sup. longitudinal» subido sobre la línea; «barra inclinada» sustituido por «armadura inclinada» (negro, discontinua); la tabla pasa a «Armadura sup. longitudinal (ρ = 0.3 %)» y lleva una fila «Armadura inclinada» con los mismos valores y el Ø como texto fijo (no editable, sigue al de la superior).
 - Motor y veredictos iguales (200 casos contra la v2 anterior). La memoria solo difiere en ese texto de la tabla, que es el cambio pedido. Scroll 0 px y decimales como antes (solo los 2 textos «20 ‰» y «28 ‰»).
+
+## Avisos en pardo en vez de «No cumple» rojo (2026-10-29)
+- El cortante (V_Sd ≤ V_Rd,c en los dos extremos) y la franja de apoyo (c ≤ L_DT,extr) pasan de «No cumple» rojo a «Aviso» pardo (token `--atencion`, contraste 5.5:1 en claro y 7.3:1 en oscuro): el cortante no es condición obligatoria (se resuelve con cercos) y la longitud apoyada es una comprobación aproximada de criterio propio. L_hueco/L_DT ≤ 0.5 ya era aviso. L_DT > L_hueco sigue en rojo: sin apoyo la losa no funciona.
+- «Atención» pasa a «Aviso» en estados y en el texto bajo el sello. Los avisos no ponen el sello en rojo: con solo avisos dice «Cumple con avisos» (con u_imp fuera del ábaco, «Con avisos»). Dos avisos explicativos nuevos en el panel Avisos.
+- Solo presentación: motor y valores iguales en 1000 casos (`v2/comparar_avisos_pardo_1000.txt`, contra la v2 anterior; `arnes.config.js` traduce los textos renombrados). Scroll 0 px, decimales y auditoría como antes (mismos 2 incumplimientos). Capturas en `v2/avisos_pardo/`.
