@@ -29,3 +29,7 @@ Tres pestañas de datos y siete de resultados; Memoria renumerada (Avisos pasa a
 ## Cambios tras la revisión de Pepiño (2026-10-29)
 - La gráfica del ábaco vuelve al diseño de la original: series de elementos finitos en colores y formas propios, leyenda en recuadro, región admisible en verde, y línea u_imp en rojo. Texto a 12 px mínimo. Los colores son locales a la gráfica (`--gr-*`); los tokens de la guía no se tocan, pero por eso la auditoría de series «por trazo, no por color» sigue marcando esa gráfica.
 - «Red viaria» pasa a «Pendiente admisible en la carretera», con un desplegable: Autopista · 20 ‰ / Carretera nacional · 28 ‰ (id `road`).
+
+## Figura y tabla de armadura (2026-10-29)
+- Punto 4: rótulo «armadura sup. longitudinal» subido sobre la línea; «barra inclinada» sustituido por «armadura inclinada» (negro, discontinua); la tabla pasa a «Armadura sup. longitudinal (ρ = 0.3 %)» y lleva una fila «Armadura inclinada» con los mismos valores y el Ø como texto fijo (no editable, sigue al de la superior).
+- Motor y veredictos iguales (200 casos contra la v2 anterior). La memoria solo difiere en ese texto de la tabla, que es el cambio pedido. Scroll 0 px y decimales como antes (solo los 2 textos «20 ‰» y «28 ‰»).
