@@ -699,7 +699,7 @@ function drawHinge(o){ SID="hinge-";
   s+=`<text x="${X(40)}" y="${Y(63)+3}" style="fill:${mu}">hormigón de limpieza</text>`;
   // armadura superior de la losa (continua desde el estribo) y barra inclinada de conexión
   s+=`<polyline points="${P([[-70,21.7],[0,21.7],[XE-4,34.2]])}" fill="none" stroke="${fg}" stroke-width="3"/>`;
-  s+=`<polyline points="${P([[-70,5.1],[0,5.1],[LDIAG*100,47.4],[XE-4,53.6]])}" fill="none" stroke="${ac}" stroke-width="3" stroke-dasharray="9 5"/>`;
+  s+=`<polyline points="${P([[-70,5.1],[0,5.1],[LDIAG*100,47.4],[XE-4,53.6]])}" fill="none" stroke="${fg}" stroke-width="3" stroke-dasharray="9 5"/>`;
   // sección de la rótula
   const xh=LDIAG*100;
   s+=`<line x1="${X(xh)}" x2="${X(xh)}" y1="${Y(-12)}" y2="${Y(76)}" stroke="${bad}" stroke-dasharray="5 3" stroke-width="1.5"/>`;
@@ -714,8 +714,8 @@ function drawHinge(o){ SID="hinge-";
   s+=vd(-8,0,20,"200 mm",fg,-5);
   s+=vd(XE+10,29.4,59.4,"300 mm",fg,12);
   s+=vd(XE+10,59.4,69.4,"100 mm",mu,12);
-  s+=`<text x="${X(66)}" y="${Y(49)+14}" style="fill:${ac}">barra inclinada (6)</text>`;
-  s+=`<text x="${X(70)}" y="${Y(28)-2}" style="fill:${fg}">armadura superior</text>`;
+  s+=`<text x="${X(66)}" y="${Y(49)+22}" style="fill:${fg}">armadura inclinada</text>`;
+  s+=`<text x="${X(70)}" y="${Y(28)-14}" style="fill:${fg}">armadura sup. longitudinal</text>`;
   s+=`<text x="${X(-60)}" y="${Y(68)}" style="fill:${fg}">estribo</text>`;
   svg.innerHTML=s;
   note.textContent="Detalle de la fig. 5.15(b) de la tesis y fig. 5.3 de la directriz ASTRA 12004 (cap. 3), redibujado a escala.";
@@ -912,14 +912,15 @@ function pintar(R){
    row2(`n<sub>max</sub> estimado por rozamiento`, U(nEst,'esf','kN/m'), `n<sub>max</sub> = G<sub>ef</sub> · cos α · (tan δ + tan α), δ = φ<sub>k</sub>`, `G<sub>ef</sub> = ${U(Geff,'esf','kN/m')}; α = ${U(deg(aA),'ang','°')}; δ = ${U(deg(delta),'ang','°')} → ${U(nEst,'esf','kN/m')}`, "ec. 5.11–5.12 · PDF p. 132") +
    row2(`n<sub>d</sub> de tracción usado`, `<strong>${U(nd,'esf','kN/m')}</strong>`, `n<sub>d</sub> = ${R.nMode==="thesis"?"100 kN/m (tesis)":"máx(100 ; n<sub>max</sub>)"}`, R.nMode==="thesis"?"":`máx(100 ; ${F(nEst,'esf')}) = ${U(nd,'esf','kN/m')}`, "§ 5.4.3 · PDF p. 133"));
 
-  const NOMB = {long:"Inferior longitudinal",trans:"Inferior transversal",hinge:"Superior de la rótula (ρ = 0.3 %)"};
+  const NOMB = {long:"Inferior longitudinal",trans:"Inferior transversal",hinge:"Armadura sup. longitudinal (ρ = 0.3 %)",incl:"Armadura inclinada"};
   const fila = b => {
     const name = NOMB[b.key];
     if (b.fail) return `<tr><td>${name}</td><td class="n" colspan="5"><span class="tag bad">sección insuficiente</span></td></tr>`;
-    const sel = `<select class="phi" data-k="${b.key}" aria-label="Diámetro de ${name}">${PHIS.map(p=>`<option value="${p}"${p===b.phi?" selected":""}>Ø${p}</option>`).join("")}</select>`;
+    const sel = b.key==="incl" ? `Ø${b.phi}` : `<select class="phi" data-k="${b.key}" aria-label="Diámetro de ${name}">${PHIS.map(p=>`<option value="${p}"${p===b.phi?" selected":""}>Ø${p}</option>`).join("")}</select>`;
     if (b.nocabe) return `<tr><td>${name}</td><td class="n">${F(b.Asreq,'area')}</td><td>${sel}</td><td class="n" colspan="3"><span class="tag bad">no cabe: use mayor diámetro</span></td></tr>`;
     return `<tr><td>${name}</td><td class="n">${F(b.Asreq,'area')}</td><td>${sel}</td><td class="n">${F(b.sp,'mm')}</td><td class="n">${b.Msd==null?"—":F(b.Msd,'esf')}</td><td class="n">${F(b.Mrd,'esf')} ${b.Msd==null?"":(b.ok?'<span class="tag ok">cumple</span>':'<span class="tag bad">no cumple</span>')}</td></tr>`;
   };
+  { const h=barras.find(b=>b.key==="hinge"); if(h) barras.push({...h,key:"incl"}); }
   put("tA", hdr(["Armadura","A<sub>s</sub> [mm²/m]","Ø [mm]","s [mm]","M<sub>Sd</sub> [kN·m/m]","M<sub>Rd</sub> [kN·m/m]"]) + barras.map(fila).join(""));
 
   const cer = V => V<=VRd ? `${U(V,'esf','kN/m')} <span class="tag ok">cumple</span>` : `<span class="tag bad">comprobar necesidad de cercos con V<sub>Sd</sub> = ${U(V,'esf','kN/m')}</span>`;
