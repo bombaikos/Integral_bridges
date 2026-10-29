@@ -865,12 +865,14 @@ function comprobaciones(R){
   const nom = {long:"M<sub>Rd</sub> ≥ M<sub>Sd</sub> longitudinal inferior",trans:"M<sub>Rd</sub> ≥ M<sub>Sd</sub> transversal inferior"};
   for (const b of R.barras) if (nom[b.key]) add("m"+b.key,"arm","tA",nom[b.key],
       b.fail||b.nocabe?"—":U(b.Mrd,'esf','kN·m/m'), b.fail||b.nocabe?"—":U(b.Msd,'esf','kN·m/m'),"EC2",b.fail||b.nocabe?"no":b.ok?"ok":"no");
-  add("vA","arm","tC","V<sub>Sd</sub> ≤ V<sub>Rd,c</sub> en el extremo del estribo",U(VsdA,'esf','kN/m'),U(VRd,'esf','kN/m'),"EC2 6.2.2",VsdA<=VRd?"ok":"no");
-  add("vB","arm","tC","V<sub>Sd</sub> ≤ V<sub>Rd,c</sub> en el extremo del relleno",U(VsdB,'esf','kN/m'),U(VRd,'esf','kN/m'),"EC2 6.2.2",VsdB<=VRd?"ok":"no");
-  if (qadm>0 && Lext>0) add("fr","arm","tC","c ≤ L<sub>DT,extr</sub> (franja de apoyo)",U(cStrip,'m','m'),U(Lext,'m','m'),"criterio propio",cStrip<=Lext?"ok":"no");
+  add("vA","arm","tC","V<sub>Sd</sub> ≤ V<sub>Rd,c</sub> en el extremo del estribo",U(VsdA,'esf','kN/m'),U(VRd,'esf','kN/m'),"EC2 6.2.2",VsdA<=VRd?"ok":"atencion");
+  add("vB","arm","tC","V<sub>Sd</sub> ≤ V<sub>Rd,c</sub> en el extremo del relleno",U(VsdB,'esf','kN/m'),U(VRd,'esf','kN/m'),"EC2 6.2.2",VsdB<=VRd?"ok":"atencion");
+  if (qadm>0 && Lext>0) add("fr","arm","tC","c ≤ L<sub>DT,extr</sub> (franja de apoyo)",U(cStrip,'m','m'),U(Lext,'m','m'),"criterio propio",cStrip<=Lext?"ok":"atencion");
   return c;
 }
-const ESTADO = {ok:"Cumple",no:"No cumple",atencion:"Atención"};
+const ESTADO = {ok:"Cumple",no:"No cumple",atencion:"Aviso"};
+// Sello global: los avisos (comprobaciones aproximadas o no obligatorias) no lo ponen en rojo. Con u_imp fuera del ábaco no se puede decir «cumple».
+const SELLO = (peor, uimpAviso) => peor==="atencion" ? (uimpAviso ? "Con avisos" : "Cumple con avisos") : ESTADO[peor];
 
 function pintar(R){
   const {set,umode,abut,conn,L,al,e0,h,hmec,phik,gphi,gs,Q1k,aQ,gQ,fck,gc,fsk,gsS,marg,esh,ecr,eT,eps,k,dpf,uimp,a,eextr,uEnv,uAdm,eReq,Lreq,uReq,free,okU,
@@ -923,11 +925,11 @@ function pintar(R){
   { const h=barras.find(b=>b.key==="hinge"); if(h) barras.push({...h,key:"incl"}); }
   put("tA", hdr(["Armadura","A<sub>s</sub> [mm²/m]","Ø [mm]","s [mm]","M<sub>Sd</sub> [kN·m/m]","M<sub>Rd</sub> [kN·m/m]"]) + barras.map(fila).join(""));
 
-  const cer = V => V<=VRd ? `${U(V,'esf','kN/m')} <span class="tag ok">cumple</span>` : `<span class="tag bad">comprobar necesidad de cercos con V<sub>Sd</sub> = ${U(V,'esf','kN/m')}</span>`;
+  const cer = V => V<=VRd ? `${U(V,'esf','kN/m')} <span class="tag ok">cumple</span>` : `<span class="tag warn">aviso: comprobar necesidad de cercos con V<sub>Sd</sub> = ${U(V,'esf','kN/m')}</span>`;
   put("tC", hdr(["Magnitud","Valor"]) +
    row2(`V<sub>Rd,c</sub> sin armadura de cortante (EC2 6.2.2)`, U(VRd,'esf','kN/m')) +
    row2(`Ancho de reparto del cortante = 2.40 + 4 · d`, U(W_SHEAR,'m','m')) +
-   row2(`Franja de apoyo c = R / q<sub>adm</sub>`, qadm>0 ? `${U(cStrip,'m','m')} ${Lext>0 ? (cStrip<=Lext?'<span class="tag ok">cabe en L<sub>DT,extr</sub></span>':'<span class="tag bad">supera L<sub>DT,extr</sub></span>') : ""}` : "—") +
+   row2(`Franja de apoyo c = R / q<sub>adm</sub>`, qadm>0 ? `${U(cStrip,'m','m')} ${Lext>0 ? (cStrip<=Lext?'<span class="tag ok">cabe en L<sub>DT,extr</sub></span>':'<span class="tag warn">aviso: supera L<sub>DT,extr</sub></span>') : ""}` : "—") +
    row2(`Luz de cálculo L<sub>s</sub> = ${conn==="hinge"?"L<sub>hueco</sub> − L<sub>diag</sub>":"L<sub>hueco</sub>"} + c / 2`, U(Ls,'m','m')) +
    row2(`V<sub>Sd</sub> en el extremo del estribo`, cer(VsdA)) +
    row2(`V<sub>Sd</sub> en el extremo del relleno`, cer(VsdB)));
@@ -957,7 +959,11 @@ function pintar(R){
   R.checks = cs; R.global = peor;
   put("tRes", hdr(["Comprobación","Valor","Límite","Norma o criterio","Estado"]) + cs.map(c =>
     `<tr class="enlace ${c.est==="no"?"no-fila":c.est==="atencion"?"atencion-fila":""}" data-tab="${c.tab}" data-dest="${c.dest}" tabindex="0" title="Ir a la comprobación"><td>${c.nombre}</td><td class="n">${c.val}</td><td class="n">${c.lim}</td><td class="ref">${c.ref}</td><td><span class="tag ${c.est==="ok"?"ok":c.est==="no"?"bad":"warn"}">${ESTADO[c.est]}</span></td></tr>`).join(""));
-  put("msgs", msgs.length ? msgs.map(([c,t])=>`<li class="${c}">${t}</li>`).join("") : `<li class="info">Sin avisos.</li>`);
+  // Avisos de las comprobaciones aproximadas: explican por qué no son un «no cumple» (solo texto; no cambian el cálculo)
+  const avisos = [...msgs];
+  if (cs.some(c=>(c.id==="vA"||c.id==="vB") && c.est==="atencion")) avisos.push(["warn",`Cortante: V<sub>Sd</sub> supera V<sub>Rd,c</sub> sin armadura de cortante. Es un aviso y no un incumplimiento: la comprobación es aproximada (la tesis la remite a Fernández Ruiz et al. 2009) y, si V<sub>Rd,c</sub> no basta, se resuelve colocando cercos.`]);
+  if (cs.some(c=>c.id==="fr" && c.est==="atencion")) avisos.push(["warn",`Franja de apoyo: c = R / q<sub>adm</sub> supera la longitud apoyada L<sub>DT,extr</sub>. Es un aviso y no un incumplimiento: la tesis no fija una longitud apoyada mínima y esta comprobación es aproximada (criterio propio de la herramienta).`]);
+  put("msgs", avisos.length ? avisos.map(([c,t])=>`<li class="${c}">${t}</li>`).join("") : `<li class="info">Sin avisos.</li>`);
   D("idLine").innerHTML = `${idLinea(D("proj").value || "—")} · ${idLinea(D("elem").value || "—")}`;
   document.title = "Losa de transición · " + (D("elem").value || "");
 
@@ -965,7 +971,7 @@ function pintar(R){
   const rat = uAdm ? uimp/uAdm : NaN;
   D("vCifra").innerHTML = (isFinite(rat) ? F(rat,'razon') : "—") + `<small>u<sub>imp</sub> / u<sub>imp,adm</sub></small>`;
   D("vBarra").firstElementChild.style.width = Math.min(100, isFinite(rat) ? rat*50 : 0) + "%";
-  D("vSello").className = "sello " + peor; D("vSello").textContent = ESTADO[peor];
+  D("vSello").className = "sello " + peor; D("vSello").textContent = SELLO(peor, cs.some(c=>c.id==="uimp" && c.est==="atencion"));
   const mal = cs.filter(c=>c.est!=="ok");
   D("vFallan").innerHTML = mal.slice(0,3).map(c=>`<li><a data-tab="${c.tab}" data-dest="${c.dest}">${c.nombre}</a> · ${ESTADO[c.est].toLowerCase()}</li>`).join("") + (mal.length>3 ? `<li><a data-tab="resumen">y ${mal.length-3} más · ver resumen</a></li>` : "") || `<li>Todas las comprobaciones cumplen.</li>`;
 
@@ -1290,7 +1296,7 @@ const AYUDA = `<p>Predimensionamiento de la losa de transición de un puente int
 <h3>Cómo se usa</h3><ul><li>Los datos están a la izquierda, en dos pestañas. Cada cambio recalcula solo; no hay botón «Calcular».</li>
 <li>Un dato no válido se marca en rojo y los resultados quedan atenuados con el último cálculo válido. Se aceptan operaciones (<code>2*150</code>) y el punto o la coma decimal.</li>
 <li>↑ y ↓ cambian el valor con el paso de la magnitud (Mayús ×10). Intro pasa al campo siguiente.</li></ul>
-<h3>Resultados</h3><ul><li>La tarjeta de arriba muestra el aprovechamiento de u<sub>imp</sub> frente a u<sub>imp,adm</sub> y el estado de <b>todas</b> las comprobaciones. Bajo el sello, las tres primeras que no cumplen.</li>
+<h3>Resultados</h3><ul><li>La tarjeta de arriba muestra el aprovechamiento de u<sub>imp</sub> frente a u<sub>imp,adm</sub> y el estado de <b>todas</b> las comprobaciones. Bajo el sello, las tres primeras que no cumplen o tienen aviso. Un aviso (en pardo) no pone el sello en rojo: el sello pasa a «Cumple con avisos». Son avisos el cortante y la franja de apoyo, que son comprobaciones aproximadas o no obligatorias.</li>
 <li><b>Resumen</b> reúne las comprobaciones; pulsar una fila lleva a su apartado. Las demás pestañas siguen el orden de la memoria.</li>
 <li>Pulse una fila de una tabla (▸) para ver su fórmula, los valores sustituidos y la fuente.</li>
 <li>En las gráficas, rueda para acercar, rectángulo para ampliar y doble clic para volver.</li></ul>

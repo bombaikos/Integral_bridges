@@ -21,7 +21,10 @@ const veredictos = () => {
   const lista = (sel, f) => [...document.querySelectorAll(sel)].map(f);
   return [...lista('#kpis .kpi', e => e.className.replace(/\s+/g, ' ').trim()),
           ...['#tU', '#tV', '#tA', '#tC'].flatMap(s => lista(s + ' .tag', e => e.className + '|' + n(e.textContent))),
-          ...lista('#msgs li', e => e.className + '|' + n(e.textContent))];
+          ...lista('#msgs li', e => e.className + '|' + n(e.textContent))]
+    .filter(t => !/^warn\|(Cortante|Franja de apoyo): /.test(t))                  // avisos explicativos nuevos (solo texto)
+    .map(t => t.replace('tag warn|aviso: ', 'tag bad|'))
+    .concat(document.querySelectorAll('#msgs li').length && ![...document.querySelectorAll('#msgs li')].every(e => /^(Cortante|Franja de apoyo): /.test(e.textContent)) ? [] : ['info|Sin avisos.']);                         // cortante y franja de apoyo: «no cumple» rojo pasa a aviso pardo (2026-10-29)
 };
 
 // Memoria: tablas y notas de resultados, sin las filas de origen (solo v2) y con la notación de la original.
@@ -30,7 +33,9 @@ const memoria = () => {
   return ['kpis', 'tU', 'tV', 'tF', 'tA', 'tC', 'kEmp', 'tEmp', 'tZq', 'empNote', 'msgs', 'planNote', 'hingeNote'].map(i => {
     const e = document.getElementById(i); if (!e) return '';
     const c = e.cloneNode(true); c.querySelectorAll('.traza-d,.err').forEach(x => x.remove()); c.querySelectorAll('tr').forEach(x => x.removeAttribute('class'));
-    return n(c.innerHTML).split('Ø [mm]').join('Diámetro').split('s [mm]').join('s [m]').split('K en cabeza [–]').join('K en cabeza').split('no cumple · ').join('').split('cumple · ').join('');   // la v2 añade el estado en texto a la tarjeta
+    c.querySelectorAll('#msgs li').forEach(li => { if (/^(Cortante|Franja de apoyo): /.test(li.textContent)) li.remove(); });
+    if (!c.querySelector('#msgs li') && c.id === 'msgs') c.innerHTML = '<li class="info">Sin avisos.</li>';   // avisos explicativos nuevos
+    return n(c.innerHTML).split('class="tag warn">aviso: ').join('class="tag bad">').split('Ø [mm]').join('Diámetro').split('s [mm]').join('s [m]').split('K en cabeza [–]').join('K en cabeza').split('no cumple · ').join('').split('cumple · ').join('');   // la v2 añade el estado en texto a la tarjeta
   }).join(' | ');
 };
 
